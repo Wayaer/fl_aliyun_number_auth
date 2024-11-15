@@ -1,0 +1,24 @@
+name: fl_aliyun_number_auth
+description: "aliyun number auth for flutter"
+version: 0.0.1
+homepage:
+
+environment:
+  sdk: ^3.5.4
+  flutter: '>=3.3.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: fl.aliyun.number.auth
+        pluginClass: FlAliYunNumberAuthPlugin
+      ios:
+        pluginClass: FlAliYunNumberAuthPlugin
