@@ -1,5 +1,8 @@
 class AuthInfo {
+  /// android 配置信息
   final AuthInfoForAndroid android;
+
+  /// ios 配置信息
   final AuthInfoForIOS ios;
 
   AuthInfo({required this.android, required this.ios});
@@ -9,19 +12,11 @@ class AuthInfo {
 
 class AuthInfoForAndroid {
   /// 启用 授权页返回监听
+  /// 仅支持android
   final bool enableActivityResultListener;
 
   /// 启用授权页UI控件点击监听
   final bool enableAuthUIControlClickListener;
-
-  /// 启用日志
-  final bool enableLogger;
-
-  /// 上传日志
-  final bool enableUploadLogger;
-
-  /// 启用自定义日志处理器
-  final bool enableLoggerHandler;
 
   /// 密钥
   final String secret;
@@ -29,17 +24,11 @@ class AuthInfoForAndroid {
   AuthInfoForAndroid(
       {this.enableActivityResultListener = false,
       this.enableAuthUIControlClickListener = false,
-      this.enableLogger = false,
-      this.enableUploadLogger = false,
-      this.enableLoggerHandler = false,
       required this.secret});
 
   Map<String, dynamic> toMap() => {
         'enableActivityResultListener': enableActivityResultListener,
         'enableAuthUIControlClickListener': enableAuthUIControlClickListener,
-        'enableLogger': enableLogger,
-        'enableUploadLogger': enableUploadLogger,
-        'enableLoggerHandler': enableLoggerHandler,
         'secret': secret
       };
 }
@@ -51,4 +40,29 @@ class AuthInfoForIOS {
   AuthInfoForIOS({required this.secret});
 
   Map<String, dynamic> toMap() => {'secret': secret};
+}
+
+/// 日志配置
+class LoggerModel {
+  /// 启用日志
+  final bool enable;
+
+  /// 上传日志
+  final bool enableUpload;
+
+  /// 启用自定义日志处理器
+  /// 仅支持android
+  final bool enableHandler;
+
+  LoggerModel({
+    this.enable = true,
+    this.enableUpload = false,
+    this.enableHandler = false,
+  });
+
+  Map<String, dynamic> toMap() => {
+        'enable': enable,
+        'enableUpload': enableUpload,
+        'enableHandler': enableHandler,
+      };
 }

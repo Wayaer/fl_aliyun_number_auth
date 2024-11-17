@@ -15,18 +15,20 @@ import com.mobile.auth.gatewayauth.PnsLoggerHandler
 import com.mobile.auth.gatewayauth.PreLoginResultListener
 import com.mobile.auth.gatewayauth.TokenResultListener
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
 
 /** FlAliYunNumberAuthPlugin */
-class FlAliYunNumberAuthPlugin : FlutterPlugin, MethodCallHandler {
+class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandler,
+    TokenResultListener, PreLoginResultListener {
     private lateinit var channel: MethodChannel
     private lateinit var context: Context
+    private lateinit var authHelper: PhoneNumberAuthHelper
 
-    private var authHelper: PhoneNumberAuthHelper? = null
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         context = flutterPluginBinding.applicationContext
@@ -34,153 +36,177 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, MethodCallHandler {
         channel.setMethodCallHandler(this)
     }
 
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        channel.setMethodCallHandler(null)
+    }
+
+    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+        authHelper = PhoneNumberAuthHelper.getInstance(binding.activity, this)
+    }
+
+    override fun onDetachedFromActivityForConfigChanges() {
+    }
+
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+    }
+
+    override fun onDetachedFromActivity() {
+    }
+
+    private var result: Result? = null
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         when (call.method) {
             "setAuthSDKInfo" -> {
+                this.result = result
                 val args = call.arguments as Map<*, *>
-                if (authHelper == null) {
-                    authHelper = PhoneNumberAuthHelper.getInstance(context, mTokenResultListener)
-                }
                 if (args["enableActivityResultListener"] as Boolean) {
-                    authHelper?.setActivityResultListener(mActivityResultListener)
+                    authHelper.setActivityResultListener(mActivityResultListener)
                 }
                 if (args["enableAuthUIControlClickListener"] as Boolean) {
-                    authHelper?.setUIClickListener(mAuthUIControlClickListener)
+                    authHelper.setUIClickListener(mAuthUIControlClickListener)
                 }
-                val reporter = authHelper?.reporter
-                reporter?.setLoggerEnable(args["enableLogger"] as Boolean)
-                reporter?.setUploadEnable(args["enableUploadLogger"] as Boolean)
-                if (args["enableLoggerHandler"] as Boolean) {
-                    reporter?.setLoggerHandler(mPnsLoggerHandler)
+                authHelper.setAuthSDKInfo(args["secret"] as String)
+            }
+
+            "setLoggerInfo" -> {
+                val args = call.arguments as Map<*, *>
+                val reporter = authHelper.reporter
+                reporter.setLoggerEnable(args["enable"] as Boolean)
+                reporter.setUploadEnable(args["enableUpload"] as Boolean)
+                if (args["enableHandler"] as Boolean) {
+                    reporter.setLoggerHandler(mPnsLoggerHandler)
                 }
-                authHelper?.setAuthSDKInfo(args["androidSecret"] as String)
-                result.success(authHelper != null)
-            }
-
-            "checkEnvAvailable" -> {
-                val args = call.arguments as Map<*, *>
-                val serviceType = (args["serviceType"] as Int) + 1
-                authHelper?.checkEnvAvailable(serviceType)
-                result.success(authHelper != null)
-            }
-
-            "setAuthUIConfig" -> setAuthUIConfig(call, result)
-            "setProtocolChecked" -> {
-                val args = call.arguments as Map<*, *>
-                authHelper?.setProtocolChecked(args["isCheck"] as Boolean)
-                result.success(authHelper != null)
-            }
-
-            "queryCheckBoxIsChecked" -> {
-                result.success(authHelper?.queryCheckBoxIsChecked())
-            }
-
-            "setAuthPageUseDayLight" -> {
-                val args = call.arguments as Map<*, *>
-                authHelper?.setAuthPageUseDayLight(args["authPageUseDayLight"] as Boolean)
-                result.success(authHelper != null)
-            }
-
-            "closeAuthPageReturnBack" -> {
-                val args = call.arguments as Map<*, *>
-                authHelper?.closeAuthPageReturnBack(args["close"] as Boolean)
-                result.success(authHelper != null)
-            }
-
-            "keepAuthPageLandscapeFullScreen" -> {
-                val args = call.arguments as Map<*, *>
-                authHelper?.keepAuthPageLandscapeFullSreen(args["fullScreen"] as Boolean)
-                result.success(authHelper != null)
-            }
-
-            "clearPreInfo" -> {
-                authHelper?.clearPreInfo()
-                result.success(authHelper != null)
-            }
-
-            "getCurrentCarrierName" -> {
-                result.success(authHelper?.currentCarrierName)
-            }
-
-            "userControlAuthPageCancel" -> {
-                authHelper?.userControlAuthPageCancel()
-                result.success(authHelper != null)
-            }
-
-            "prohibitUseUtdid" -> {
-                authHelper?.prohibitUseUtdid()
-                result.success(authHelper != null)
-            }
-
-            "expandAuthPageCheckedScope" -> {
-                val args = call.arguments as Map<*, *>
-                authHelper?.expandAuthPageCheckedScope(args["expand"] as Boolean)
-                result.success(authHelper != null)
+                result.success(true)
             }
 
             "getLoginToken" -> {
+                this.result = result
                 val args = call.arguments as Map<*, *>
-                authHelper?.setAuthListener(mTokenResultListener)
-                authHelper?.getLoginToken(context, args["timeout"] as Int)
-                result.success(authHelper != null)
+                authHelper.setAuthListener(this)
+                authHelper.getLoginToken(context, args["timeout"] as Int)
             }
-
-            "hideLoginLoading" -> {
-                authHelper?.hideLoginLoading()
-                result.success(authHelper != null)
-            }
-
 
             "quitLoginPage" -> {
-                authHelper?.quitLoginPage()
-                result.success(authHelper != null)
+                authHelper.quitLoginPage()
+                result.success(true)
             }
 
             "accelerateLoginPage" -> {
+                this.result = result
                 val args = call.arguments as Map<*, *>
-                authHelper?.accelerateLoginPage(
-                    args["timeout"] as Int, mPreLoginResultListener
-                )
-                result.success(authHelper != null)
+                authHelper.accelerateLoginPage(args["timeout"] as Int, this)
             }
 
             "getVersion" -> {
                 result.success(PhoneNumberAuthHelper.getVersion())
             }
 
+            "checkEnvAvailable" -> {
+                this.result = result
+                val args = call.arguments as Map<*, *>
+                authHelper.checkEnvAvailable(args["authType"] as Int)
+            }
+
+            "setCheckboxIsChecked" -> {
+                val args = call.arguments as Map<*, *>
+                authHelper.setProtocolChecked(args["isChecked"] as Boolean)
+                result.success(true)
+            }
+
+            "queryCheckBoxIsChecked" -> {
+                result.success(authHelper.queryCheckBoxIsChecked())
+            }
+
+            "hideLoginLoading" -> {
+                authHelper.hideLoginLoading()
+                result.success(true)
+            }
+
+            "getCurrentCarrierName" -> {
+                result.success(authHelper.currentCarrierName)
+            }
+
+            "setAuthUI" -> setAuthUI(call, result)
+            "quitPrivacyAlert" -> {
+                authHelper.quitPrivacyPage()
+                result.success(true)
+            }
+
+            /// 以下为android 特有
+            "setAuthPageUseDayLight" -> {
+                val args = call.arguments as Map<*, *>
+                authHelper.setAuthPageUseDayLight(args["authPageUseDayLight"] as Boolean)
+                result.success(true)
+            }
+
+            "closeAuthPageReturnBack" -> {
+                val args = call.arguments as Map<*, *>
+                authHelper.closeAuthPageReturnBack(args["close"] as Boolean)
+                result.success(true)
+            }
+
+            "keepAuthPageLandscapeFullScreen" -> {
+                val args = call.arguments as Map<*, *>
+                authHelper.keepAuthPageLandscapeFullSreen(args["fullScreen"] as Boolean)
+                result.success(true)
+            }
+
+            "clearPreInfo" -> {
+                authHelper.clearPreInfo()
+                result.success(true)
+            }
+
+            "userControlAuthPageCancel" -> {
+                authHelper.userControlAuthPageCancel()
+                result.success(true)
+            }
+
+            "prohibitUseUtdid" -> {
+                authHelper.prohibitUseUtdid()
+                result.success(true)
+            }
+
+            "expandAuthPageCheckedScope" -> {
+                val args = call.arguments as Map<*, *>
+                authHelper.expandAuthPageCheckedScope(args["expand"] as Boolean)
+                result.success(true)
+            }
+
+
             "addAuthRegisterViewConfig" -> addAuthRegisterViewConfig(call, result)
             "removeAuthRegisterViewConfig" -> {
-                authHelper?.removeAuthRegisterViewConfig()
-                result.success(authHelper != null)
+                authHelper.removeAuthRegisterViewConfig()
+                result.success(true)
             }
 
             "addAuthRegisterXmlConfig" -> addAuthRegisterXmlConfig(call, result)
 
             "removeAuthRegisterXmlConfig" -> {
-                authHelper?.removeAuthRegisterXmlConfig()
-                result.success(authHelper != null)
+                authHelper.removeAuthRegisterXmlConfig()
+                result.success(true)
             }
 
             "addPrivacyRegisterXmlConfig" -> addPrivacyRegisterXmlConfig(call, result)
-            "quitPrivacyPage" -> {
-                authHelper?.quitPrivacyPage()
-                result.success(authHelper != null)
-            }
 
             "removePrivacyRegisterXmlConfig" -> {
-                authHelper?.removePrivacyRegisterXmlConfig()
-                result.success(authHelper != null)
+                authHelper.removePrivacyRegisterXmlConfig()
+                result.success(true)
             }
 
             "addPrivacyAuthRegisterViewConfig" -> addPrivacyAuthRegisterViewConfig(call, result)
             "removePrivacyAuthRegisterViewConfig" -> {
-                authHelper?.removePrivacyAuthRegisterViewConfig()
-                result.success(authHelper != null)
+                authHelper.removePrivacyAuthRegisterViewConfig()
+                result.success(true)
             }
 
             else -> result.notImplemented()
         }
+    }
+
+    private fun resultSuccess(any: Any?) {
+        result?.success(any)
+        this.result = null
     }
 
     private var mPnsLoggerHandler: PnsLoggerHandler = object : PnsLoggerHandler {
@@ -209,28 +235,19 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, MethodCallHandler {
         }
 
     }
-    private var mPreLoginResultListener: PreLoginResultListener = object : PreLoginResultListener {
-        override fun onTokenSuccess(s: String) {
-            //加速成功业务逻辑处理
-            channel.invokeMethod("onPreLoginResult", mapOf("code" to s, "status" to 0))
-        }
 
-        override fun onTokenFailed(s: String, s1: String) {
-            //加速失败业务逻辑处理
-            channel.invokeMethod("onPreLoginResult", mapOf("code" to s, "status" to 1))
-        }
+    override fun onTokenSuccess(s: String?) {
+        resultSuccess(mapOf("resultCode" to s, "isFailed" to false))
     }
-    private var mTokenResultListener: TokenResultListener = object : TokenResultListener {
-        override fun onTokenSuccess(s: String) {
-            //此处可进行token获取成功及授权页唤起成功的业务处理
-            channel.invokeMethod("onTokenResult", mapOf("code" to s, "status" to 0))
-        }
 
-        override fun onTokenFailed(s: String) {
-            //此处可进行token获取失败及退出授权页的业务处理
-            channel.invokeMethod("onTokenResult", mapOf("code" to s, "status" to 1))
-        }
+    override fun onTokenFailed(s: String?, s1: String?) {
+        resultSuccess(mapOf("resultCode" to s, "isFailed" to true, "msg" to s1))
     }
+
+    override fun onTokenFailed(s: String?) {
+        resultSuccess(mapOf("resultCode" to s, "isFailed" to true))
+    }
+
     private var mActivityResultListener: ActivityResultListener =
         ActivityResultListener { requestCode, resultCode, data ->
             channel.invokeMethod(
@@ -249,420 +266,435 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, MethodCallHandler {
         }
 
     private fun addAuthRegisterViewConfig(call: MethodCall, result: Result) {
-        result.success(authHelper != null)
+        result.success(true)
     }
 
     private fun addAuthRegisterXmlConfig(call: MethodCall, result: Result) {
-        result.success(authHelper != null)
+        result.success(true)
     }
 
     private fun addPrivacyRegisterXmlConfig(call: MethodCall, result: Result) {
-        result.success(authHelper != null)
+        result.success(true)
     }
 
     private fun addPrivacyAuthRegisterViewConfig(call: MethodCall, result: Result) {
-        result.success(authHelper != null)
+        result.success(true)
     }
 
-    private fun setAuthUIConfig(call: MethodCall, result: Result) {
+    private fun setAuthUI(call: MethodCall, result: Result) {
         val args = call.arguments as Map<*, *>
         val authUIConfigBuilder = AuthUIConfig.Builder()
-        val nav = args["nav"] as Map<*, *>?
-        if (nav != null) {
-            (nav["statusBarColor"] as Int?)?.let { authUIConfigBuilder.setStatusBarColor(it) }
-            (nav["lightColor"] as Boolean?)?.let { authUIConfigBuilder.setLightColor(it) }
-            (nav["navColor"] as Int?)?.let { authUIConfigBuilder.setNavColor(it) }
-            (nav["navText"] as String?)?.let { authUIConfigBuilder.setNavText(it) }
-            (nav["navTextColor"] as Int?)?.let { authUIConfigBuilder.setNavTextColor(it) }
-            (nav["navTextSize"] as Int?)?.let { authUIConfigBuilder.setNavTextSizeDp(it) }
-            (nav["navTypeface"] as Int?)?.let { authUIConfigBuilder.setNavTypeface(typefaces[it]) }
-            (nav["navReturnImgPath"] as String?)?.let { authUIConfigBuilder.setNavReturnImgPath(it) }
-            (nav["navReturnHidden"] as Boolean?)?.let { authUIConfigBuilder.setNavReturnHidden(it) }
-            (nav["navHidden"] as Boolean?)?.let { authUIConfigBuilder.setNavHidden(it) }
-            (nav["statusBarHidden"] as Boolean?)?.let { authUIConfigBuilder.setStatusBarHidden(it) }
-            (nav["statusBarUIFlag"] as Int?)?.let {
+        val statusBarUi = args["statusBarUi"] as Map<*, *>?
+        if (statusBarUi != null) {
+            (statusBarUi["statusBarColor"] as Int?)?.let { authUIConfigBuilder.setStatusBarColor(it) }
+            (statusBarUi["lightColor"] as Boolean?)?.let { authUIConfigBuilder.setLightColor(it) }
+            (statusBarUi["statusBarHidden"] as Boolean?)?.let {
+                authUIConfigBuilder.setStatusBarHidden(it)
+            }
+            (statusBarUi["statusBarUIFlag"] as Int?)?.let {
                 authUIConfigBuilder.setStatusBarUIFlag(systemUiFlag[it])
             }
-            (nav["webViewStatusBarColor"] as Int?)?.let {
+            (statusBarUi["webViewStatusBarColor"] as Int?)?.let {
                 authUIConfigBuilder.setWebViewStatusBarColor(it)
             }
-            (nav["webNavColor"] as Int?)?.let { authUIConfigBuilder.setWebNavColor(it) }
-            (nav["webNavTextColor"] as Int?)?.let { authUIConfigBuilder.setWebNavTextColor(it) }
-            (nav["webNavTextSize"] as Int?)?.let { authUIConfigBuilder.setWebNavTextSizeDp(it) }
-            (nav["webNavReturnImgPath"] as String?)?.let {
+        }
+        val navUi = args["navUi"] as Map<*, *>?
+        if (navUi != null) {
+            (navUi["navColor"] as Int?)?.let { authUIConfigBuilder.setNavColor(it) }
+            (navUi["navText"] as String?)?.let { authUIConfigBuilder.setNavText(it) }
+            (navUi["navTextColor"] as Int?)?.let { authUIConfigBuilder.setNavTextColor(it) }
+            (navUi["navTextSize"] as Int?)?.let { authUIConfigBuilder.setNavTextSizeDp(it) }
+            (navUi["navTypeface"] as Int?)?.let { authUIConfigBuilder.setNavTypeface(typefaces[it]) }
+            (navUi["navReturnImgPath"] as String?)?.let { authUIConfigBuilder.setNavReturnImgPath(it) }
+            (navUi["navReturnHidden"] as Boolean?)?.let { authUIConfigBuilder.setNavReturnHidden(it) }
+            (navUi["navHidden"] as Boolean?)?.let { authUIConfigBuilder.setNavHidden(it) }
+            (navUi["webNavColor"] as Int?)?.let { authUIConfigBuilder.setWebNavColor(it) }
+            (navUi["webNavTextColor"] as Int?)?.let { authUIConfigBuilder.setWebNavTextColor(it) }
+            (navUi["webNavTextSize"] as Int?)?.let { authUIConfigBuilder.setWebNavTextSizeDp(it) }
+            (navUi["webNavReturnImgPath"] as String?)?.let {
                 authUIConfigBuilder.setWebNavReturnImgPath(it)
             }
-            (nav["bottomNavColor"] as Int?)?.let { authUIConfigBuilder.setBottomNavColor(it) }
-            (nav["navReturnImgDrawable"] as Drawable?)?.let {
+            (navUi["bottomNavColor"] as Int?)?.let { authUIConfigBuilder.setBottomNavColor(it) }
+            (navUi["navReturnImgDrawable"] as Drawable?)?.let {
                 authUIConfigBuilder.setNavReturnImgDrawable(it)
             }
         }
-        val logo = args["logo"] as Map<*, *>?
-        if (logo != null) {
-            (logo["logoHidden"] as Boolean?)?.let { authUIConfigBuilder.setLogoHidden(it) }
-            (logo["logoImgPath"] as String?)?.let { authUIConfigBuilder.setLogoImgPath(it) }
-            (logo["logoWidth"] as Int?)?.let { authUIConfigBuilder.setLogoWidth(it) }
-            (logo["logoHeight"] as Int?)?.let { authUIConfigBuilder.setLogoHeight(it) }
-            (logo["logoOffsetY"] as Int?)?.let { authUIConfigBuilder.setLogoOffsetY(it) }
-            (logo["logoOffsetYB"] as Int?)?.let { authUIConfigBuilder.setLogoOffsetY_B(it) }
-            (logo["logoScaleType"] as Int?)?.let { authUIConfigBuilder.setLogoScaleType(ImageView.ScaleType.entries[it]) }
+        val logoUi = args["logoUi"] as Map<*, *>?
+        if (logoUi != null) {
+            (logoUi["logoHidden"] as Boolean?)?.let { authUIConfigBuilder.setLogoHidden(it) }
+            (logoUi["logoImgPath"] as String?)?.let { authUIConfigBuilder.setLogoImgPath(it) }
+            (logoUi["logoWidth"] as Int?)?.let { authUIConfigBuilder.setLogoWidth(it) }
+            (logoUi["logoHeight"] as Int?)?.let { authUIConfigBuilder.setLogoHeight(it) }
+            (logoUi["logoOffsetY"] as Int?)?.let { authUIConfigBuilder.setLogoOffsetY(it) }
+            (logoUi["logoOffsetYB"] as Int?)?.let { authUIConfigBuilder.setLogoOffsetY_B(it) }
+            (logoUi["logoScaleType"] as Int?)?.let { authUIConfigBuilder.setLogoScaleType(ImageView.ScaleType.entries[it]) }
         }
-        val slogan = args["slogan"] as Map<*, *>?
-        if (slogan != null) {
-            (slogan["sloganText"] as String?)?.let { authUIConfigBuilder.setSloganText(it) }
-            (slogan["sloganTextColor"] as Int?)?.let { authUIConfigBuilder.setSloganTextColor(it) }
-            (slogan["sloganTextSize"] as Int?)?.let { authUIConfigBuilder.setSloganTextSizeDp(it) }
-            (slogan["sloganOffsetY"] as Int?)?.let { authUIConfigBuilder.setSloganOffsetY(it) }
-            (slogan["sloganOffsetYB"] as Int?)?.let { authUIConfigBuilder.setSloganOffsetY_B(it) }
-            (slogan["sloganTypeface"] as Int?)?.let {
+        val sloganUi = args["sloganUi"] as Map<*, *>?
+        if (sloganUi != null) {
+            (sloganUi["sloganText"] as String?)?.let { authUIConfigBuilder.setSloganText(it) }
+            (sloganUi["sloganTextColor"] as Int?)?.let { authUIConfigBuilder.setSloganTextColor(it) }
+            (sloganUi["sloganTextSize"] as Int?)?.let { authUIConfigBuilder.setSloganTextSizeDp(it) }
+            (sloganUi["sloganOffsetY"] as Int?)?.let { authUIConfigBuilder.setSloganOffsetY(it) }
+            (sloganUi["sloganOffsetYB"] as Int?)?.let { authUIConfigBuilder.setSloganOffsetY_B(it) }
+            (sloganUi["sloganTypeface"] as Int?)?.let {
                 authUIConfigBuilder.setSloganTypeface(typefaces[it])
             }
         }
-        val number = args["number"] as Map<*, *>?
-        if (number != null) {
-            (number["numberColor"] as Int?)?.let { authUIConfigBuilder.setNumberColor(it) }
-            (number["numberTextSize"] as Int?)?.let { authUIConfigBuilder.setNumberSizeDp(it) }
-            (number["numFieldOffsetY"] as Int?)?.let { authUIConfigBuilder.setNumFieldOffsetY(it) }
-            (number["numFieldOffsetYB"] as Int?)?.let { authUIConfigBuilder.setNumFieldOffsetY_B(it) }
-            (number["numberFieldOffsetX"] as Int?)?.let {
+        val numberUi = args["numberUi"] as Map<*, *>?
+        if (numberUi != null) {
+            (numberUi["numberColor"] as Int?)?.let { authUIConfigBuilder.setNumberColor(it) }
+            (numberUi["numberTextSize"] as Int?)?.let { authUIConfigBuilder.setNumberSizeDp(it) }
+            (numberUi["numFieldOffsetY"] as Int?)?.let { authUIConfigBuilder.setNumFieldOffsetY(it) }
+            (numberUi["numFieldOffsetYB"] as Int?)?.let {
+                authUIConfigBuilder.setNumFieldOffsetY_B(it)
+            }
+            (numberUi["numberFieldOffsetX"] as Int?)?.let {
                 authUIConfigBuilder.setNumberFieldOffsetX(it)
             }
-            (number["numberLayoutGravity"] as Int?)?.let {
+            (numberUi["numberLayoutGravity"] as Int?)?.let {
                 authUIConfigBuilder.setNumberLayoutGravity(gravity[it])
             }
-            (number["numberTypeface"] as Int?)?.let {
+            (numberUi["numberTypeface"] as Int?)?.let {
                 authUIConfigBuilder.setNumberTypeface(typefaces[it])
             }
-            (number["numberTextSpace"] as Float?)?.let { authUIConfigBuilder.setNumberTextSpace(it) }
+            (numberUi["numberTextSpace"] as Float?)?.let { authUIConfigBuilder.setNumberTextSpace(it) }
         }
-        val loginBtn = args["LoginBtn"] as Map<*, *>?
-        if (loginBtn != null) {
-            (loginBtn["logBtnText"] as String?)?.let { authUIConfigBuilder.setLogBtnText(it) }
-            (loginBtn["logBtnTextColor"] as Int?)?.let { authUIConfigBuilder.setLogBtnTextColor(it) }
-            (loginBtn["logBtnTextSize"] as Int?)?.let { authUIConfigBuilder.setLogBtnTextSizeDp(it) }
-            (loginBtn["logBtnWidth"] as Int?)?.let { authUIConfigBuilder.setLogBtnWidth(it) }
-            (loginBtn["logBtnHeight"] as Int?)?.let { authUIConfigBuilder.setLogBtnHeight(it) }
-            (loginBtn["logBtnMarginLeftAndRight"] as Int?)?.let {
+        val loginBtnUi = args["loginBtnUi"] as Map<*, *>?
+        if (loginBtnUi != null) {
+            (loginBtnUi["logBtnText"] as String?)?.let { authUIConfigBuilder.setLogBtnText(it) }
+            (loginBtnUi["logBtnTextColor"] as Int?)?.let { authUIConfigBuilder.setLogBtnTextColor(it) }
+            (loginBtnUi["logBtnTextSize"] as Int?)?.let { authUIConfigBuilder.setLogBtnTextSizeDp(it) }
+            (loginBtnUi["logBtnWidth"] as Int?)?.let { authUIConfigBuilder.setLogBtnWidth(it) }
+            (loginBtnUi["logBtnHeight"] as Int?)?.let { authUIConfigBuilder.setLogBtnHeight(it) }
+            (loginBtnUi["logBtnMarginLeftAndRight"] as Int?)?.let {
                 authUIConfigBuilder.setLogBtnMarginLeftAndRight(it)
             }
-            (loginBtn["logBtnBackgroundPath"] as String?)?.let {
+            (loginBtnUi["logBtnBackgroundPath"] as String?)?.let {
                 authUIConfigBuilder.setLogBtnBackgroundPath(it)
             }
-            (loginBtn["logBtnOffsetY"] as Int?)?.let { authUIConfigBuilder.setLogBtnOffsetY(it) }
-            (loginBtn["logBtnOffsetYB"] as Int?)?.let { authUIConfigBuilder.setLogBtnOffsetY_B(it) }
-            (loginBtn["loadingImgPath"] as String?)?.let { authUIConfigBuilder.setLoadingImgPath(it) }
-            (loginBtn["logBtnOffsetX"] as Int?)?.let { authUIConfigBuilder.setLogBtnOffsetX(it) }
-            (loginBtn["logBtnLayoutGravity"] as Int?)?.let {
+            (loginBtnUi["logBtnOffsetY"] as Int?)?.let { authUIConfigBuilder.setLogBtnOffsetY(it) }
+            (loginBtnUi["logBtnOffsetYB"] as Int?)?.let { authUIConfigBuilder.setLogBtnOffsetY_B(it) }
+            (loginBtnUi["loadingImgPath"] as String?)?.let {
+                authUIConfigBuilder.setLoadingImgPath(it)
+            }
+            (loginBtnUi["logBtnOffsetX"] as Int?)?.let { authUIConfigBuilder.setLogBtnOffsetX(it) }
+            (loginBtnUi["logBtnLayoutGravity"] as Int?)?.let {
                 authUIConfigBuilder.setLogBtnLayoutGravity(gravity[it])
             }
-            (loginBtn["logBtnBackgroundDrawable"] as Drawable?)?.let {
+            (loginBtnUi["logBtnBackgroundDrawable"] as Drawable?)?.let {
                 authUIConfigBuilder.setLogBtnBackgroundDrawable(it)
             }
-            (loginBtn["loadingImgDrawable"] as Drawable?)?.let {
+            (loginBtnUi["loadingImgDrawable"] as Drawable?)?.let {
                 authUIConfigBuilder.setLoadingImgDrawable(it)
             }
-            (loginBtn["logBtnTypeface"] as Int?)?.let {
+            (loginBtnUi["logBtnTypeface"] as Int?)?.let {
                 authUIConfigBuilder.setLogBtnTypeface(typefaces[it])
             }
         }
-        val privacy = args["privacy"] as Map<*, *>?
-        if (privacy != null) {
-            (privacy["privacyOne"] as String?)?.let { text ->
-                (privacy["privacyOneUrl"] as String?)?.let { url ->
+        val privacyUi = args["privacyUi"] as Map<*, *>?
+        if (privacyUi != null) {
+            (privacyUi["privacyOne"] as String?)?.let { text ->
+                (privacyUi["privacyOneUrl"] as String?)?.let { url ->
                     authUIConfigBuilder.setAppPrivacyOne(text, url)
                 }
             }
 
-            (privacy["privacyTwo"] as String?)?.let { text ->
-                (privacy["privacyTwoUrl"] as String?)?.let { url ->
+            (privacyUi["privacyTwo"] as String?)?.let { text ->
+                (privacyUi["privacyTwoUrl"] as String?)?.let { url ->
                     authUIConfigBuilder.setAppPrivacyTwo(text, url)
                 }
             }
-            (privacy["privacyThree"] as String?)?.let { text ->
-                (privacy["privacyThreeUrl"] as String?)?.let { url ->
+            (privacyUi["privacyThree"] as String?)?.let { text ->
+                (privacyUi["privacyThreeUrl"] as String?)?.let { url ->
                     authUIConfigBuilder.setAppPrivacyThree(text, url)
                 }
             }
 
-            (privacy["privacyColor"] as Int?)?.let { color ->
-                (privacy["privacyUrlColor"] as Int?)?.let { urlColor ->
+            (privacyUi["privacyColor"] as Int?)?.let { color ->
+                (privacyUi["privacyUrlColor"] as Int?)?.let { urlColor ->
                     authUIConfigBuilder.setAppPrivacyColor(color, urlColor)
                 }
             }
-            (privacy["privacyOffsetY"] as Int?)?.let { authUIConfigBuilder.setPrivacyOffsetY(it) }
-            (privacy["privacyOffsetYB"] as Int?)?.let { authUIConfigBuilder.setPrivacyOffsetY_B(it) }
-            (privacy["privacyState"] as Boolean?)?.let { authUIConfigBuilder.setPrivacyState(it) }
-            (privacy["protocolGravity"] as Int?)?.let {
+            (privacyUi["privacyOffsetY"] as Int?)?.let { authUIConfigBuilder.setPrivacyOffsetY(it) }
+            (privacyUi["privacyOffsetYB"] as Int?)?.let { authUIConfigBuilder.setPrivacyOffsetY_B(it) }
+            (privacyUi["privacyState"] as Boolean?)?.let { authUIConfigBuilder.setPrivacyState(it) }
+            (privacyUi["protocolGravity"] as Int?)?.let {
                 authUIConfigBuilder.setProtocolGravity(gravity[it])
             }
-            (privacy["privacyTextSize"] as Int?)?.let { authUIConfigBuilder.setPrivacyTextSizeDp(it) }
-            (privacy["privacyMargin"] as Int?)?.let { authUIConfigBuilder.setPrivacyMargin(it) }
-            (privacy["privacyBefore"] as String?)?.let { authUIConfigBuilder.setPrivacyBefore(it) }
-            (privacy["privacyEnd"] as String?)?.let { authUIConfigBuilder.setPrivacyEnd(it) }
-            (privacy["checkboxHidden"] as Boolean?)?.let { authUIConfigBuilder.setCheckboxHidden(it) }
-            (privacy["uncheckedImgPath"] as String?)?.let {
+            (privacyUi["privacyTextSize"] as Int?)?.let {
+                authUIConfigBuilder.setPrivacyTextSizeDp(it)
+            }
+            (privacyUi["privacyMargin"] as Int?)?.let { authUIConfigBuilder.setPrivacyMargin(it) }
+            (privacyUi["privacyBefore"] as String?)?.let { authUIConfigBuilder.setPrivacyBefore(it) }
+            (privacyUi["privacyEnd"] as String?)?.let { authUIConfigBuilder.setPrivacyEnd(it) }
+            (privacyUi["checkboxHidden"] as Boolean?)?.let {
+                authUIConfigBuilder.setCheckboxHidden(it)
+            }
+            (privacyUi["uncheckedImgPath"] as String?)?.let {
                 authUIConfigBuilder.setUncheckedImgPath(it)
             }
-            (privacy["checkedImgPath"] as String?)?.let { authUIConfigBuilder.setCheckedImgPath(it) }
-            (privacy["checkBoxMarginTop"] as Int?)?.let {
+            (privacyUi["checkedImgPath"] as String?)?.let { authUIConfigBuilder.setCheckedImgPath(it) }
+            (privacyUi["checkBoxMarginTop"] as Int?)?.let {
                 authUIConfigBuilder.setCheckBoxMarginTop(it)
             }
-            (privacy["vendorPrivacyPrefix"] as String?)?.let {
+            (privacyUi["vendorPrivacyPrefix"] as String?)?.let {
                 authUIConfigBuilder.setVendorPrivacyPrefix(it)
             }
-            (privacy["vendorPrivacySuffix"] as String?)?.let {
+            (privacyUi["vendorPrivacySuffix"] as String?)?.let {
                 authUIConfigBuilder.setVendorPrivacySuffix(it)
             }
-            (privacy["protocolLayoutGravity"] as Int?)?.let {
+            (privacyUi["protocolLayoutGravity"] as Int?)?.let {
                 authUIConfigBuilder.setProtocolLayoutGravity(gravity[it])
             }
-            (privacy["privacyOffsetX"] as Int?)?.let { authUIConfigBuilder.setPrivacyOffsetX(it) }
-            (privacy["logBtnToastHidden"] as Boolean?)?.let {
+            (privacyUi["privacyOffsetX"] as Int?)?.let { authUIConfigBuilder.setPrivacyOffsetX(it) }
+            (privacyUi["logBtnToastHidden"] as Boolean?)?.let {
                 authUIConfigBuilder.setLogBtnToastHidden(it)
             }
-            (privacy["uncheckedImgDrawable"] as Drawable?)?.let {
+            (privacyUi["uncheckedImgDrawable"] as Drawable?)?.let {
                 authUIConfigBuilder.setUncheckedImgDrawable(it)
             }
-            (privacy["checkedImgDrawable"] as Drawable?)?.let {
+            (privacyUi["checkedImgDrawable"] as Drawable?)?.let {
                 authUIConfigBuilder.setCheckedImgDrawable(it)
             }
-            (privacy["protocolTypeface"] as Int?)?.let {
+            (privacyUi["protocolTypeface"] as Int?)?.let {
                 authUIConfigBuilder.setProtocolTypeface(typefaces[it])
             }
-            (privacy["privacyOneColor"] as Int?)?.let { authUIConfigBuilder.setPrivacyOneColor(it) }
-            (privacy["privacyTwoColor"] as Int?)?.let { authUIConfigBuilder.setPrivacyTwoColor(it) }
-            (privacy["privacyThreeColor"] as Int?)?.let {
+            (privacyUi["privacyOneColor"] as Int?)?.let { authUIConfigBuilder.setPrivacyOneColor(it) }
+            (privacyUi["privacyTwoColor"] as Int?)?.let { authUIConfigBuilder.setPrivacyTwoColor(it) }
+            (privacyUi["privacyThreeColor"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyThreeColor(it)
             }
-            (privacy["privacyOperatorColor"] as Int?)?.let {
+            (privacyUi["privacyOperatorColor"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyOperatorColor(it)
             }
-            (privacy["checkBoxWidth"] as Int?)?.let { authUIConfigBuilder.setCheckBoxWidth(it) }
-            (privacy["checkBoxHeight"] as Int?)?.let { authUIConfigBuilder.setCheckBoxHeight(it) }
+            (privacyUi["checkBoxWidth"] as Int?)?.let { authUIConfigBuilder.setCheckBoxWidth(it) }
+            (privacyUi["checkBoxHeight"] as Int?)?.let { authUIConfigBuilder.setCheckBoxHeight(it) }
         }
-        val switch = args["switch"] as Map<*, *>?
-        if (switch != null) {
-            (switch["switchAccHidden"] as Boolean?)?.let { authUIConfigBuilder.setSwitchAccHidden(it) }
-            (switch["switchAccText"] as String?)?.let { authUIConfigBuilder.setSwitchAccText(it) }
-            (switch["switchAccTextColor"] as Int?)?.let {
+        val switchUi = args["switchUi"] as Map<*, *>?
+        if (switchUi != null) {
+            (switchUi["switchAccHidden"] as Boolean?)?.let {
+                authUIConfigBuilder.setSwitchAccHidden(it)
+            }
+            (switchUi["switchAccText"] as String?)?.let { authUIConfigBuilder.setSwitchAccText(it) }
+            (switchUi["switchAccTextColor"] as Int?)?.let {
                 authUIConfigBuilder.setSwitchAccTextColor(it)
             }
-            (switch["switchAccTextSize"] as Int?)?.let {
+            (switchUi["switchAccTextSize"] as Int?)?.let {
                 authUIConfigBuilder.setSwitchAccTextSizeDp(it)
             }
-            (switch["switchOffsetY"] as Int?)?.let { authUIConfigBuilder.setSwitchOffsetY(it) }
-            (switch["switchOffsetYB"] as Int?)?.let { authUIConfigBuilder.setSwitchOffsetY_B(it) }
-            (switch["switchTypeface"] as Int?)?.let {
+            (switchUi["switchOffsetY"] as Int?)?.let { authUIConfigBuilder.setSwitchOffsetY(it) }
+            (switchUi["switchOffsetYB"] as Int?)?.let { authUIConfigBuilder.setSwitchOffsetY_B(it) }
+            (switchUi["switchTypeface"] as Int?)?.let {
                 authUIConfigBuilder.setSwitchTypeface(typefaces[it])
             }
         }
-        val page = args["page"] as Map<*, *>?
-        if (page != null) {
-            (page["authPageActIn"] as String?)?.let { actIn ->
-                (page["authPageActOut"] as String?)?.let { actOut ->
+        val pageUi = args["pageUi"] as Map<*, *>?
+        if (pageUi != null) {
+            (pageUi["authPageActIn"] as String?)?.let { actIn ->
+                (pageUi["authPageActOut"] as String?)?.let { actOut ->
                     authUIConfigBuilder.setAuthPageActIn(actIn, actOut)
                     authUIConfigBuilder.setAuthPageActOut(actOut, actIn)
                 }
             }
 
-            (page["screenOrientation"] as Int?)?.let {
+            (pageUi["screenOrientation"] as Int?)?.let {
                 authUIConfigBuilder.setScreenOrientation(screenOrientation[it])
             }
-            (page["pageBackgroundPath"] as String?)?.let {
+            (pageUi["pageBackgroundPath"] as String?)?.let {
                 authUIConfigBuilder.setPageBackgroundPath(it)
             }
-            (page["dialogWidth"] as Int?)?.let { authUIConfigBuilder.setDialogWidth(it) }
-            (page["dialogHeight"] as Int?)?.let { authUIConfigBuilder.setDialogHeight(it) }
-            (page["dialogAlpha"] as Float?)?.let { authUIConfigBuilder.setDialogAlpha(it) }
-            (page["dialogOffsetX"] as Int?)?.let { authUIConfigBuilder.setDialogOffsetX(it) }
-            (page["dialogOffsetY"] as Int?)?.let { authUIConfigBuilder.setDialogOffsetY(it) }
-            (page["tapAuthPageMaskClosePage"] as Boolean?)?.let {
+            (pageUi["dialogWidth"] as Int?)?.let { authUIConfigBuilder.setDialogWidth(it) }
+            (pageUi["dialogHeight"] as Int?)?.let { authUIConfigBuilder.setDialogHeight(it) }
+            (pageUi["dialogAlpha"] as Float?)?.let { authUIConfigBuilder.setDialogAlpha(it) }
+            (pageUi["dialogOffsetX"] as Int?)?.let { authUIConfigBuilder.setDialogOffsetX(it) }
+            (pageUi["dialogOffsetY"] as Int?)?.let { authUIConfigBuilder.setDialogOffsetY(it) }
+            (pageUi["tapAuthPageMaskClosePage"] as Boolean?)?.let {
                 authUIConfigBuilder.setTapAuthPageMaskClosePage(it)
             }
-            (page["dialogBottom"] as Boolean?)?.let { authUIConfigBuilder.setDialogBottom(it) }
-            (page["pageBackgroundDrawable"] as Drawable?)?.let {
+            (pageUi["dialogBottom"] as Boolean?)?.let { authUIConfigBuilder.setDialogBottom(it) }
+            (pageUi["pageBackgroundDrawable"] as Drawable?)?.let {
                 authUIConfigBuilder.setPageBackgroundDrawable(it)
             }
-            (page["protocolAction"] as String?)?.let { authUIConfigBuilder.setProtocolAction(it) }
-            (page["packageName"] as String?)?.let { authUIConfigBuilder.setPackageName(it) }
-            (page["webCacheMode"] as Int?)?.let { authUIConfigBuilder.setWebCacheMode(it) }
+            (pageUi["protocolAction"] as String?)?.let { authUIConfigBuilder.setProtocolAction(it) }
+            (pageUi["packageName"] as String?)?.let { authUIConfigBuilder.setPackageName(it) }
+            (pageUi["webCacheMode"] as Int?)?.let { authUIConfigBuilder.setWebCacheMode(it) }
         }
-        val privacyAlert = args["privacyAlert"] as Map<*, *>?
-        if (privacyAlert != null) {
-            (privacyAlert["privacyAlertIsNeedShow"] as Boolean?)?.let {
+        val privacyAlertUi = args["privacyAlertUi"] as Map<*, *>?
+        if (privacyAlertUi != null) {
+            (privacyAlertUi["privacyAlertIsNeedShow"] as Boolean?)?.let {
                 authUIConfigBuilder.setPrivacyAlertIsNeedShow(it)
             }
-            (privacyAlert["privacyAlertIsNeedAutoLogin"] as Boolean?)?.let {
+            (privacyAlertUi["privacyAlertIsNeedAutoLogin"] as Boolean?)?.let {
                 authUIConfigBuilder.setPrivacyAlertIsNeedAutoLogin(it)
             }
-            (privacyAlert["privacyAlertMaskIsNeedShow"] as Boolean?)?.let {
+            (privacyAlertUi["privacyAlertMaskIsNeedShow"] as Boolean?)?.let {
                 authUIConfigBuilder.setPrivacyAlertMaskIsNeedShow(it)
             }
-            (privacyAlert["privacyAlertMaskAlpha"] as Float?)?.let {
+            (privacyAlertUi["privacyAlertMaskAlpha"] as Float?)?.let {
                 authUIConfigBuilder.setPrivacyAlertMaskAlpha(it)
             }
-            (privacyAlert["privacyAlertAlpha"] as Float?)?.let {
+            (privacyAlertUi["privacyAlertAlpha"] as Float?)?.let {
                 authUIConfigBuilder.setPrivacyAlertAlpha(it)
             }
-            (privacyAlert["privacyAlertBackgroundColor"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertBackgroundColor"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertBackgroundColor(it)
             }
-            (privacyAlert["privacyAlertEntryAnimation"] as String?)?.let {
+            (privacyAlertUi["privacyAlertEntryAnimation"] as String?)?.let {
                 authUIConfigBuilder.setPrivacyAlertEntryAnimation(it)
             }
-            (privacyAlert["privacyAlertExitAnimation"] as String?)?.let {
+            (privacyAlertUi["privacyAlertExitAnimation"] as String?)?.let {
                 authUIConfigBuilder.setPrivacyAlertExitAnimation(it)
             }
-            (privacyAlert["privacyAlertCornerRadiusArray"] as IntArray?)?.let {
+            (privacyAlertUi["privacyAlertCornerRadiusArray"] as IntArray?)?.let {
                 authUIConfigBuilder.setPrivacyAlertCornerRadiusArray(it)
             }
-            (privacyAlert["privacyAlertAlignment"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertAlignment"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertAlignment(gravity[it])
             }
-            (privacyAlert["privacyAlertWidth"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertWidth"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertWidth(it)
             }
-            (privacyAlert["privacyAlertHeight"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertHeight"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertHeight(it)
             }
-            (privacyAlert["privacyAlertOffsetX"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertOffsetX"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertOffsetX(it)
             }
-            (privacyAlert["privacyAlertOffsetY"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertOffsetY"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertOffsetY(it)
             }
-            (privacyAlert["privacyAlertTitleBackgroundColor"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertTitleBackgroundColor"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertTitleBackgroundColor(it)
             }
-            (privacyAlert["privacyAlertTitleAlignment"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertTitleAlignment"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertTitleAlignment(gravity[it])
             }
-            (privacyAlert["privacyAlertTitleOffsetX"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertTitleOffsetX"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertTitleOffsetX(it)
             }
-            (privacyAlert["privacyAlertTitleOffsetY"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertTitleOffsetY"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertTitleOffsetY(it)
             }
-            (privacyAlert["privacyAlertTitleContent"] as String?)?.let {
+            (privacyAlertUi["privacyAlertTitleContent"] as String?)?.let {
                 authUIConfigBuilder.setPrivacyAlertTitleContent(it)
             }
-            (privacyAlert["privacyAlertTitleTextSize"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertTitleTextSize"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertTitleTextSize(it)
             }
-            (privacyAlert["privacyAlertTitleColor"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertTitleColor"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertTitleColor(it)
             }
-            (privacyAlert["privacyAlertContentBackgroundColor"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertContentBackgroundColor"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertContentBackgroundColor(it)
             }
-            (privacyAlert["privacyAlertContentTextSize"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertContentTextSize"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertContentTextSize(it)
             }
-            (privacyAlert["privacyAlertContentAlignment"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertContentAlignment"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertContentAlignment(gravity[it])
             }
-            (privacyAlert["privacyAlertContentColor"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertContentColor"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertContentColor(it)
             }
-            (privacyAlert["privacyAlertContentBaseColor"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertContentBaseColor"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertContentBaseColor(it)
             }
-            (privacyAlert["privacyAlertContentHorizontalMargin"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertContentHorizontalMargin"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertContentHorizontalMargin(it)
             }
-            (privacyAlert["privacyAlertContentVerticalMargin"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertContentVerticalMargin"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertContentVerticalMargin(it)
             }
-            (privacyAlert["privacyAlertBtnBackgroundImgPath"] as String?)?.let {
+            (privacyAlertUi["privacyAlertBtnBackgroundImgPath"] as String?)?.let {
                 authUIConfigBuilder.setPrivacyAlertBtnBackgroundImgPath(it)
             }
-            (privacyAlert["privacyAlertBtnBackgroundImgDrawable"] as Drawable?)?.let {
+            (privacyAlertUi["privacyAlertBtnBackgroundImgDrawable"] as Drawable?)?.let {
                 authUIConfigBuilder.setPrivacyAlertBtnBackgroundImgDrawable(it)
             }
-            (privacyAlert["privacyAlertBtnTextColor"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertBtnTextColor"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertBtnTextColor(it)
             }
-            (privacyAlert["privacyAlertBtnTextColorPath"] as String?)?.let {
+            (privacyAlertUi["privacyAlertBtnTextColorPath"] as String?)?.let {
                 authUIConfigBuilder.setPrivacyAlertBtnTextColorPath(it)
             }
-            (privacyAlert["privacyAlertBtnTextSize"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertBtnTextSize"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertBtnTextSize(it)
             }
-            (privacyAlert["privacyAlertBtnWidth"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertBtnWidth"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertBtnWidth(it)
             }
-            (privacyAlert["privacyAlertBtnHeight"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertBtnHeight"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertBtnHeigth(it)
             }
-            (privacyAlert["privacyAlertCloseBtnShow"] as Boolean?)?.let {
+            (privacyAlertUi["privacyAlertCloseBtnShow"] as Boolean?)?.let {
                 authUIConfigBuilder.setPrivacyAlertCloseBtnShow(it)
             }
-            (privacyAlert["privacyAlertCloseImgPath"] as String?)?.let {
+            (privacyAlertUi["privacyAlertCloseImgPath"] as String?)?.let {
                 authUIConfigBuilder.setPrivacyAlertCloseImagPath(it)
             }
-            (privacyAlert["privacyAlertCloseScaleType"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertCloseScaleType"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertCloseScaleType(ImageView.ScaleType.entries[it])
             }
-            (privacyAlert["privacyAlertCloseImgDrawable"] as Drawable?)?.let {
+            (privacyAlertUi["privacyAlertCloseImgDrawable"] as Drawable?)?.let {
                 authUIConfigBuilder.setPrivacyAlertCloseImagDrawable(it)
             }
-            (privacyAlert["privacyAlertCloseImgWidth"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertCloseImgWidth"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertCloseImgWidth(it)
             }
-            (privacyAlert["privacyAlertCloseImgHeight"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertCloseImgHeight"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertCloseImgHeight(it)
             }
-            (privacyAlert["privacyAlertBtnGravity"] as IntArray?)?.let {
+            (privacyAlertUi["privacyAlertBtnGravity"] as IntArray?)?.let {
                 authUIConfigBuilder.setPrivacyAlertBtnGrivaty(it)
             }
-            (privacyAlert["privacyAlertBtnContent"] as String?)?.let {
+            (privacyAlertUi["privacyAlertBtnContent"] as String?)?.let {
                 authUIConfigBuilder.setPrivacyAlertBtnContent(it)
             }
-            (privacyAlert["privacyAlertBtnOffsetX"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertBtnOffsetX"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertBtnOffsetX(it)
             }
-            (privacyAlert["privacyAlertBtnOffsetY"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertBtnOffsetY"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertBtnOffsetY(it)
             }
-            (privacyAlert["privacyAlertBtnHorizontalMargin"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertBtnHorizontalMargin"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertBtnHorizontalMargin(it)
             }
-            (privacyAlert["privacyAlertBtnVerticalMargin"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertBtnVerticalMargin"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertBtnVerticalMargin(it)
             }
-            (privacyAlert["tapPrivacyAlertMaskCloseAlert"] as Boolean?)?.let {
+            (privacyAlertUi["tapPrivacyAlertMaskCloseAlert"] as Boolean?)?.let {
                 authUIConfigBuilder.setTapPrivacyAlertMaskCloseAlert(it)
             }
-            (privacyAlert["privacyAlertTitleTypeface"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertTitleTypeface"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertTitleTypeface(typefaces[it])
             }
-            (privacyAlert["privacyAlertContentTypeface"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertContentTypeface"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertContentTypeface(typefaces[it])
             }
-            (privacyAlert["privacyAlertBtnTypeface"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertBtnTypeface"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertBtnTypeface(typefaces[it])
             }
-            (privacyAlert["privacyAlertBefore"] as String?)?.let {
+            (privacyAlertUi["privacyAlertBefore"] as String?)?.let {
                 authUIConfigBuilder.setPrivacyAlertBefore(it)
             }
-            (privacyAlert["privacyAlertEnd"] as String?)?.let {
+            (privacyAlertUi["privacyAlertEnd"] as String?)?.let {
                 authUIConfigBuilder.setPrivacyAlertEnd(it)
             }
-            (privacyAlert["privacyAlertOneColor"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertOneColor"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertOneColor(it)
             }
-            (privacyAlert["privacyAlertTwoColor"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertTwoColor"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertTwoColor(it)
             }
-            (privacyAlert["privacyAlertThreeColor"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertThreeColor"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertThreeColor(it)
             }
-            (privacyAlert["privacyAlertOperatorColor"] as Int?)?.let {
+            (privacyAlertUi["privacyAlertOperatorColor"] as Int?)?.let {
                 authUIConfigBuilder.setPrivacyAlertOperatorColor(it)
             }
         }
-        authHelper?.setAuthUIConfig(authUIConfigBuilder.create())
-        result.success(authHelper != null)
+        authHelper.setAuthUIConfig(authUIConfigBuilder.create())
+        result.success(true)
     }
 
     private val systemUiFlag = arrayListOf(
@@ -692,7 +724,4 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, MethodCallHandler {
     )
 
 
-    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        channel.setMethodCallHandler(null)
-    }
 }

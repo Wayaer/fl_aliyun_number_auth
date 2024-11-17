@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 
 /// 配置授权页号码栏
-class NumberUiModel {
+class NumberUiModelForAndroid {
   /// 设置手机号码字体颜色。
   final Color? numberColor;
 
@@ -29,7 +29,7 @@ class NumberUiModel {
   /// 设置手机号码显示水平间距。
   final double? numberTextSpace;
 
-  NumberUiModel({
+  const NumberUiModelForAndroid({
     this.numberColor,
     this.numberTextSize,
     this.numFieldOffsetY,
@@ -50,4 +50,11 @@ class NumberUiModel {
         'numberTypeface': numberTypeface?.index,
         'numberTextSpace': numberTextSpace,
       };
+}
+
+/// 配置授权页号码栏
+class NumberUiModelForIOS {
+  const NumberUiModelForIOS();
+
+  Map<String, dynamic> toMap() => {};
 }

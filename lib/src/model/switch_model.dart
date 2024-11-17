@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 
 /// 配置切换控件方式
-class SwitchUiModel {
+class SwitchUiModelForAndroid {
   /// 设置切换按钮点是否可见。
   final bool? switchAccHidden;
 
@@ -25,7 +25,7 @@ class SwitchUiModel {
   /// 设置切换按钮文本使用字体。
   final Typeface? switchTypeface;
 
-  SwitchUiModel({
+  const SwitchUiModelForAndroid({
     this.switchAccHidden,
     this.switchAccText,
     this.switchAccTextColor,
@@ -44,4 +44,11 @@ class SwitchUiModel {
         'switchOffsetYB': switchOffsetYB,
         'switchTypeface': switchTypeface?.index,
       };
+}
+
+/// 配置切换控件方式
+class SwitchUiModelForIOS {
+  const SwitchUiModelForIOS();
+
+  Map<String, dynamic> toMap() => {};
 }

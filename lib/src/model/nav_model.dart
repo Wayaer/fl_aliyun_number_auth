@@ -3,15 +3,7 @@ import 'dart:ui';
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 
 /// 配置授权页导航栏
-class NavUiModel {
-  /// 设置状态栏颜色（系统版本5.0以上可设置）。
-  final Color? statusBarColor;
-
-  /// 设置状态栏字体颜色（系统版本6.0以上可设置黑色、白色，默认为黑色）。取值：
-  /// true：表示字体颜色为黑色。
-  /// false：表示字体颜色为白色。
-  final bool? lightColor;
-
+class NavUiModelForAndroid {
   /// 设置导航栏颜色。
   final Color? navColor;
 
@@ -41,17 +33,6 @@ class NavUiModel {
   /// false：表示显示。
   final bool? navHidden;
 
-  /// 设置状态栏是否隐藏。取值：
-  /// true：表示隐藏。
-  /// false：表示显示。
-  final bool? statusBarHidden;
-
-  /// 设置状态栏UI属性，属性类型：
-  final SystemUiFlag? statusBarUIFlag;
-
-  /// 设置协议页状态栏颜色（系统版本5.0以上可设置），不设置则与授权页设置一致。
-  final Color? webViewStatusBarColor;
-
   /// 设置协议页顶部导航栏背景色，不设置则与授权页设置一致。
   final Color? webNavColor;
 
@@ -70,9 +51,7 @@ class NavUiModel {
   /// Drawable
   final String? navReturnImgDrawable;
 
-  NavUiModel({
-    this.statusBarColor,
-    this.lightColor,
+  const NavUiModelForAndroid({
     this.navColor,
     this.navText,
     this.navTextColor,
@@ -81,9 +60,6 @@ class NavUiModel {
     this.navReturnImgPath,
     this.navReturnHidden,
     this.navHidden,
-    this.statusBarHidden,
-    this.statusBarUIFlag,
-    this.webViewStatusBarColor,
     this.webNavColor,
     this.webNavTextColor,
     this.webNavTextSize,
@@ -93,8 +69,6 @@ class NavUiModel {
   });
 
   Map<String, dynamic> toMap() => {
-        'statusBarColor': statusBarColor?.value,
-        'lightColor': lightColor,
         'navColor': navColor?.value,
         'navText': navText,
         'navTextColor': navTextColor?.value,
@@ -103,9 +77,6 @@ class NavUiModel {
         'navReturnImgPath': navReturnImgPath,
         'navReturnHidden': navReturnHidden,
         'navHidden': navHidden,
-        'statusBarHidden': statusBarHidden,
-        'statusBarUIFlag': statusBarUIFlag?.index,
-        'webViewStatusBarColor': webViewStatusBarColor?.value,
         'webNavColor': webNavColor?.value,
         'webNavTextColor': webNavTextColor?.value,
         'webNavTextSize': webNavTextSize,
@@ -113,4 +84,11 @@ class NavUiModel {
         'bottomNavColor': bottomNavColor?.value,
         'navReturnImgDrawable': navReturnImgDrawable,
       };
+}
+
+/// 配置授权页导航栏
+class NavUiModelForIOS {
+  const NavUiModelForIOS();
+
+  Map<String, dynamic> toMap() => {};
 }

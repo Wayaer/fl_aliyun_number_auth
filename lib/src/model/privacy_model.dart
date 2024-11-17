@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 
 /// 配置授权页隐私栏
-class PrivacyUiModel {
+class PrivacyUiModelForAndroid {
   /// 设置开发者隐私条款1名称和URL（名称，URL）。
   final String? privacyOne;
 
@@ -114,7 +114,7 @@ class PrivacyUiModel {
   /// 设置隐私协议栏复选框高度（单位：dp）。
   final int? checkBoxHeight;
 
-  PrivacyUiModel({
+  const PrivacyUiModelForAndroid({
     this.privacyOne,
     this.privacyOneUrl,
     this.privacyTwo,
@@ -187,4 +187,11 @@ class PrivacyUiModel {
         'checkBoxWidth': checkBoxWidth,
         'checkBoxHeight': checkBoxHeight,
       };
+}
+
+/// 配置授权页隐私栏
+class PrivacyUiModelForIOS {
+  const PrivacyUiModelForIOS();
+
+  Map<String, dynamic> toMap() => {};
 }

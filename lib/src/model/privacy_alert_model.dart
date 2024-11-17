@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 
 /// 二次隐私协议弹窗页面
-class PrivacyAlertUiModel {
+class PrivacyAlertUiModelForAndroid {
   /// 设置二次隐私协议弹窗是否需要显示。取值：
   /// true：表示显示。
   /// false（默认值）：表示不显示。
@@ -197,7 +197,7 @@ class PrivacyAlertUiModel {
   /// 设置授权页运营商协议文本颜色。
   final Color? privacyAlertOperatorColor;
 
-  PrivacyAlertUiModel({
+  const PrivacyAlertUiModelForAndroid({
     this.privacyAlertIsNeedShow,
     this.privacyAlertIsNeedAutoLogin,
     this.privacyAlertMaskIsNeedShow,
@@ -321,4 +321,11 @@ class PrivacyAlertUiModel {
         'privacyAlertThreeColor': privacyAlertThreeColor?.value,
         'privacyAlertOperatorColor': privacyAlertOperatorColor?.value,
       };
+}
+
+/// 二次隐私协议弹窗页面
+class PrivacyAlertUiModelForIOS {
+  const PrivacyAlertUiModelForIOS();
+
+  Map<String, dynamic> toMap() => {};
 }

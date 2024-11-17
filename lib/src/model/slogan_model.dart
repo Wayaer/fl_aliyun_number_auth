@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 
 /// 配置授权页Slogan
-class SloganUiModel {
+class SloganUiModelForAndroid {
   /// 设置Slogan文字内容。
   final String? sloganText;
 
@@ -22,7 +22,7 @@ class SloganUiModel {
   /// 设置slogan文本使用字体。
   final Typeface? sloganTypeface;
 
-  SloganUiModel({
+  const SloganUiModelForAndroid({
     this.sloganText,
     this.sloganTextColor,
     this.sloganTextSize,
@@ -39,4 +39,11 @@ class SloganUiModel {
         'sloganOffsetYB': sloganOffsetYB,
         'sloganTypeface': sloganTypeface?.index,
       };
+}
+
+/// 配置授权页Slogan
+class SloganUiModelForIOS {
+  const SloganUiModelForIOS();
+
+  Map<String, dynamic> toMap() => {};
 }
