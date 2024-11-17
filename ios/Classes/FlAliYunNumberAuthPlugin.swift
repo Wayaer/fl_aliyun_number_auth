@@ -1,3 +1,4 @@
+import ATAuthSDK
 import Flutter
 import UIKit
 
@@ -8,10 +9,15 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
 
+    private var authHelper = TXCommonHandler()
+    private var authUtils = TXCommonUtils()
+    private var authModel = TXCustomModel()
+
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
-        case "getPlatformVersion":
-            result("iOS " + UIDevice.current.systemVersion)
+        case "setAuthSDKInfo":
+            break
+
         default:
             result(FlutterMethodNotImplemented)
         }
