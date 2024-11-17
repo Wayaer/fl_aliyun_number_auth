@@ -71,3 +71,17 @@ enum PageOrientation {
 }
 
 /// **** 以下为 ios 特有 ****
+enum UIStatusBarStyle {
+  /// 默认
+  defaultStyle(0),
+
+  /// 白色
+  lightContent(1),
+
+  /// 黑色
+  darkContent(3);
+
+  const UIStatusBarStyle(this.value);
+
+  final int value;
+}

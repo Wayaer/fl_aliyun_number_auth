@@ -118,8 +118,19 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
 
     func setAuthUI(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         let args = call.arguments as! [String: Any]
-        if let statusBar = args["statusBarUi"] as? [String: Any] {}
-        if let navUi = args["navUi"] as? [String: Any] {}
+        if let statusBar = args["statusBarUi"] as? [String: Any] {
+            if let value = statusBar["prefersStatusBarHidden"] as? Bool {
+                authUiModel.prefersStatusBarHidden = value
+            }
+            if let value = statusBar["preferredStatusBarStyle"] as? Int {
+                authUiModel.preferredStatusBarStyle = UIStatusBarStyle(rawValue: value)!
+            }
+        }
+        if let navUi = args["navUi"] as? [String: Any] {
+            if let value = navUi["navIsHidden"] as? Bool {
+                authUiModel.navIsHidden = value
+            }
+        }
         if let logoUi = args["logoUi"] as? [String: Any] {}
         if let sloganUi = args["sloganUi"] as? [String: Any] {}
         if let numberUi = args["numberUi"] as? [String: Any] {}

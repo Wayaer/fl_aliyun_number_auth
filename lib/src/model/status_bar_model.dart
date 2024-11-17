@@ -41,7 +41,17 @@ class StatusBarUiModelForAndroid {
 
 /// 配置授权页状态栏
 class StatusBarUiModelForIOS {
-  const StatusBarUiModelForIOS();
+  /// 状态栏是否隐藏，默认为NO
+  final bool? prefersStatusBarHidden;
 
-  Map<String, dynamic> toMap() => {};
+  /// 状态栏主题风格，默认UIStatusBarStyleDefault
+  final UIStatusBarStyle? preferredStatusBarStyle;
+
+  const StatusBarUiModelForIOS(
+      {this.prefersStatusBarHidden, this.preferredStatusBarStyle});
+
+  Map<String, dynamic> toMap() => {
+        'prefersStatusBarHidden': prefersStatusBarHidden,
+        'preferredStatusBarStyle': preferredStatusBarStyle?.value
+      };
 }
