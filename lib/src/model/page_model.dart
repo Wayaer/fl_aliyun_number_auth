@@ -1,7 +1,7 @@
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 
 /// 配置页面相关函数
-class PageUiModelForAndroid {
+class PageUIModelForAndroid {
   /// 设置授权页进场动画（即anim下文件名称，但无需带文件格式）。
   final String? authPageActIn;
 
@@ -55,7 +55,7 @@ class PageUiModelForAndroid {
   /// 设置内置协议展示页webview缓存模式。
   final int? webCacheMode;
 
-  const PageUiModelForAndroid({
+  const PageUIModelForAndroid({
     this.authPageActIn,
     this.authPageActOut,
     this.screenOrientation,
@@ -93,8 +93,8 @@ class PageUiModelForAndroid {
 }
 
 /// 配置页面相关函数
-class PageUiModelForIOS {
-  const PageUiModelForIOS();
+class PageUIModelForIOS {
+  const PageUIModelForIOS();
 
   Map<String, dynamic> toMap() => {};
 }

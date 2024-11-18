@@ -1,6 +1,7 @@
 package fl.aliyun.number.auth
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
@@ -24,11 +25,11 @@ import io.flutter.plugin.common.MethodChannel.Result
 
 /** FlAliYunNumberAuthPlugin */
 class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandler,
-    TokenResultListener, PreLoginResultListener {
+    TokenResultListener, PreLoginResultListener, ActivityResultListener,
+    AuthUIControlClickListener {
     private lateinit var channel: MethodChannel
     private lateinit var context: Context
     private lateinit var authHelper: PhoneNumberAuthHelper
-
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         context = flutterPluginBinding.applicationContext
@@ -36,9 +37,6 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
         channel.setMethodCallHandler(this)
     }
 
-    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        channel.setMethodCallHandler(null)
-    }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         authHelper = PhoneNumberAuthHelper.getInstance(binding.activity, this)
@@ -53,6 +51,10 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
     override fun onDetachedFromActivity() {
     }
 
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        channel.setMethodCallHandler(null)
+    }
+
     private var result: Result? = null
 
     override fun onMethodCall(call: MethodCall, result: Result) {
@@ -61,10 +63,10 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                 this.result = result
                 val args = call.arguments as Map<*, *>
                 if (args["enableActivityResultListener"] as Boolean) {
-                    authHelper.setActivityResultListener(mActivityResultListener)
+                    authHelper.setActivityResultListener(this)
                 }
                 if (args["enableAuthUIControlClickListener"] as Boolean) {
-                    authHelper.setUIClickListener(mAuthUIControlClickListener)
+                    authHelper.setUIClickListener(this)
                 }
                 authHelper.setAuthSDKInfo(args["secret"] as String)
             }
@@ -248,22 +250,16 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
         resultSuccess(mapOf("resultCode" to s, "isFailed" to true))
     }
 
-    private var mActivityResultListener: ActivityResultListener =
-        ActivityResultListener { requestCode, resultCode, data ->
-            channel.invokeMethod(
-                "onActivityResult",
-                mapOf("requestCode" to requestCode, "resultCode" to resultCode, "data" to data.data)
-            )
-        }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        channel.invokeMethod(
+            "onActivityResult",
+            mapOf("requestCode" to requestCode, "resultCode" to resultCode, "data" to data?.data)
+        )
+    }
 
-    private var mAuthUIControlClickListener: AuthUIControlClickListener =
-        AuthUIControlClickListener { code, _, jsonString ->
-            channel.invokeMethod(
-                "onAuthUIClick", mapOf(
-                    "code" to code, "json" to jsonString
-                )
-            )
-        }
+    override fun onClick(code: String?, context: Context?, jsonString: String?) {
+        channel.invokeMethod("onAuthUIClick", mapOf("code" to code, "json" to jsonString))
+    }
 
     private fun addAuthRegisterViewConfig(call: MethodCall, result: Result) {
         result.success(true)
@@ -722,6 +718,5 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
         Typeface.SERIF,
         Typeface.MONOSPACE,
     )
-
 
 }

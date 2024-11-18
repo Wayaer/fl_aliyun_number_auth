@@ -2,7 +2,7 @@ import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 import 'package:flutter/services.dart';
 
 /// 配置授权页状态栏
-class StatusBarUiModelForAndroid {
+class StatusBarUIModelForAndroid {
   /// 设置状态栏颜色（系统版本5.0以上可设置）。
   final Color? statusBarColor;
 
@@ -22,7 +22,7 @@ class StatusBarUiModelForAndroid {
   /// 设置协议页状态栏颜色（系统版本5.0以上可设置），不设置则与授权页设置一致。
   final Color? webViewStatusBarColor;
 
-  const StatusBarUiModelForAndroid({
+  const StatusBarUIModelForAndroid({
     this.statusBarColor,
     this.lightColor,
     this.statusBarHidden,
@@ -40,14 +40,14 @@ class StatusBarUiModelForAndroid {
 }
 
 /// 配置授权页状态栏
-class StatusBarUiModelForIOS {
+class StatusBarUIModelForIOS {
   /// 状态栏是否隐藏，默认为NO
   final bool? prefersStatusBarHidden;
 
   /// 状态栏主题风格，默认UIStatusBarStyleDefault
   final UIStatusBarStyle? preferredStatusBarStyle;
 
-  const StatusBarUiModelForIOS(
+  const StatusBarUIModelForIOS(
       {this.prefersStatusBarHidden, this.preferredStatusBarStyle});
 
   Map<String, dynamic> toMap() => {

@@ -1,7 +1,7 @@
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 
 /// 配置授权页Logo
-class LogoUiModelForAndroid {
+class LogoUIModelForAndroid {
   /// 设置Logo是否隐藏。取值：
   /// true：表示隐藏。
   /// false：表示显示。
@@ -25,7 +25,7 @@ class LogoUiModelForAndroid {
   /// 设置Logo图片缩放模式。模式类型：
   final ImageScaleType? logoScaleType;
 
-  const LogoUiModelForAndroid({
+  const LogoUIModelForAndroid({
     this.logoHidden,
     this.logoImgPath,
     this.logoWidth,
@@ -47,8 +47,8 @@ class LogoUiModelForAndroid {
 }
 
 /// 配置授权页Logo
-class LogoUiModelForIOS {
-  const LogoUiModelForIOS();
+class LogoUIModelForIOS {
+  const LogoUIModelForIOS();
 
   Map<String, dynamic> toMap() => {};
 }

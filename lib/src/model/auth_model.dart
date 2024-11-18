@@ -2,34 +2,34 @@ import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 
 class AuthUiForAndroidModel {
   /// 配置授权页状态栏
-  final StatusBarUiModelForAndroid? statusBarUi;
+  final StatusBarUIModelForAndroid? statusBarUi;
 
   /// 配置授权页导航栏
-  final NavUiModelForAndroid? navUi;
+  final NavUIModelForAndroid? navUi;
 
   /// 配置授权页Logo
-  final LogoUiModelForAndroid? logoUi;
+  final LogoUIModelForAndroid? logoUi;
 
   /// 配置授权页Slogan
-  final SloganUiModelForAndroid? sloganUi;
+  final SloganUIModelForAndroid? sloganUi;
 
   /// 配置授权页号码栏
-  final NumberUiModelForAndroid? numberUi;
+  final NumberUIModelForAndroid? numberUi;
 
   /// 配置授权页登录按钮
-  final LoginBtnUiModelForAndroid? loginBtnUi;
+  final LoginBtnUIModelForAndroid? loginBtnUi;
 
   /// 配置授权页隐私栏
-  final PrivacyUiModelForAndroid? privacyUi;
+  final PrivacyUIModelForAndroid? privacyUi;
 
   /// 配置切换控件方式
-  final SwitchUiModelForAndroid? switchUi;
+  final SwitchUIModelForAndroid? switchUi;
 
   /// 配置页面相关函数
-  final PageUiModelForAndroid? pageUi;
+  final PageUIModelForAndroid? pageUi;
 
   /// 二次隐私协议弹窗页面
-  final PrivacyAlertUiModelForAndroid? privacyAlertUi;
+  final PrivacyAlertUIModelForAndroid? privacyAlertUi;
 
   AuthUiForAndroidModel({
     this.statusBarUi,
@@ -60,34 +60,34 @@ class AuthUiForAndroidModel {
 
 class AuthUiForIOSModel {
   /// 配置授权页状态栏
-  final StatusBarUiModelForIOS? statusBarUi;
+  final StatusBarUIModelForIOS? statusBarUi;
 
   /// 配置授权页导航栏
-  final NavUiModelForIOS? navUi;
+  final NavUIModelForIOS? navUi;
 
   /// 配置授权页Logo
-  final LogoUiModelForIOS? logoUi;
+  final LogoUIModelForIOS? logoUi;
 
   /// 配置授权页Slogan
-  final SloganUiModelForIOS? sloganUi;
+  final SloganUIModelForIOS? sloganUi;
 
   /// 配置授权页号码栏
-  final NumberUiModelForIOS? numberUi;
+  final NumberUIModelForIOS? numberUi;
 
   /// 配置授权页登录按钮
-  final LoginBtnUiModelForIOS? loginBtnUi;
+  final LoginBtnUIModelForIOS? loginBtnUi;
 
   /// 配置授权页隐私栏
-  final PrivacyUiModelForIOS? privacyUi;
+  final PrivacyUIModelForIOS? privacyUi;
 
   /// 配置切换控件方式
-  final SwitchUiModelForIOS? switchUi;
+  final SwitchUIModelForIOS? switchUi;
 
   /// 配置页面相关函数
-  final PageUiModelForIOS? pageUi;
+  final PageUIModelForIOS? pageUi;
 
   /// 二次隐私协议弹窗页面
-  final PrivacyAlertUiModelForIOS? privacyAlertUi;
+  final PrivacyAlertUIModelForIOS? privacyAlertUi;
 
   AuthUiForIOSModel({
     this.statusBarUi,

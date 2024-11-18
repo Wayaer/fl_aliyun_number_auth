@@ -130,6 +130,50 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             if let value = navUi["navIsHidden"] as? Bool {
                 authUiModel.navIsHidden = value
             }
+            if let value = navUi["navColor"] as? Int {
+                authUiModel.navColor = value.toColor()
+            }
+            if let value = navUi["navTitle"] as? [String: Any] {
+                if let text = value.toNSAttributedString() { authUiModel.navTitle = text }
+            }
+            if let value = navUi["navBackImage"] as? String {
+                if let image = value.toUIImage(registrar) {
+                    authUiModel.navBackImage = image
+                }
+            }
+            if let value = navUi["hideNavBackItem"] as? Bool {
+                authUiModel.hideNavBackItem = value
+            }
+            if let value = navUi["navMoreView"] as? [String: Any] {
+                if let view = value.toUIView() {
+                    authUiModel.navMoreView = view
+                }
+            }
+//            if let value = navUi["navBackButtonFrameBlock"] as? Any {
+//                authUiModel.navBackButtonFrameBlock=
+//            }
+//            if let value = navUi["navTitleFrameBlock"] as? Any {
+//                authUiModel.navTitleFrameBlock = value
+//            }
+//            if let value = navUi["navMoreViewFrameBlock"] as? Any {
+//                authUiModel.navMoreViewFrameBlock = value
+//            }
+            if let value = navUi["privacyNavColor"] as? Int {
+                authUiModel.privacyNavColor = value.toColor()
+            }
+            if let value = navUi["privacyNavTitleFont"] as? [String: Any] {
+                if let uiFont = value.toUIFont() {
+                    authUiModel.privacyNavTitleFont = uiFont
+                }
+            }
+            if let value = navUi["privacyNavTitleColor"] as? Int {
+                authUiModel.privacyNavTitleColor = value.toColor()
+            }
+            if let value = navUi["privacyNavBackImage"] as? String {
+                if let image = value.toUIImage(registrar) {
+                    authUiModel.privacyNavBackImage = image
+                }
+            }
         }
         if let logoUi = args["logoUi"] as? [String: Any] {}
         if let sloganUi = args["sloganUi"] as? [String: Any] {}
@@ -150,5 +194,50 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             return rootViewController
         }
         return nil
+    }
+}
+
+extension [String: Any] {
+    func toNSAttributedString() -> NSAttributedString? {
+        if let text = self["text"] as? String {
+            return NSAttributedString(string: text)
+        }
+        return nil
+    }
+
+    func toUIView() -> UIView? {
+        return nil
+    }
+
+    func toUIFont() -> UIFont? {
+        return nil
+    }
+}
+
+extension String {
+    // 资源路径转 Bundle
+    func toBundle(_ registrar: FlutterPluginRegistrar) -> String? {
+        Bundle.main.path(forResource: registrar.lookupKey(forAsset: self), ofType: nil)
+    }
+
+    // to ui image
+    func toUIImage() -> UIImage? {
+        UIImage(contentsOfFile: self)
+    }
+
+    // to ui image
+    func toUIImage(_ registrar: FlutterPluginRegistrar) -> UIImage? {
+        toBundle(registrar)?.toUIImage()
+    }
+}
+
+extension Int {
+    // 从整数转换为UIColor（支持透明度）
+    func toColor() -> UIColor {
+        let alpha = CGFloat((self >> 24) & 0xFF) / 255.0 // 获取透明度部分
+        let red = CGFloat((self >> 16) & 0xFF) / 255.0 // 获取红色部分
+        let green = CGFloat((self >> 8) & 0xFF) / 255.0 // 获取绿色部分
+        let blue = CGFloat(self & 0xFF) / 255.0 // 获取蓝色部分
+        return UIColor(red: red, green: green, blue: blue, alpha: alpha)
     }
 }

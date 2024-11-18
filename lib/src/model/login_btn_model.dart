@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 
 /// 配置授权页登录按钮
-class LoginBtnUiModelForAndroid {
+class LoginBtnUIModelForAndroid {
   /// 设置登录按钮文字。
   final String? logBtnText;
 
@@ -52,7 +52,7 @@ class LoginBtnUiModelForAndroid {
   /// 设置手机号码文本使用字体
   final Typeface? logBtnTypeface;
 
-  const LoginBtnUiModelForAndroid({
+  const LoginBtnUIModelForAndroid({
     this.logBtnText,
     this.logBtnTextColor,
     this.logBtnTextSize,
@@ -90,8 +90,8 @@ class LoginBtnUiModelForAndroid {
 }
 
 /// 配置授权页登录按钮
-class LoginBtnUiModelForIOS {
-  const LoginBtnUiModelForIOS();
+class LoginBtnUIModelForIOS {
+  const LoginBtnUIModelForIOS();
 
   Map<String, dynamic> toMap() => {};
 }
