@@ -175,14 +175,340 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
                 }
             }
         }
-        if let logoUi = args["logoUi"] as? [String: Any] {}
-        if let sloganUi = args["sloganUi"] as? [String: Any] {}
-        if let numberUi = args["numberUi"] as? [String: Any] {}
-        if let privacyUi = args["privacyUi"] as? [String: Any] {}
-        if let loginBtnUi = args["loginBtnUi"] as? [String: Any] {}
-        if let switchUi = args["switchUi"] as? [String: Any] {}
-        if let pageUi = args["pageUi"] as? [String: Any] {}
-        if let privacyAlertUi = args["privacyAlertUi"] as? [String: Any] {}
+        if let logoUi = args["logoUi"] as? [String: Any] {
+            if let value = logoUi["logoImage"] as? String {
+                if let image = value.toUIImage(registrar) {
+                    authUiModel.logoImage = image
+                }
+            }
+            if let value = logoUi["logoIsHidden"] as? Bool {
+                authUiModel.logoIsHidden = value
+            }
+//            if let value = logoUi["logoFrameBlock"] as? Any {
+//                authUiModel.logoFrameBlock = value
+//            }
+        }
+        if let sloganUi = args["sloganUi"] as? [String: Any] {
+            if let value = sloganUi["sloganText"] as? [String: Any] {
+                if let text = value.toNSAttributedString() { authUiModel.sloganText = text }
+            }
+            if let value = sloganUi["sloganIsHidden"] as? Bool {
+                authUiModel.sloganIsHidden = value
+            }
+//            if let value = sloganUi["sloganFrameBlock"] as? Any {
+//                authUiModel.sloganFrameBlock = value
+//            }
+        }
+        if let numberUi = args["numberUi"] as? [String: Any] {
+            if let value = numberUi["numberColor"] as? Int {
+                authUiModel.numberColor = value.toColor()
+            }
+            if let value = numberUi["numberFont"] as? [String: Any] {
+                if let uiFont = value.toUIFont() {
+                    authUiModel.numberFont = uiFont
+                }
+            }
+//            if let value = sloganUi["numberFrameBlock"] as? Any {
+//                authUiModel.numberFrameBlock = value
+//            }
+        }
+
+        if let loginBtnUi = args["loginBtnUi"] as? [String: Any] {
+            if let value = loginBtnUi["loginBtnText"] as? [String: Any] {
+                if let text = value.toNSAttributedString() { authUiModel.loginBtnText = text }
+            }
+            if let value = loginBtnUi["loginBtnBgImgs"] as? [String] {
+                let imgs = value.map { image in
+                    image.toUIImage(registrar)
+                }
+                authUiModel.loginBtnBgImgs = imgs.filter { $0 != nil }.map { $0! }
+            }
+            if let value = loginBtnUi["autoHideLoginLoading"] as? Bool {
+                authUiModel.autoHideLoginLoading = value
+            }
+//            if let value = loginBtnUi["loginBtnFrameBlock"] as? Any {
+//                authUiModel.loginBtnFrameBlock = value
+//            }
+        }
+        if let switchUi = args["switchUi"] as? [String: Any] {
+            if let value = switchUi["changeBtnTitle"] as? [String: Any] {
+                if let text = value.toNSAttributedString() { authUiModel.changeBtnTitle = text }
+            }
+            if let value = switchUi["changeBtnIsHidden"] as? Bool {
+                authUiModel.changeBtnIsHidden = value
+            }
+//            if let value = switchUi["changeBtnFrameBlock"] as? Any {
+//                authUiModel.changeBtnFrameBlock = value
+//            }
+        }
+        if let privacyUi = args["privacyUi"] as? [String: Any] {
+            if let value = privacyUi["checkBoxImages"] as? [String] {
+                let imgs = value.map { image in
+                    image.toUIImage(registrar)
+                }
+                authUiModel.checkBoxImages = imgs.filter { $0 != nil }.map { $0! }
+            }
+            if let value = privacyUi["checkBoxIsChecked"] as? Bool {
+                authUiModel.checkBoxIsChecked = value
+            }
+            if let value = privacyUi["checkBoxIsHidden"] as? Bool {
+                authUiModel.checkBoxIsHidden = value
+            }
+            if let value = privacyUi["checkBoxWH"] as? Double {
+                authUiModel.checkBoxWH = value.toCGFloat()
+            }
+            if let privacy = privacyUi["privacyOne"] as? String, let url = privacyUi["privacyOneUrl"] as? String {
+                authUiModel.privacyOne = [privacy, url]
+            }
+            if let privacy = privacyUi["privacyTwo"] as? String, let url = privacyUi["privacyTwoUrl"] as? String {
+                authUiModel.privacyTwo = [privacy, url]
+            }
+            if let privacy = privacyUi["privacyThree"] as? String, let url = privacyUi["privacyThreeUrl"] as? String {
+                authUiModel.privacyThree = [privacy, url]
+            }
+            if let value = privacyUi["privacyColors"] as? [Int] {
+                authUiModel.privacyColors = value.map { color in
+                    color.toColor()
+                }
+            }
+            if let value = privacyUi["privacyAlignment"] as? Int {
+                if let alignment = NSTextAlignment(rawValue: value) {
+                    authUiModel.privacyAlignment = alignment
+                }
+            }
+            if let value = privacyUi["privacyPreText"] as? String {
+                authUiModel.privacyPreText = value
+            }
+            if let value = privacyUi["privacySufText"] as? String {
+                authUiModel.privacySufText = value
+            }
+            if let value = privacyUi["privacyOperatorPreText"] as? String {
+                authUiModel.privacyOperatorPreText = value
+            }
+            if let value = privacyUi["privacyOperatorSufText"] as? String {
+                authUiModel.privacyOperatorSufText = value
+            }
+            if let value = privacyUi["privacyFont"] as? [String: Any] {
+                if let font = value.toUIFont() {
+                    authUiModel.privacyFont = font
+                }
+            }
+//            if let value = privacyUi["privacyFrameBlock"] as? Any {
+//                authUiModel.privacyFrameBlock = value
+//            }
+            if let value = privacyUi["privacyOperatorColor"] as? Int {
+                authUiModel.privacyOperatorColor = value.toColor()
+            }
+            if let value = privacyUi["privacyOneColor"] as? Int {
+                authUiModel.privacyOneColor = value.toColor()
+            }
+            if let value = privacyUi["privacyTwoColor"] as? Int {
+                authUiModel.privacyTwoColor = value.toColor()
+            }
+            if let value = privacyUi["privacyThreeColor"] as? Int {
+                authUiModel.privacyThreeColor = value.toColor()
+            }
+        }
+        if let pageUi = args["pageUi"] as? [String: Any] {
+//            if let value = pageUi["contentViewFrameBlock"] as? Any {
+//                authUiModel.contentViewFrameBlock = value
+//            }
+            if let value = pageUi["supportedInterfaceOrientations"] as? Int {
+                authUiModel.supportedInterfaceOrientations = UIInterfaceOrientationMask(rawValue: UInt(value))
+            }
+            if let value = pageUi["presentDirection"] as? Int {
+                if let dir = PNSPresentationDirection(rawValue: UInt(value)) {
+                    authUiModel.presentDirection = dir
+                }
+            }
+        }
+        if let privacyAlertUi = args["privacyAlertUi"] as? [String: Any] {
+            if let value = privacyAlertUi["alertTitleBarColor"] as? Int {
+                authUiModel.alertTitleBarColor = value.toColor()
+            }
+            if let value = privacyAlertUi["alertBarIsHidden"] as? Bool {
+                authUiModel.alertBarIsHidden = value
+            }
+            if let value = privacyAlertUi["alertTitle"] as? [String: Any] {
+                if let text = value.toNSAttributedString() { authUiModel.alertTitle = text }
+            }
+            if let value = privacyAlertUi["alertCloseImage"] as? String {
+                if let image = value.toUIImage(registrar) {
+                    authUiModel.alertCloseImage = image
+                }
+            }
+            if let value = privacyAlertUi["alertCloseItemIsHidden"] as? Bool {
+                authUiModel.alertCloseItemIsHidden = value
+            }
+//            if let value = privacyAlertUi["alertTitleBarFrameBlock"] as? Any {
+//                authUiModel.alertTitleBarFrameBlock = value
+//            }
+//            if let value = privacyAlertUi["alertTitleFrameBlock"] as? Any {
+//                authUiModel.alertTitleFrameBlock = value
+//            }
+//            if let value = privacyAlertUi["alertCloseItemFrameBlock"] as? Any {
+//                authUiModel.alertCloseItemFrameBlock = value
+//            }
+            if let value = privacyAlertUi["alertBlurViewColor"] as? Int {
+                authUiModel.alertBlurViewColor = value.toColor()
+            }
+            if let value = privacyAlertUi["alertBlurViewAlpha"] as? Double {
+                authUiModel.alertBlurViewAlpha = value
+            }
+            if let value = privacyAlertUi["alertCornerRadiusArray"] as? [Int] {
+                authUiModel.alertCornerRadiusArray = value.map { i in
+                    NSNumber(value: i)
+                }
+            }
+//            if let value = privacyAlertUi["setTapAuthPageMaskClosePage"] as? Bool {
+//                authHelper.setTapAuthPageMaskClosePage = value
+//            }
+            if let value = privacyAlertUi["privacyAlertIsNeedShow"] as? Bool {
+                authUiModel.privacyAlertIsNeedShow = value
+            }
+            if let value = privacyAlertUi["privacyAlertIsNeedAutoLogin"] as? Bool {
+                authUiModel.privacyAlertIsNeedAutoLogin = value
+            }
+//            if let value = privacyAlertUi["privacyAlertEntryAnimation"] as? Int {
+//                authUiModel.privacyAlertEntryAnimation = value
+//            }
+//            if let value = privacyAlertUi["privacyAlertExitAnimation"] as? Int {
+//                authUiModel.privacyAlertIsNeedAutoLogin = value
+//            }
+            if let value = privacyAlertUi["privacyAlertCornerRadiusArray"] as? [Int] {
+                authUiModel.privacyAlertCornerRadiusArray = value.map { i in
+                    NSNumber(value: i)
+                }
+            }
+            if let value = privacyAlertUi["privacyAlertBackgroundColor"] as? Int {
+                authUiModel.privacyAlertBackgroundColor = value.toColor()
+            }
+            if let value = privacyAlertUi["privacyAlertAlpha"] as? Double {
+                authUiModel.privacyAlertAlpha = value
+            }
+            if let value = privacyAlertUi["privacyAlertTitleFont"] as? [String: Any] {
+                if let uiFont = value.toUIFont() {
+                    authUiModel.privacyAlertTitleFont = uiFont
+                }
+            }
+            if let value = privacyAlertUi["privacyAlertTitleColor"] as? Int {
+                authUiModel.privacyAlertTitleColor = value.toColor()
+            }
+            if let value = privacyAlertUi["privacyAlertTitleBackgroundColor"] as? Int {
+                authUiModel.privacyAlertTitleBackgroundColor = value.toColor()
+            }
+            if let value = privacyAlertUi["privacyAlertTitleAlignment"] as? Int {
+                if let alignment = NSTextAlignment(rawValue: value) {
+                    authUiModel.privacyAlertTitleAlignment = alignment
+                }
+            }
+            if let value = privacyAlertUi["privacyAlertContentFont"] as? [String: Any] {
+                if let uiFont = value.toUIFont() {
+                    authUiModel.privacyAlertContentFont = uiFont
+                }
+            }
+            if let value = privacyAlertUi["privacyAlertContentBackgroundColor"] as? Int {
+                authUiModel.privacyAlertContentBackgroundColor = value.toColor()
+            }
+            if let value = privacyAlertUi["privacyAlertContentColors"] as? [Int] {
+                authUiModel.privacyAlertContentColors = value.map { color in
+                    color.toColor()
+                }
+            }
+            if let value = privacyAlertUi["privacyAlertTitleAlignment"] as? Int {
+                if let alignment = NSTextAlignment(rawValue: value) {
+                    authUiModel.privacyAlertTitleAlignment = alignment
+                }
+            }
+            if let value = privacyAlertUi["privacyAlertBtnBackgroundImages"] as? [String] {
+                let imgs = value.map { image in
+                    image.toUIImage(registrar)
+                }
+                authUiModel.privacyAlertBtnBackgroundImages = imgs.filter { $0 != nil }.map { $0! }
+            }
+            if let value = privacyAlertUi["privacyAlertButtonTextColors"] as? [Int] {
+                authUiModel.privacyAlertButtonTextColors = value.map { color in
+                    color.toColor()
+                }
+            }
+            if let value = privacyAlertUi["privacyAlertButtonFont"] as? [String: Any] {
+                if let uiFont = value.toUIFont() {
+                    authUiModel.privacyAlertButtonFont = uiFont
+                }
+            }
+            if let value = privacyAlertUi["privacyAlertCloseButtonIsNeedShow"] as? Bool {
+                authUiModel.privacyAlertCloseButtonIsNeedShow = value
+            }
+            if let value = privacyAlertUi["privacyAlertCloseButtonImage"] as? String {
+                if let image = value.toUIImage(registrar) {
+                    authUiModel.privacyAlertCloseButtonImage = image
+                }
+            }
+            if let value = privacyAlertUi["privacyAlertMaskIsNeedShow"] as? Bool {
+                authUiModel.privacyAlertMaskIsNeedShow = value
+            }
+            if let value = privacyAlertUi["tapPrivacyAlertMaskCloseAlert"] as? Bool {
+                authUiModel.tapPrivacyAlertMaskCloseAlert = value
+            }
+            if let value = privacyAlertUi["privacyAlertMaskColor"] as? Int {
+                authUiModel.privacyAlertMaskColor = value.toColor()
+            }
+            if let value = privacyAlertUi["privacyAlertMaskAlpha"] as? Double {
+                authUiModel.privacyAlertMaskAlpha = value.toCGFloat()
+            }
+
+            if let value = privacyAlertUi["privacyAlertOperatorColor"] as? Int {
+                authUiModel.privacyAlertOperatorColor = value.toColor()
+            }
+            if let value = privacyAlertUi["privacyAlertOneColor"] as? Int {
+                authUiModel.privacyAlertOneColor = value.toColor()
+            }
+            if let value = privacyAlertUi["privacyAlertTwoColor"] as? Int {
+                authUiModel.privacyAlertTwoColor = value.toColor()
+            }
+            if let value = privacyAlertUi["privacyAlertThreeColor"] as? Int {
+                authUiModel.privacyAlertThreeColor = value.toColor()
+            }
+            if let value = privacyAlertUi["privacyAlertPreText"] as? String {
+                authUiModel.privacyAlertPreText = value
+            }
+            if let value = privacyAlertUi["privacyAlertSufText"] as? String {
+                authUiModel.privacyAlertSufText = value
+            }
+//            if let value = privacyAlertUi["privacyAlertMaskEntryAnimation"] as? Int {
+//                authUiModel.privacyAlertMaskEntryAnimation = value
+//            }
+//            if let value = privacyAlertUi["privacyAlertMaskExitAnimation"] as? Int {
+//                authUiModel.privacyAlertMaskExitAnimation = value
+//            }
+//            if let value = privacyAlertUi["privacyAlertFrameBlock"] as? Any {
+//                authUiModel.privacyAlertFrameBlock = value
+//            }
+//            if let value = privacyAlertUi["privacyAlertTitleFrameBlock"] as? Any {
+//                authUiModel.privacyAlertTitleFrameBlock = value
+//            }
+//            if let value = privacyAlertUi["privacyAlertPrivacyContentFrameBlock"] as? Any {
+//                authUiModel.privacyAlertPrivacyContentFrameBlock = value
+//            }
+//            if let value = privacyAlertUi["privacyAlertButtonFrameBlock"] as? Any {
+//                authUiModel.privacyAlertButtonFrameBlock = value
+//            }
+//            if let value = privacyAlertUi["privacyAlertCloseFrameBlock"] as? Any {
+//                authUiModel.privacyAlertCloseFrameBlock = value
+//            }
+            if let value = privacyAlertUi["privacyAlertBtnContent"] as? String {
+                authUiModel.privacyAlertBtnContent = value
+            }
+            if let value = privacyAlertUi["privacyAlertTitleContent"] as? String {
+                authUiModel.privacyAlertTitleContent = value
+            }
+//            if let value = privacyAlertUi["privacyAlertCustomViewBlock"] as? Any {
+//                authUiModel.privacyAlertCustomViewBlock = value
+//            }
+//            if let value = privacyAlertUi["privacyAlertCustomViewLayoutBlock"] as? Any {
+//                authUiModel.privacyAlertCustomViewLayoutBlock = value
+//            }
+        }
     }
 
     // 获取当前的 UIViewController
@@ -239,5 +565,12 @@ extension Int {
         let green = CGFloat((self >> 8) & 0xFF) / 255.0 // 获取绿色部分
         let blue = CGFloat(self & 0xFF) / 255.0 // 获取蓝色部分
         return UIColor(red: red, green: green, blue: blue, alpha: alpha)
+    }
+}
+
+extension Double {
+    //
+    func toCGFloat() -> CGFloat {
+        CGFloat(self)
     }
 }
