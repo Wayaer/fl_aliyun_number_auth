@@ -85,3 +85,19 @@ enum UIStatusBarStyle {
 
   final int value;
 }
+
+enum UIViewContentMode {
+  scaleToFill,
+  scaleAspectFit,
+  scaleAspectFill,
+  redraw,
+  center,
+  top,
+  bottom,
+  left,
+  right,
+  topLeft,
+  topRight,
+  bottomLeft,
+  bottomRight,
+}

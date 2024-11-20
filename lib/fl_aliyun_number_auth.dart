@@ -8,6 +8,7 @@ export 'src/model/slogan_model.dart';
 export 'src/model/login_btn_model.dart';
 export 'src/model/number_model.dart';
 export 'src/model/status_bar_model.dart';
+export 'src/model/ios_ui_model.dart';
 export 'src/enum.dart';
 export 'src/model/auth_model.dart';
 export 'src/auth_info.dart';

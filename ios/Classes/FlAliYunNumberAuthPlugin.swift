@@ -162,18 +162,16 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
                 authUiModel.privacyNavColor = value.toColor()
             }
             if let value = navUi["privacyNavTitleFont"] as? [String: Any] {
-                if let uiFont = value.toUIFont() {
-                    authUiModel.privacyNavTitleFont = uiFont
-                }
+                authUiModel.privacyNavTitleFont = value.toUIFont()
             }
             if let value = navUi["privacyNavTitleColor"] as? Int {
                 authUiModel.privacyNavTitleColor = value.toColor()
             }
-            if let value = navUi["privacyNavBackImage"] as? String {
-                if let image = value.toUIImage(registrar) {
-                    authUiModel.privacyNavBackImage = image
-                }
-            }
+//            if let value = navUi["privacyNavBackImage"] as? String {
+//                if let image = value.toUIImage(registrar) {
+//                    authUiModel.privacyNavBackImage = image
+//                }
+//            }
         }
         if let logoUi = args["logoUi"] as? [String: Any] {
             if let value = logoUi["logoImage"] as? String {
@@ -204,9 +202,7 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
                 authUiModel.numberColor = value.toColor()
             }
             if let value = numberUi["numberFont"] as? [String: Any] {
-                if let uiFont = value.toUIFont() {
-                    authUiModel.numberFont = uiFont
-                }
+                authUiModel.numberFont = value.toUIFont()
             }
 //            if let value = sloganUi["numberFrameBlock"] as? Any {
 //                authUiModel.numberFrameBlock = value
@@ -289,9 +285,7 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
                 authUiModel.privacyOperatorSufText = value
             }
             if let value = privacyUi["privacyFont"] as? [String: Any] {
-                if let font = value.toUIFont() {
-                    authUiModel.privacyFont = font
-                }
+                authUiModel.privacyFont = value.toUIFont()
             }
 //            if let value = privacyUi["privacyFrameBlock"] as? Any {
 //                authUiModel.privacyFrameBlock = value
@@ -387,9 +381,7 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
                 authUiModel.privacyAlertAlpha = value
             }
             if let value = privacyAlertUi["privacyAlertTitleFont"] as? [String: Any] {
-                if let uiFont = value.toUIFont() {
-                    authUiModel.privacyAlertTitleFont = uiFont
-                }
+                authUiModel.privacyAlertTitleFont = value.toUIFont()
             }
             if let value = privacyAlertUi["privacyAlertTitleColor"] as? Int {
                 authUiModel.privacyAlertTitleColor = value.toColor()
@@ -403,9 +395,7 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
                 }
             }
             if let value = privacyAlertUi["privacyAlertContentFont"] as? [String: Any] {
-                if let uiFont = value.toUIFont() {
-                    authUiModel.privacyAlertContentFont = uiFont
-                }
+                authUiModel.privacyAlertContentFont = value.toUIFont()
             }
             if let value = privacyAlertUi["privacyAlertContentBackgroundColor"] as? Int {
                 authUiModel.privacyAlertContentBackgroundColor = value.toColor()
@@ -432,9 +422,7 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
                 }
             }
             if let value = privacyAlertUi["privacyAlertButtonFont"] as? [String: Any] {
-                if let uiFont = value.toUIFont() {
-                    authUiModel.privacyAlertButtonFont = uiFont
-                }
+                authUiModel.privacyAlertButtonFont = value.toUIFont()
             }
             if let value = privacyAlertUi["privacyAlertCloseButtonIsNeedShow"] as? Bool {
                 authUiModel.privacyAlertCloseButtonIsNeedShow = value
@@ -526,17 +514,74 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
 extension [String: Any] {
     func toNSAttributedString() -> NSAttributedString? {
         if let text = self["text"] as? String {
-            return NSAttributedString(string: text)
+            var attributes: [NSAttributedString.Key: Any] = [:]
+            if let value = self["font"] as? [String: Any] {
+                attributes[NSAttributedString.Key.font] = value.toUIFont()
+            }
+            if let value = self["color"] as? Int {
+                attributes[NSAttributedString.Key.foregroundColor] = value.toColor()
+            }
+            if let value = self["backgroundColor"] as? Int {
+                attributes[NSAttributedString.Key.backgroundColor] = value.toColor()
+            }
+            if let value = self["wordSpacing"] as? Double {
+                attributes[NSAttributedString.Key.kern] = value.toCGFloat()
+            }
+            return NSAttributedString(string: text, attributes: attributes)
+        }
+        return nil
+    }
+
+    func toUILabel() -> UILabel? {
+        if let text = self["text"] as? String {
+            var label = UILabel()
+            label.text = text
+            if let value = self["color"] as? Int {
+                label.textColor = value.toColor()
+            }
+            if let value = self["font"] as? [String: Any] {
+                label.font = value.toUIFont()
+            }
+            return label
+        }
+        return nil
+    }
+
+    func toUIImageView() -> UIImageView? {
+        if let image = (self["path"] as? String)?.toUIImage() {
+            var imageView = UIImageView(image: image)
+            if let width = self["width"] as? Double, let height = self["height"] as? Double {
+                imageView.frame = CGRect(x: 0, y: 0, width: width, height: height)
+            }
+            if let value = self["contentMode"] as? Int, let contentMode = UIView.ContentMode(rawValue: value) {
+                imageView.contentMode = contentMode
+            }
+            imageView.contentMode = .center
+            return imageView
         }
         return nil
     }
 
     func toUIView() -> UIView? {
+        let type = self["type"] as? Int
+        if type == 0 {
+            return toUILabel()
+        } else if type == 1 {
+            return toUIImageView()
+        }
         return nil
     }
 
-    func toUIFont() -> UIFont? {
-        return nil
+    func toUIFont() -> UIFont {
+        let fontSize = (self["size"] as? Int)?.toCGFloat() ?? UIFont.systemFontSize
+        let isSystemBold = self["isSystemBold"] as? Bool ?? false
+        if isSystemBold {
+            return UIFont.boldSystemFont(ofSize: fontSize)
+        } else if let fontWeight = self["weight"] as? Int {
+            return UIFont.systemFont(ofSize: fontSize, weight: UIFont.Weight(rawValue: CGFloat(fontWeight)))
+        } else {
+            return UIFont.systemFont(ofSize: fontSize)
+        }
     }
 }
 
@@ -569,6 +614,13 @@ extension Int {
 }
 
 extension Double {
+    //
+    func toCGFloat() -> CGFloat {
+        CGFloat(self)
+    }
+}
+
+extension Int {
     //
     func toCGFloat() -> CGFloat {
         CGFloat(self)

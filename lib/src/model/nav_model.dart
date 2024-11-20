@@ -125,8 +125,8 @@ class NavUIModelForIOS {
   /// 协议详情页导航栏标题颜色
   final String? privacyNavTitleColor;
 
-  /// 协议详情页导航栏返回图片
-  final UIImage? privacyNavBackImage;
+  /// 协议详情页导航栏返回图片 仅支持 flutter 资源路径
+  final String? privacyNavBackImage;
 
   const NavUIModelForIOS({
     this.navIsHidden,
@@ -160,11 +160,3 @@ class NavUIModelForIOS {
         'privacyNavBackImage': privacyNavBackImage,
       };
 }
-
-class NSAttributedString {}
-
-class UIImage {}
-
-class UIFont {}
-
-class UIView {}
