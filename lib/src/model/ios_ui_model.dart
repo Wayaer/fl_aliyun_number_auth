@@ -1,6 +1,9 @@
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 import 'package:flutter/material.dart';
 
+typedef ViewFrameBlockForIOS = void Function(
+    Size screenSize, Size superViewSize, Rect frame);
+
 class UIFont {
   /// 字体大小
   final int? size;
@@ -22,7 +25,7 @@ class UIFont {
 }
 
 class NSAttributedString {
-  NSAttributedString({
+  const NSAttributedString({
     required this.text,
     this.color,
     this.backgroundColor,

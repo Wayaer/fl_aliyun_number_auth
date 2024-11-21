@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
 
 /// 配置授权页号码栏
 class NumberUIModelForAndroid {
@@ -54,7 +55,30 @@ class NumberUIModelForAndroid {
 
 /// 配置授权页号码栏
 class NumberUIModelForIOS {
-  const NumberUIModelForIOS();
+  /// 设置掩码颜色
+  final Color? numberColor;
 
-  Map<String, dynamic> toMap() => {};
+  /// 设置掩码字体大小设置，<16则不生效
+  final UIFont? numberFont;
+
+  /// 构建号码的frame，view布局或布局发生变化时调用，只有x，y生效，不实现则按默认处理，设置不能超出父视图content view
+  final ViewFrameBlockForIOS? numberFrameBlock;
+
+  /// 通过[numberFrameBlock]构建frame
+  /// 如果不传递则使用默认
+  final Rect? numberFrame;
+
+  const NumberUIModelForIOS({
+    this.numberColor,
+    this.numberFont,
+    this.numberFrameBlock,
+    this.numberFrame,
+  });
+
+  Map<String, dynamic> toMap() => {
+        'numberColor': numberColor?.value,
+        'numberFont': numberFont?.toMap(),
+        'numberFrameBlock': numberFrameBlock != null,
+        'numberFrame': numberFrame?.toMap(),
+      };
 }

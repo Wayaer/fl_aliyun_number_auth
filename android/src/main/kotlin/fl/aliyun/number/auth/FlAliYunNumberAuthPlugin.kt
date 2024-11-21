@@ -389,23 +389,21 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
         }
         val privacyUi = args["privacyUi"] as Map<*, *>?
         if (privacyUi != null) {
-            (privacyUi["privacyOne"] as String?)?.let { text ->
-                (privacyUi["privacyOneUrl"] as String?)?.let { url ->
-                    authUIConfigBuilder.setAppPrivacyOne(text, url)
-                }
+            (privacyUi["privacyOne"] as Map<*, *>?)?.let { map ->
+                val text = map["text"] as String;
+                val url = map["url"] as String;
+                authUIConfigBuilder.setAppPrivacyOne(text, url)
             }
-
-            (privacyUi["privacyTwo"] as String?)?.let { text ->
-                (privacyUi["privacyTwoUrl"] as String?)?.let { url ->
-                    authUIConfigBuilder.setAppPrivacyTwo(text, url)
-                }
+            (privacyUi["privacyTwo"] as Map<*, *>?)?.let { map ->
+                val text = map["text"] as String;
+                val url = map["url"] as String;
+                authUIConfigBuilder.setAppPrivacyTwo(text, url)
             }
-            (privacyUi["privacyThree"] as String?)?.let { text ->
-                (privacyUi["privacyThreeUrl"] as String?)?.let { url ->
-                    authUIConfigBuilder.setAppPrivacyThree(text, url)
-                }
+            (privacyUi["privacyThree"] as Map<*, *>?)?.let { map ->
+                val text = map["text"] as String;
+                val url = map["url"] as String;
+                authUIConfigBuilder.setAppPrivacyThree(text, url)
             }
-
             (privacyUi["privacyColor"] as Int?)?.let { color ->
                 (privacyUi["privacyUrlColor"] as Int?)?.let { urlColor ->
                     authUIConfigBuilder.setAppPrivacyColor(color, urlColor)

@@ -1,6 +1,14 @@
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 
-class AuthUiForAndroidModel {
+typedef ActivityResultCallbackForAndroid = void Function(
+    int requestCode, int resultCode, dynamic data);
+
+typedef AuthUIClickCallbackForAndroid = void Function(
+    String? code, String? jsonString);
+
+typedef LoggerHandlerForAndroid = void Function(String level, String msg);
+
+class AuthUIModelForAndroid {
   /// 配置授权页状态栏
   final StatusBarUIModelForAndroid? statusBarUi;
 
@@ -31,7 +39,16 @@ class AuthUiForAndroidModel {
   /// 二次隐私协议弹窗页面
   final PrivacyAlertUIModelForAndroid? privacyAlertUi;
 
-  AuthUiForAndroidModel({
+  /// onActivityResult
+  final ActivityResultCallbackForAndroid? onActivityResult;
+
+  /// 授权页UI点击回调
+  final AuthUIClickCallbackForAndroid? onAuthUIClick;
+
+  /// logger handler
+  final LoggerHandlerForAndroid? onLogger;
+
+  const AuthUIModelForAndroid({
     this.statusBarUi,
     this.navUi,
     this.logoUi,
@@ -42,6 +59,9 @@ class AuthUiForAndroidModel {
     this.switchUi,
     this.pageUi,
     this.privacyAlertUi,
+    this.onActivityResult,
+    this.onAuthUIClick,
+    this.onLogger,
   });
 
   Map<String, dynamic> toMap() => {
@@ -56,9 +76,22 @@ class AuthUiForAndroidModel {
         'pageUi': pageUi?.toMap(),
         'privacyAlertUi': privacyAlertUi?.toMap(),
       };
+
+  void onActivityResultHandler(Map<String, dynamic> args) {
+    onActivityResult?.call(args['requestCode'] as int,
+        args['resultCode'] as int, args['data'] as dynamic);
+  }
+
+  void onAuthUIClickHandler(Map<String, dynamic> args) {
+    onAuthUIClick?.call(args['code'] as String?, args['json'] as String?);
+  }
+
+  void onLoggerHandler(Map<String, dynamic> args) {
+    onLogger?.call(args['level'] as String, args['msg'] as String);
+  }
 }
 
-class AuthUiForIOSModel {
+class AuthUIModelForIOS {
   /// 配置授权页状态栏
   final StatusBarUIModelForIOS? statusBarUi;
 
@@ -89,7 +122,7 @@ class AuthUiForIOSModel {
   /// 二次隐私协议弹窗页面
   final PrivacyAlertUIModelForIOS? privacyAlertUi;
 
-  AuthUiForIOSModel({
+  const AuthUIModelForIOS({
     this.statusBarUi,
     this.navUi,
     this.logoUi,
@@ -114,4 +147,22 @@ class AuthUiForIOSModel {
         'pageUi': pageUi?.toMap(),
         'privacyAlertUi': privacyAlertUi?.toMap(),
       };
+
+  void onViewFrameBlock(Map<String, dynamic> args) {}
+}
+
+class AuthResultModel {
+  /// result code
+  final String? resultCode;
+
+  /// result msg
+  final String? msg;
+
+  /// 仅在android返回
+  final bool? isFailed;
+
+  AuthResultModel.fromMap(Map<String, dynamic> map)
+      : resultCode = map['resultCode'] as String?,
+        msg = map['msg'] as String?,
+        isFailed = map['isFailed'] as bool?;
 }

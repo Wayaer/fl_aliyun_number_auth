@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
 
 /// 配置切换控件方式
 class SwitchUIModelForAndroid {
@@ -48,7 +49,30 @@ class SwitchUIModelForAndroid {
 
 /// 配置切换控件方式
 class SwitchUIModelForIOS {
-  const SwitchUIModelForIOS();
+  /// changeBtn标题，内容，大小，颜色
+  final NSAttributedString? changeBtnTitle;
 
-  Map<String, dynamic> toMap() => {};
+  /// changeBtn是否隐藏，默认NO
+  final bool? changeBtnIsHidden;
+
+  /// 构建changeBtn的frame，view布局或布局发生变化时调用，不实现则按默认处理
+  final ViewFrameBlockForIOS? changeBtnFrameBlock;
+
+  /// 通过[changeBtnFrameBlock]构建frame
+  /// 如果不传递则使用默认
+  final Rect? changeBtnFrame;
+
+  const SwitchUIModelForIOS({
+    this.changeBtnTitle,
+    this.changeBtnIsHidden,
+    this.changeBtnFrameBlock,
+    this.changeBtnFrame,
+  });
+
+  Map<String, dynamic> toMap() => {
+        'changeBtnTitle': changeBtnTitle?.toMap(),
+        'changeBtnIsHidden': changeBtnIsHidden,
+        'changeBtnFrameBlock': changeBtnFrameBlock != null,
+        'changeBtnFrame': changeBtnFrame?.toMap(),
+      };
 }

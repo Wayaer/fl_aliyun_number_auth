@@ -101,3 +101,17 @@ enum UIViewContentMode {
   bottomLeft,
   bottomRight,
 }
+
+enum NSTextAlignment { left, center, right, justified, natural }
+
+enum PNSPresentationDirection { bottom, right, top, left }
+
+enum UIInterfaceOrientationMask{
+  portrait,
+  landscapeLeft,
+  landscapeRight,
+  portraitUpsideDown,
+  landscape,
+  all,
+  allButUpsideDown
+}

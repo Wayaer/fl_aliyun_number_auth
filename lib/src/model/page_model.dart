@@ -1,4 +1,6 @@
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
+import 'package:flutter/material.dart';
 
 /// 配置页面相关函数
 class PageUIModelForAndroid {
@@ -94,7 +96,41 @@ class PageUIModelForAndroid {
 
 /// 配置页面相关函数
 class PageUIModelForIOS {
-  const PageUIModelForIOS();
+  /// 全屏、弹窗模式设置，授权页面中，渲染并显示所有空间的view，称为content view，不实现该block默认为全屏模式。* 实现弹窗的方案 x > 0 || y > 0, width < 屏幕宽度 || height < 屏幕高度。
+  final ViewFrameBlockForIOS? contentViewFrameBlock;
 
-  Map<String, dynamic> toMap() => {};
+  /// 通过[contentViewFrameBlock]构建frame
+  /// 如果不传递则使用默认
+  final Rect? contentViewFrame;
+
+  /// 横屏、竖屏模式设置，注意：在刘海屏，UIInterfaceOrientationMaskPortraitUpsideDown 属性慎用！
+  final UIInterfaceOrientationMask? supportedInterfaceOrientations;
+
+  /// 授权页面弹出方向，默认PNSPresentationDirectionBottom。
+  final PNSPresentationDirection? presentDirection;
+
+  /// 自定义控件添加，注意：自定义视图的创建初始化和添加到父视图都需要在主线程中。
+  final Function? customViewBlock;
+
+  /// 每次授权页布局完成时会调用该block，可以在该block实现里面设置自定义添加控件的frame。
+  /// 您可以在除了协议、掩码、登录按钮之外的区域添加自定义控件。
+  final Function? customViewLayoutBlock;
+
+  const PageUIModelForIOS({
+    this.contentViewFrameBlock,
+    this.contentViewFrame,
+    this.supportedInterfaceOrientations,
+    this.presentDirection,
+    this.customViewBlock,
+    this.customViewLayoutBlock,
+  });
+
+  Map<String, dynamic> toMap() => {
+        'contentViewFrameBlock': contentViewFrameBlock != null,
+        'contentViewFrame': contentViewFrame?.toMap(),
+        'supportedInterfaceOrientations': supportedInterfaceOrientations,
+        'presentDirection': presentDirection?.index,
+        'customViewBlock': customViewBlock != null,
+        'customViewLayoutBlock': customViewLayoutBlock != null,
+      };
 }

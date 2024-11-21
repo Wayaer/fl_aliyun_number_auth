@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
 
 /// 配置授权页Slogan
 class SloganUIModelForAndroid {
@@ -43,7 +44,30 @@ class SloganUIModelForAndroid {
 
 /// 配置授权页Slogan
 class SloganUIModelForIOS {
-  const SloganUIModelForIOS();
+  /// 设置slogan文案，内容、大小、颜色
+  final NSAttributedString? sloganText;
 
-  Map<String, dynamic> toMap() => {};
+  /// 设置slogan是否隐藏、默认不隐藏
+  final bool? sloganIsHidden;
+
+  /// 构建slogan的frame，view布局或者布局发生变化时调用，不实现则按默认处理
+  final ViewFrameBlockForIOS? sloganFrameBlock;
+
+  /// 通过[sloganFrameBlock]构建frame
+  /// 如果不传递则使用默认
+  final Rect? sloganFrame;
+
+  SloganUIModelForIOS({
+    this.sloganText,
+    this.sloganIsHidden,
+    this.sloganFrameBlock,
+    this.sloganFrame,
+  });
+
+  Map<String, dynamic> toMap() => {
+        'sloganText': sloganText?.toMap(),
+        'sloganIsHidden': sloganIsHidden,
+        'sloganFrameBlock': sloganFrameBlock != null,
+        'sloganFrame': sloganFrame?.toMap(),
+      };
 }

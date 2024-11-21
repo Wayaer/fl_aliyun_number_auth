@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
 
 /// 配置授权页登录按钮
 class LoginBtnUIModelForAndroid {
@@ -91,7 +92,35 @@ class LoginBtnUIModelForAndroid {
 
 /// 配置授权页登录按钮
 class LoginBtnUIModelForIOS {
-  const LoginBtnUIModelForIOS();
+  /// 设置登录按钮文案、内容、大小、颜色
+  final NSAttributedString? loginBtnText;
 
-  Map<String, dynamic> toMap() => {};
+  /// 登录按钮背景图片组，默认高度50.0pt，@[激活状态的图片、失效状态的图片、高亮状态的图片]
+  final List<String>? loginBtnBgImgs;
+
+  /// 是否自动隐藏点击登录按钮之后授权页上转圈的loading，默认为YES，在获取登录Token成功后自动隐藏，如果设置为NO，需要自己手动调用[[TXCommonHandler, sharedInstance] hideLoginLoading]隐藏。
+  final bool? autoHideLoginLoading;
+
+  /// 构建登录按钮frame，view布局或布局发生变化时调用，不实现则按默认处理，不能超出父视图content view，height不能小于40，width不能小于父视图宽度的一半。
+  final ViewFrameBlockForIOS? loginBtnFrameBlock;
+
+  /// 通过[loginBtnFrameBlock]构建frame
+  /// 如果不传递则使用默认
+  final Rect? loginBtnFrame;
+
+  const LoginBtnUIModelForIOS({
+    this.loginBtnText,
+    this.loginBtnBgImgs,
+    this.autoHideLoginLoading = true,
+    this.loginBtnFrameBlock,
+    this.loginBtnFrame,
+  });
+
+  Map<String, dynamic> toMap() => {
+        'loginBtnText': loginBtnText?.toMap(),
+        'loginBtnBgImgs': loginBtnBgImgs,
+        'autoHideLoginLoading': autoHideLoginLoading,
+        'loginBtnFrameBlock': loginBtnFrameBlock != null,
+        'loginBtnFrame': loginBtnFrame?.toMap()
+      };
 }

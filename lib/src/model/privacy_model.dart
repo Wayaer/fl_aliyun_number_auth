@@ -1,26 +1,30 @@
 import 'dart:ui';
 
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
+
+class PrivacyTextUrl {
+  /// 名称
+  final String text;
+
+  /// url
+  final String url;
+
+  const PrivacyTextUrl({required this.text, required this.url});
+
+  Map<String, dynamic> toMap() => {'text': text, 'url': url};
+}
 
 /// 配置授权页隐私栏
 class PrivacyUIModelForAndroid {
   /// 设置开发者隐私条款1名称和URL（名称，URL）。
-  final String? privacyOne;
-
-  /// 设置开发者隐私条款1名称和URL（名称，URL）。
-  final String? privacyOneUrl;
+  final PrivacyTextUrl? privacyOne;
 
   /// 设置开发者隐私条款2名称和URL（名称，URL）。
-  final String? privacyTwo;
-
-  /// 设置开发者隐私条款2名称和URL（名称，URL）。
-  final String? privacyTwoUrl;
+  final PrivacyTextUrl? privacyTwo;
 
   /// 设置开发者隐私条款3名称和URL（名称，URL）。
-  final String? privacyThree;
-
-  /// 设置开发者隐私条款3名称和URL（名称，URL）。
-  final String? privacyThreeUrl;
+  final PrivacyTextUrl? privacyThree;
 
   /// 设置隐私条款名称颜色（基础文字颜色，协议文字颜色）。
   final Color? privacyColor;
@@ -116,11 +120,8 @@ class PrivacyUIModelForAndroid {
 
   const PrivacyUIModelForAndroid({
     this.privacyOne,
-    this.privacyOneUrl,
     this.privacyTwo,
-    this.privacyTwoUrl,
     this.privacyThree,
-    this.privacyThreeUrl,
     this.privacyColor,
     this.privacyUrlColor,
     this.privacyOffsetY,
@@ -152,12 +153,9 @@ class PrivacyUIModelForAndroid {
   });
 
   Map<String, dynamic> toMap() => {
-        'privacyOne': privacyOne,
-        'privacyOneUrl': privacyOneUrl,
-        'privacyTwo': privacyTwo,
-        'privacyTwoUrl': privacyTwoUrl,
-        'privacyThree': privacyThree,
-        'privacyThreeUrl': privacyThreeUrl,
+        'privacyOne': privacyOne?.toMap(),
+        'privacyTwo': privacyTwo?.toMap(),
+        'privacyThree': privacyThree?.toMap(),
         'privacyColor': privacyColor?.value,
         'privacyUrlColor': privacyUrlColor?.value,
         'privacyOffsetY': privacyOffsetY,
@@ -191,7 +189,109 @@ class PrivacyUIModelForAndroid {
 
 /// 配置授权页隐私栏
 class PrivacyUIModelForIOS {
-  const PrivacyUIModelForIOS();
+  /// 设置checkBox图片组，[uncheckedImg, checkedImg]
+  final List<String>? checkBoxImages;
 
-  Map<String, dynamic> toMap() => {};
+  /// checkBox是否勾选，默认NO
+  final bool? checkBoxIsChecked;
+
+  /// checkBox是否隐藏，默认NO
+  final bool? checkBoxIsHidden;
+
+  /// checkBox大小，高宽一样，必须大于0
+  final double? checkBoxWH;
+
+  /// 协议1，[协议名称，协议Url]，注：三个协议名称不能相同
+  final PrivacyTextUrl? privacyOne;
+
+  /// 协议2，[协议名称，协议Url]，注：三个协议名称不能相同
+  final PrivacyTextUrl? privacyTwo;
+
+  /// 协议3，[协议名称，协议Url]，注：三个协议名称不能相同
+  final PrivacyTextUrl? privacyThree;
+
+  /// 协议内容颜色数组，[非点击文案颜色，点击文案颜色]
+  final List<Color>? privacyColors;
+
+  /// 协议文案支持居中，居左设置，默认居左
+  final NSTextAlignment? privacyAlignment;
+
+  /// 协议整体文案，前缀部分文案
+  final String? privacyPreText;
+
+  /// 协议整体文案，后缀部分文案
+  final String? privacySufText;
+
+  /// 运营商协议名称前缀文案，仅支持<、(、[、{、（、【、『、。
+  final String? privacyOperatorPreText;
+
+  /// 运营商协议 >、)、]、}、）、】、』
+  final String? privacyOperatorSufText;
+
+  /// 协议整体文案字体大小，小于12.0 不生效
+  final UIFont? privacyFont;
+
+  /// 构建协议整体（包括checkBox）的frame，view布局或布局发生变化时调用，不实现则按默认处理，如果设置的width小于checkBox的宽度则不生效，最小值为0，最大width，height为父视图宽高，最终会根据设置进来的width对协议文本进行自适应，得到的size是协议空间的最终大小。
+  final ViewFrameBlockForIOS? privacyFrameBlock;
+
+  /// 通过[privacyFrameBlock]构建frame
+  /// 如果不传递则使用默认
+  final Rect? privacyFrame;
+
+  /// 运营商协议内容颜色 ，优先级最高，如果privacyOperatorColors不设置，则取privacyColors中的点击文案颜色，privacyColors不设置，则是默认色
+  final Color? privacyOperatorColor;
+
+  /// 协议1内容颜色，优先级最高，如果privacyOneColors不设置，则取privacyColors中的点击文案颜色，privacyColors不设置，则是默认色
+  final Color? privacyOneColor;
+
+  /// 协议2内容颜色，优先级最高，如果privacyTwoColors不设置，则取privacyColors中的点击文案颜色，privacyColors不设置，则是默认色
+  final Color? privacyTwoColor;
+
+  /// 协议3内容颜色，优先级最高，如果privacyThreeColors不设置，则取privacyColors中的点击文案颜色，privacyColors不设置，则是默认色
+  final Color? privacyThreeColor;
+
+  const PrivacyUIModelForIOS(
+      {this.checkBoxImages,
+      this.checkBoxIsChecked,
+      this.checkBoxIsHidden,
+      this.checkBoxWH,
+      this.privacyOne,
+      this.privacyTwo,
+      this.privacyThree,
+      this.privacyColors,
+      this.privacyAlignment,
+      this.privacyPreText,
+      this.privacySufText,
+      this.privacyOperatorPreText,
+      this.privacyOperatorSufText,
+      this.privacyFont,
+      this.privacyFrameBlock,
+      this.privacyFrame,
+      this.privacyOperatorColor,
+      this.privacyOneColor,
+      this.privacyTwoColor,
+      this.privacyThreeColor});
+
+  Map<String, dynamic> toMap() => {
+        'checkBoxImages': checkBoxImages,
+        'checkBoxIsChecked': checkBoxIsChecked,
+        'checkBoxIsHidden': checkBoxIsHidden,
+        'checkBoxWH': checkBoxWH,
+        'privacyOne': privacyOne?.toMap(),
+        'privacyTwo': privacyTwo?.toMap(),
+        'privacyThree': privacyThree?.toMap(),
+        'privacyColors': privacyColors?.map((e) => e.value).toList(),
+        'privacyAlignment': privacyAlignment?.index,
+        'privacyPreText': privacyPreText,
+        'privacySufText': privacySufText,
+        'privacyOperatorPreText': privacyOperatorPreText,
+        'privacyOperatorSufText': privacyOperatorSufText,
+        'privacyFont': privacyFont?.toMap(),
+        'privacyFrameBlock': privacyFrameBlock != null,
+        'privacyFrame': privacyFrame?.toMap(),
+        'privacyOperatorColor': privacyOperatorColor?.value,
+        'privacyOneColor': privacyOneColor?.value,
+        'privacyTwoColor': privacyTwoColor?.value,
+        'privacyThreeColor': privacyThreeColor?.value,
+      };
 }

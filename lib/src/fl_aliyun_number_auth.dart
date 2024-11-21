@@ -15,10 +15,15 @@ class FlAliYunNumberAuth {
       FlAliYunNumberAuthForAndroid();
 
   /// 初始化设置
-  static Future<bool?> setAuthInfo(AuthInfo authInfo) async {
+  static Future<AuthResultModel?> setAuthInfo(AuthInfo authInfo) async {
     if (!_supported) return null;
-    return await _channel.invokeMethod<bool>(
+    final result = await _channel.invokeMethod<Map<String, dynamic>>(
         'setAuthSDKInfo', authInfo.toMap());
+    if (result == null) return null;
+
+    final model = AuthResultModel.fromMap(result);
+    setMethodCallHandler();
+    return model;
   }
 
   /// 日志设置
@@ -30,11 +35,13 @@ class FlAliYunNumberAuth {
   /// 一键登录获取Token
   /// 获取登录Token 调起一键登录授权页面，在用户授权后获取一键登录的Token
   /// timeout 接口超时时间 默认10s
-  static Future<String?> getLoginToken(
+  static Future<AuthResultModel?> getLoginToken(
       {Duration timeout = const Duration(seconds: 10)}) async {
     if (!_supported) return null;
-    return await _channel.invokeMethod<String>(
+    final result = await _channel.invokeMethod<Map<String, dynamic>>(
         'getLoginToken', {'timeout': timeout.inMilliseconds});
+    if (result == null) return null;
+    return AuthResultModel.fromMap(result);
   }
 
   /// 注销登录页面
@@ -48,11 +55,13 @@ class FlAliYunNumberAuth {
   }
 
   /// 加速拉起授权页
-  static Future<bool?> accelerateLoginPage(
+  static Future<AuthResultModel?> accelerateLoginPage(
       {Duration timeout = const Duration(seconds: 10)}) async {
     if (!_supported) return null;
-    return await _channel.invokeMethod<bool>(
+    final result = await _channel.invokeMethod<Map<String, dynamic>>(
         'accelerateLoginPage', {'timeout': timeout.inMilliseconds});
+    if (result == null) return null;
+    return AuthResultModel.fromMap(result);
   }
 
   /// 获取版本号
@@ -62,10 +71,12 @@ class FlAliYunNumberAuth {
   }
 
   /// SDK环境检查函数，检查终端是否支持号码认证，带返回code的
-  static Future<bool?> checkEnvAvailable(AuthType type) async {
+  static Future<AuthResultModel?> checkEnvAvailable(AuthType type) async {
     if (!_supported) return null;
-    return await _channel
-        .invokeMethod<bool>('checkEnvAvailable', {'authType': type.index + 1});
+    final result = await _channel.invokeMethod<Map<String, dynamic>>(
+        'checkEnvAvailable', {'authType': type.index + 1});
+    if (result == null) return null;
+    return AuthResultModel.fromMap(result);
   }
 
   /// 设置授权页协议框是否勾选
@@ -99,15 +110,25 @@ class FlAliYunNumberAuth {
     return await _channel.invokeMethod<bool>('quitPrivacyAlert');
   }
 
+  static AuthUIModelForAndroid? _androidAuthUi;
+
+  static AuthUIModelForAndroid? get androidAuthUi => _androidAuthUi;
+
+  static AuthUIModelForIOS? _iosAuthUi;
+
+  static AuthUIModelForIOS? get iosAuthUi => _iosAuthUi;
+
   /// 设置授权页UI
   static Future<bool?> setAuthUI({
     /// android 授权页配置
-    AuthUiForAndroidModel? android,
+    AuthUIModelForAndroid? android,
 
     /// ios 授权页配置
-    AuthUiForIOSModel? ios,
+    AuthUIModelForIOS? ios,
   }) async {
     if (!_supported) return null;
+    _androidAuthUi = android;
+    _iosAuthUi = ios;
     return await _channel.invokeMethod<bool>('setAuthUI', {
       if (_isAndroid && android != null) ...android.toMap(),
       if (_isIOS && ios != null) ...ios.toMap(),
@@ -115,9 +136,24 @@ class FlAliYunNumberAuth {
   }
 
   /// 设置监听器
-  static void setHandler() {
+  static void setMethodCallHandler() {
     _channel.setMethodCallHandler((MethodCall call) async {
       switch (call.method) {
+        case 'onViewFrameBlock':
+          _iosAuthUi?.onViewFrameBlock(call.arguments as Map<String, dynamic>);
+          break;
+        case 'onActivityResult':
+          _androidAuthUi
+              ?.onActivityResultHandler(call.arguments as Map<String, dynamic>);
+          break;
+        case 'onAuthUIClick':
+          _androidAuthUi
+              ?.onAuthUIClickHandler(call.arguments as Map<String, dynamic>);
+          break;
+        case 'onLoggerHandler':
+          _androidAuthUi
+              ?.onLoggerHandler(call.arguments as Map<String, dynamic>);
+          break;
         default:
       }
     });

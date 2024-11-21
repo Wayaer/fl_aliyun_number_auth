@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
 
 /// 配置授权页导航栏
 class NavUIModelForAndroid {
@@ -107,23 +108,35 @@ class NavUIModelForIOS {
   /// 导航栏右侧自定义控件，可以包含手势操作或按钮
   final UIView? navMoreView;
 
-  // /// 构建导航栏返回按钮的frame（布局）
-  // final Function? navBackButtonFrameBlock;
-  //
-  // /// 构建导航栏标题的frame（布局）
-  // final Function? navTitleFrameBlock;
-  //
-  // /// 构建导航栏右侧more view的frame（布局）
-  // final Function? navMoreViewFrameBlock;
+  /// 构建导航栏返回按钮的frame（布局）
+  final ViewFrameBlockForIOS? navBackButtonFrameBlock;
+
+  /// 通过[navBackButtonFrameBlock]构建frame
+  /// 如果不传递则使用默认
+  final Rect? navBackButtonFrame;
+
+  /// 构建导航栏标题的frame（布局）
+  final ViewFrameBlockForIOS? navTitleFrameBlock;
+
+  /// 通过[navTitleFrameBlock]构建frame
+  /// 如果不传递则使用默认
+  final Rect? navTitleFrame;
+
+  /// 构建导航栏右侧more view的frame（布局）
+  final ViewFrameBlockForIOS? navMoreViewFrameBlock;
+
+  /// 通过[navMoreViewFrameBlock]构建frame
+  /// 如果不传递则使用默认
+  final Rect? navMoreViewFrame;
 
   /// 协议详情页导航栏背景颜色设置
-  final String? privacyNavColor;
+  final Color? privacyNavColor;
 
   /// 协议详情页导航栏标题字体、大小
   final UIFont? privacyNavTitleFont;
 
   /// 协议详情页导航栏标题颜色
-  final String? privacyNavTitleColor;
+  final Color? privacyNavTitleColor;
 
   /// 协议详情页导航栏返回图片 仅支持 flutter 资源路径
   final String? privacyNavBackImage;
@@ -135,9 +148,12 @@ class NavUIModelForIOS {
     this.navBackImage,
     this.hideNavBackItem,
     this.navMoreView,
-    // this.navBackButtonFrameBlock,
-    // this.navTitleFrameBlock,
-    // this.navMoreViewFrameBlock,
+    this.navBackButtonFrameBlock,
+    this.navBackButtonFrame,
+    this.navTitleFrameBlock,
+    this.navTitleFrame,
+    this.navMoreViewFrameBlock,
+    this.navMoreViewFrame,
     this.privacyNavColor,
     this.privacyNavTitleFont,
     this.privacyNavTitleColor,
@@ -146,17 +162,20 @@ class NavUIModelForIOS {
 
   Map<String, dynamic> toMap() => {
         'navIsHidden': navIsHidden,
-        'navColor': navColor,
-        'navTitle': navTitle,
+        'navColor': navColor?.value,
+        'navTitle': navTitle?.toMap(),
         'navBackImage': navBackImage,
         'hideNavBackItem': hideNavBackItem,
-        'navMoreView': navMoreView,
-        // 'navBackButtonFrameBlock': navBackButtonFrameBlock,
-        // 'navTitleFrameBlock': navTitleFrameBlock,
-        // 'navMoreViewFrameBlock': navMoreViewFrameBlock,
-        'privacyNavColor': privacyNavColor,
-        'privacyNavTitleFont': privacyNavTitleFont,
-        'privacyNavTitleColor': privacyNavTitleColor,
+        'navMoreView': navMoreView?.toMap(),
+        'navBackButtonFrameBlock': navBackButtonFrameBlock != null,
+        'navBackButtonFrame': navBackButtonFrame?.toMap(),
+        'navTitleFrameBlock': navTitleFrameBlock != null,
+        'navTitleFrame': navTitleFrame?.toMap(),
+        'navMoreViewFrameBlock': navMoreViewFrameBlock != null,
+        'navMoreViewFrame': navMoreViewFrame?.toMap(),
+        'privacyNavColor': privacyNavColor?.value,
+        'privacyNavTitleFont': privacyNavTitleFont?.toMap(),
+        'privacyNavTitleColor': privacyNavTitleColor?.value,
         'privacyNavBackImage': privacyNavBackImage,
       };
 }

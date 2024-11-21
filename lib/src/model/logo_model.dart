@@ -1,4 +1,6 @@
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
 
 /// 配置授权页Logo
 class LogoUIModelForAndroid {
@@ -48,7 +50,31 @@ class LogoUIModelForAndroid {
 
 /// 配置授权页Logo
 class LogoUIModelForIOS {
-  const LogoUIModelForIOS();
+  /// logo图片设置
+  final String? logoImage;
 
-  Map<String, dynamic> toMap() => {};
+  /// logo是否隐藏，默认NO
+  final bool? logoIsHidden;
+
+  /// 构建logo的frame，view布局或布局发生变化时调用，不实现则按默认处理
+  final ViewFrameBlockForIOS? logoFrameBlock;
+
+  /// 通过[logoFrameBlock]构建frame
+  /// 如果不传递则使用默认
+  final Rect? logoFrame;
+
+  /// 构造函数，提供默认值
+  const LogoUIModelForIOS({
+    this.logoImage,
+    this.logoIsHidden,
+    this.logoFrameBlock,
+    this.logoFrame,
+  });
+
+  Map<String, dynamic> toMap() => {
+        'logoImage': logoImage,
+        'logoIsHidden': logoIsHidden,
+        'logoFrameBlock': logoFrameBlock != null,
+        'logoFrame': logoFrame?.toMap(),
+      };
 }
