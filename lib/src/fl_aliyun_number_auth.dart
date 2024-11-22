@@ -8,10 +8,10 @@ class FlAliYunNumberAuth {
   const FlAliYunNumberAuth._();
 
   /// ios 端特有方法
-  static FlAliYunNumberAuthForIOS get ios => FlAliYunNumberAuthForIOS();
+  static FlAliYunNumberAuthForIOS get iosMethod => FlAliYunNumberAuthForIOS();
 
   /// android 端特有方法
-  static FlAliYunNumberAuthForAndroid get android =>
+  static FlAliYunNumberAuthForAndroid get androidMethod =>
       FlAliYunNumberAuthForAndroid();
 
   /// 初始化设置
@@ -20,7 +20,6 @@ class FlAliYunNumberAuth {
     final result = await _channel.invokeMethod<Map<String, dynamic>>(
         'setAuthSDKInfo', authInfo.toMap());
     if (result == null) return null;
-
     final model = AuthResultModel.fromMap(result);
     setMethodCallHandler();
     return model;

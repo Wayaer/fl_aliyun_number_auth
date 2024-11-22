@@ -165,4 +165,7 @@ class AuthResultModel {
       : resultCode = map['resultCode'] as String?,
         msg = map['msg'] as String?,
         isFailed = map['isFailed'] as bool?;
+
+  Map<String, dynamic> toMap() =>
+      {'resultCode': resultCode, 'msg': msg, 'isFailed': isFailed};
 }
