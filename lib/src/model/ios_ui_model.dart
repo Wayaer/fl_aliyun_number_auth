@@ -9,7 +9,7 @@ class UIFont {
   final int? size;
 
   /// 字体 Wight
-  final int? weight;
+  final UIFontWeight? weight;
 
   /// 是否使用系统加粗 默认不加粗
   /// [true] weight 无效
@@ -19,7 +19,7 @@ class UIFont {
 
   Map<String, dynamic> toMap() => {
         'size': size,
-        'weight': weight,
+        'weight': weight?.value,
         'isSystemBold': isSystemBold,
       };
 }

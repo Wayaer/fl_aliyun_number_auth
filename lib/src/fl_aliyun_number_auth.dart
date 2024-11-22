@@ -17,7 +17,7 @@ class FlAliYunNumberAuth {
   /// 初始化设置
   static Future<AuthResultModel?> setAuthInfo(AuthInfo authInfo) async {
     if (!_supported) return null;
-    final result = await _channel.invokeMethod<Map<String, dynamic>>(
+    final result = await _channel.invokeMethod<Map<dynamic, dynamic>>(
         'setAuthSDKInfo', authInfo.toMap());
     if (result == null) return null;
     final model = AuthResultModel.fromMap(result);
@@ -34,11 +34,16 @@ class FlAliYunNumberAuth {
   /// 一键登录获取Token
   /// 获取登录Token 调起一键登录授权页面，在用户授权后获取一键登录的Token
   /// timeout 接口超时时间 默认10s
-  static Future<AuthResultModel?> getLoginToken(
-      {Duration timeout = const Duration(seconds: 10)}) async {
+  static Future<AuthResultModel?> getLoginToken({
+    Duration timeout = const Duration(seconds: 10),
+
+    /// ios 模拟环境
+    bool isDebug = false,
+  }) async {
     if (!_supported) return null;
-    final result = await _channel.invokeMethod<Map<String, dynamic>>(
-        'getLoginToken', {'timeout': timeout.inMilliseconds});
+    final result = await _channel.invokeMethod<Map<dynamic, dynamic>>(
+        'getLoginToken',
+        {'timeout': timeout.inMilliseconds, 'isDebug': isDebug});
     if (result == null) return null;
     return AuthResultModel.fromMap(result);
   }
@@ -57,7 +62,7 @@ class FlAliYunNumberAuth {
   static Future<AuthResultModel?> accelerateLoginPage(
       {Duration timeout = const Duration(seconds: 10)}) async {
     if (!_supported) return null;
-    final result = await _channel.invokeMethod<Map<String, dynamic>>(
+    final result = await _channel.invokeMethod<Map<dynamic, dynamic>>(
         'accelerateLoginPage', {'timeout': timeout.inMilliseconds});
     if (result == null) return null;
     return AuthResultModel.fromMap(result);
@@ -72,7 +77,7 @@ class FlAliYunNumberAuth {
   /// SDK环境检查函数，检查终端是否支持号码认证，带返回code的
   static Future<AuthResultModel?> checkEnvAvailable(AuthType type) async {
     if (!_supported) return null;
-    final result = await _channel.invokeMethod<Map<String, dynamic>>(
+    final result = await _channel.invokeMethod<Map<dynamic, dynamic>>(
         'checkEnvAvailable', {'authType': type.index + 1});
     if (result == null) return null;
     return AuthResultModel.fromMap(result);
@@ -137,21 +142,22 @@ class FlAliYunNumberAuth {
   /// 设置监听器
   static void setMethodCallHandler() {
     _channel.setMethodCallHandler((MethodCall call) async {
+      debugPrint('setMethodCallHandler:${call.method} ${call.arguments}');
       switch (call.method) {
         case 'onViewFrameBlock':
-          _iosAuthUi?.onViewFrameBlock(call.arguments as Map<String, dynamic>);
+          _iosAuthUi?.onViewFrameBlock(call.arguments as Map<dynamic, dynamic>);
           break;
         case 'onActivityResult':
-          _androidAuthUi
-              ?.onActivityResultHandler(call.arguments as Map<String, dynamic>);
+          _androidAuthUi?.onActivityResultHandler(
+              call.arguments as Map<dynamic, dynamic>);
           break;
         case 'onAuthUIClick':
           _androidAuthUi
-              ?.onAuthUIClickHandler(call.arguments as Map<String, dynamic>);
+              ?.onAuthUIClickHandler(call.arguments as Map<dynamic, dynamic>);
           break;
         case 'onLoggerHandler':
           _androidAuthUi
-              ?.onLoggerHandler(call.arguments as Map<String, dynamic>);
+              ?.onLoggerHandler(call.arguments as Map<dynamic, dynamic>);
           break;
         default:
       }

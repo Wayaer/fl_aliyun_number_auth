@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
-import 'package:fl_aliyun_number_auth/src/extension.dart';
+import 'package:fl_aliyun_number_auth/src/const/extension.dart';
 
 /// 二次隐私协议弹窗页面
 class PrivacyAlertUIModelForAndroid {

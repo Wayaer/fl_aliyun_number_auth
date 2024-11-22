@@ -304,7 +304,7 @@ typedef CGRect(^PNSBuildFrameBlock)(CGSize screenSize, CGSize superViewSize, CGR
 /** 导航栏标题颜色 */
 @property (nonatomic, strong) UIColor *privacyNavTitleColor;
 /** 导航栏返回图片 */
-@property (nonatomic, strong) UIImage * ;
+@property (nonatomic, strong) UIImage *privacyNavBackImage;
 
 #pragma mark- 其他自定义控件添加及布局
 

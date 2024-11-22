@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 
 typedef ActivityResultCallbackForAndroid = void Function(
@@ -77,16 +79,16 @@ class AuthUIModelForAndroid {
         'privacyAlertUi': privacyAlertUi?.toMap(),
       };
 
-  void onActivityResultHandler(Map<String, dynamic> args) {
+  void onActivityResultHandler(Map<dynamic, dynamic> args) {
     onActivityResult?.call(args['requestCode'] as int,
         args['resultCode'] as int, args['data'] as dynamic);
   }
 
-  void onAuthUIClickHandler(Map<String, dynamic> args) {
+  void onAuthUIClickHandler(Map<dynamic, dynamic> args) {
     onAuthUIClick?.call(args['code'] as String?, args['json'] as String?);
   }
 
-  void onLoggerHandler(Map<String, dynamic> args) {
+  void onLoggerHandler(Map<dynamic, dynamic> args) {
     onLogger?.call(args['level'] as String, args['msg'] as String);
   }
 }
@@ -148,11 +150,91 @@ class AuthUIModelForIOS {
         'privacyAlertUi': privacyAlertUi?.toMap(),
       };
 
-  void onViewFrameBlock(Map<String, dynamic> args) {}
+  void onViewFrameBlock(Map<dynamic, dynamic> args) {
+    final key = args['key'] as String?;
+    if (key == null) return;
+    final screenSizeMap = args['screenSize'] as Map<dynamic, dynamic>;
+    final screenSize = Size(
+        screenSizeMap['width'] as double, screenSizeMap['height'] as double);
+    final superViewSizeMap = args['superViewSize'] as Map<dynamic, dynamic>;
+    final superViewSize = Size(superViewSizeMap['width'] as double,
+        superViewSizeMap['height'] as double);
+    final frameMap = args['frame'] as Map<dynamic, dynamic>;
+    final frame = Rect.fromLTWH(
+        frameMap['x'] as double,
+        frameMap['y'] as double,
+        frameMap['width'] as double,
+        frameMap['height'] as double);
+    switch (key) {
+      case 'navBackButtonFrameBlock':
+        navUi?.navBackButtonFrameBlock?.call(screenSize, superViewSize, frame);
+        break;
+      case 'navTitleFrameBlock':
+        navUi?.navTitleFrameBlock?.call(screenSize, superViewSize, frame);
+        break;
+      case 'navMoreViewFrameBlock':
+        navUi?.navMoreViewFrameBlock?.call(screenSize, superViewSize, frame);
+        break;
+      case 'logoFrameBlock':
+        logoUi?.logoFrameBlock?.call(screenSize, superViewSize, frame);
+        break;
+      case 'sloganFrameBlock':
+        sloganUi?.sloganFrameBlock?.call(screenSize, superViewSize, frame);
+        break;
+      case 'numberFrameBlock':
+        numberUi?.numberFrameBlock?.call(screenSize, superViewSize, frame);
+        break;
+      case 'loginBtnFrameBlock':
+        loginBtnUi?.loginBtnFrameBlock?.call(screenSize, superViewSize, frame);
+        break;
+      case 'changeBtnFrameBlock':
+        switchUi?.changeBtnFrameBlock?.call(screenSize, superViewSize, frame);
+        break;
+      case 'privacyFrameBlock':
+        privacyUi?.privacyFrameBlock?.call(screenSize, superViewSize, frame);
+        break;
+      case 'contentViewFrameBlock':
+        pageUi?.contentViewFrameBlock?.call(screenSize, superViewSize, frame);
+        break;
+      case 'alertTitleBarFrameBlock':
+        privacyAlertUi?.alertTitleBarFrameBlock
+            ?.call(screenSize, superViewSize, frame);
+        break;
+      case 'alertTitleFrameBlock':
+        privacyAlertUi?.alertTitleFrameBlock
+            ?.call(screenSize, superViewSize, frame);
+        break;
+      case 'alertCloseItemFrameBlock':
+        privacyAlertUi?.alertCloseItemFrameBlock
+            ?.call(screenSize, superViewSize, frame);
+        break;
+      case 'privacyAlertFrameBlock':
+        privacyAlertUi?.privacyAlertFrameBlock
+            ?.call(screenSize, superViewSize, frame);
+        break;
+      case 'privacyAlertTitleFrameBlock':
+        privacyAlertUi?.privacyAlertTitleFrameBlock
+            ?.call(screenSize, superViewSize, frame);
+        break;
+      case 'privacyAlertPrivacyContentFrameBlock':
+        privacyAlertUi?.privacyAlertPrivacyContentFrameBlock
+            ?.call(screenSize, superViewSize, frame);
+        break;
+      case 'privacyAlertButtonFrameBlock':
+        privacyAlertUi?.privacyAlertButtonFrameBlock
+            ?.call(screenSize, superViewSize, frame);
+        break;
+      case 'privacyAlertCloseFrameBlock':
+        privacyAlertUi?.privacyAlertCloseFrameBlock
+            ?.call(screenSize, superViewSize, frame);
+        break;
+    }
+  }
 }
 
 class AuthResultModel {
   /// result code
+  /// [AuthResultCode]
   final String? resultCode;
 
   /// result msg
@@ -161,8 +243,8 @@ class AuthResultModel {
   /// 仅在android返回
   final bool? isFailed;
 
-  AuthResultModel.fromMap(Map<String, dynamic> map)
-      : resultCode = map['resultCode'] as String?,
+  AuthResultModel.fromMap(Map<dynamic, dynamic> map)
+      : resultCode = map['resultCode'] as String? ?? map['code'] as String?,
         msg = map['msg'] as String?,
         isFailed = map['isFailed'] as bool?;
 

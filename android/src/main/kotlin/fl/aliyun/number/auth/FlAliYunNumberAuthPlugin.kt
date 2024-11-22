@@ -1,20 +1,15 @@
 package fl.aliyun.number.auth
 
 import android.content.Context
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
-import com.mobile.auth.gatewayauth.ActivityResultListener
 import com.mobile.auth.gatewayauth.AuthUIConfig
-import com.mobile.auth.gatewayauth.AuthUIControlClickListener
 import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper
 import com.mobile.auth.gatewayauth.PnsLoggerHandler
-import com.mobile.auth.gatewayauth.PreLoginResultListener
-import com.mobile.auth.gatewayauth.TokenResultListener
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -24,22 +19,22 @@ import io.flutter.plugin.common.MethodChannel.Result
 
 
 /** FlAliYunNumberAuthPlugin */
-class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandler,
-    TokenResultListener, PreLoginResultListener, ActivityResultListener,
-    AuthUIControlClickListener {
+class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandler {
     private lateinit var channel: MethodChannel
     private lateinit var context: Context
     private lateinit var authHelper: PhoneNumberAuthHelper
+
+    private lateinit var authListener: AuthListener
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         context = flutterPluginBinding.applicationContext
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "fl_aliyun_number_auth")
         channel.setMethodCallHandler(this)
+        authListener = AuthListener(channel)
     }
 
-
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        authHelper = PhoneNumberAuthHelper.getInstance(binding.activity, this)
+        authHelper = PhoneNumberAuthHelper.getInstance(binding.activity, authListener)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
@@ -55,20 +50,19 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
         channel.setMethodCallHandler(null)
     }
 
-    private var result: Result? = null
-
     override fun onMethodCall(call: MethodCall, result: Result) {
+        println("onMethodCall: ${call.method} ${call.arguments}")
         when (call.method) {
             "setAuthSDKInfo" -> {
-                this.result = result
                 val args = call.arguments as Map<*, *>
                 if (args["enableActivityResultListener"] as Boolean) {
-                    authHelper.setActivityResultListener(this)
+                    authHelper.setActivityResultListener(authListener)
                 }
                 if (args["enableAuthUIControlClickListener"] as Boolean) {
-                    authHelper.setUIClickListener(this)
+                    authHelper.setUIClickListener(authListener)
                 }
                 authHelper.setAuthSDKInfo(args["secret"] as String)
+                result.success(mapOf("resultCode" to "600000"))
             }
 
             "setLoggerInfo" -> {
@@ -83,9 +77,9 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
             }
 
             "getLoginToken" -> {
-                this.result = result
+                authListener.result = result
                 val args = call.arguments as Map<*, *>
-                authHelper.setAuthListener(this)
+                authHelper.setAuthListener(authListener)
                 authHelper.getLoginToken(context, args["timeout"] as Int)
             }
 
@@ -95,9 +89,9 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
             }
 
             "accelerateLoginPage" -> {
-                this.result = result
+                authListener.result = result
                 val args = call.arguments as Map<*, *>
-                authHelper.accelerateLoginPage(args["timeout"] as Int, this)
+                authHelper.accelerateLoginPage(args["timeout"] as Int, authListener)
             }
 
             "getVersion" -> {
@@ -105,7 +99,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
             }
 
             "checkEnvAvailable" -> {
-                this.result = result
+                authListener.result = result
                 val args = call.arguments as Map<*, *>
                 authHelper.checkEnvAvailable(args["authType"] as Int)
             }
@@ -206,10 +200,6 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
         }
     }
 
-    private fun resultSuccess(any: Any?) {
-        result?.success(any)
-        this.result = null
-    }
 
     private var mPnsLoggerHandler: PnsLoggerHandler = object : PnsLoggerHandler {
         override fun monitor(msg: String?) {
@@ -235,30 +225,6 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
         override fun error(msg: String?) {
             channel.invokeMethod("onLoggerHandler", mapOf("level" to "error", "msg" to msg))
         }
-
-    }
-
-    override fun onTokenSuccess(s: String?) {
-        resultSuccess(mapOf("resultCode" to s, "isFailed" to false))
-    }
-
-    override fun onTokenFailed(s: String?, s1: String?) {
-        resultSuccess(mapOf("resultCode" to s, "isFailed" to true, "msg" to s1))
-    }
-
-    override fun onTokenFailed(s: String?) {
-        resultSuccess(mapOf("resultCode" to s, "isFailed" to true))
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        channel.invokeMethod(
-            "onActivityResult",
-            mapOf("requestCode" to requestCode, "resultCode" to resultCode, "data" to data?.data)
-        )
-    }
-
-    override fun onClick(code: String?, context: Context?, jsonString: String?) {
-        channel.invokeMethod("onAuthUIClick", mapOf("code" to code, "json" to jsonString))
     }
 
     private fun addAuthRegisterViewConfig(call: MethodCall, result: Result) {

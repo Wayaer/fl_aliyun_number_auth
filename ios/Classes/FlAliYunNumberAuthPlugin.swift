@@ -33,6 +33,7 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             reporter.setConsolePrintLoggerEnable(args["enable"] as! Bool)
             reporter.setUploadEnable(args["enableUpload"] as! Bool)
             if args["enableHandler"] as! Bool {}
+            result(true)
         case "getLoginToken":
             getLoginToken(call, result)
         case "quitLoginPage":
@@ -117,13 +118,27 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
         }
     }
 
-    func invokeFrame(_ name: String, _ screenSize: CGSize, _ superViewSize: CGSize, _ frame: CGRect) {
-        channel.invokeMethod("onViewFrameBlock", arguments: [
-            "name": name,
-            "screenSize": screenSize.toMap(),
-            "superViewSize": superViewSize.toMap(),
-            "frame": frame.toMap(),
-        ])
+    func onViewFrameBlock(_ args: [String: Any], _ key: String) -> PNSBuildFrameBlock {
+        let blockKey = "\(key)Block"
+        return { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
+            if args[blockKey] != nil {
+                self.channel.invokeMethod("onViewFrameBlock", arguments: [
+                    "key": blockKey,
+                    "screenSize": screenSize.toMap(),
+                    "superViewSize": superViewSize.toMap(),
+                    "frame": frame.toMap(),
+                ])
+            }
+
+            if let value = args[key] as? [String: Any] {
+                return value.toCGRect()
+            }
+            return frame
+        }
+    }
+
+    func enableFrameBlock(_ args: [String: Any], _ key: String) -> Bool {
+        args["\(key)Block"] != nil || (args[key] as? [String: Any]) != nil
     }
 
     func setAuthUI(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
@@ -159,32 +174,15 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
                     authUiModel.navMoreView = view
                 }
             }
-            if let value = navUi["navBackButtonFrameBlock"] as? Bool, value {
-                authUiModel.navMoreViewFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("navBackButtonFrameBlock", screenSize, superViewSize, frame)
-                    if let value = navUi["navBackButtonFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
-                }
+
+            if enableFrameBlock(navUi, "navBackButtonFrame") {
+                authUiModel.navMoreViewFrameBlock = onViewFrameBlock(navUi, "navBackButtonFrame")
             }
-            if let value = navUi["navTitleFrameBlock"] as? Bool, value {
-                authUiModel.navTitleFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("navTitleFrameBlock", screenSize, superViewSize, frame)
-                    if let value = navUi["navTitleFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
-                }
+            if enableFrameBlock(navUi, "navTitleFrame") {
+                authUiModel.navTitleFrameBlock = onViewFrameBlock(navUi, "navBackButtonFrame")
             }
-            if let value = navUi["navMoreViewFrameBlock"] as? Bool, value {
-                authUiModel.navMoreViewFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("navMoreViewFrameBlock", screenSize, superViewSize, frame)
-                    if let value = navUi["navMoreViewFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
-                }
+            if enableFrameBlock(navUi, "navMoreViewFrame") {
+                authUiModel.navMoreViewFrameBlock = onViewFrameBlock(navUi, "navMoreViewFrame")
             }
             if let value = navUi["privacyNavColor"] as? Int {
                 authUiModel.privacyNavColor = value.toColor()
@@ -210,14 +208,9 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             if let value = logoUi["logoIsHidden"] as? Bool {
                 authUiModel.logoIsHidden = value
             }
-            if let value = logoUi["logoFrameBlock"] as? Bool, value {
-                authUiModel.logoFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("logoFrameBlock", screenSize, superViewSize, frame)
-                    if let value = logoUi["logoFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
-                }
+
+            if enableFrameBlock(logoUi, "logoFrame") {
+                authUiModel.logoFrameBlock = onViewFrameBlock(logoUi, "logoFrame")
             }
         }
         if let sloganUi = args["sloganUi"] as? [String: Any] {
@@ -228,14 +221,8 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
                 authUiModel.sloganIsHidden = value
             }
 
-            if let value = sloganUi["sloganFrameBlock"] as? Bool, value {
-                authUiModel.logoFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("sloganFrameBlock", screenSize, superViewSize, frame)
-                    if let value = sloganUi["sloganFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
-                }
+            if enableFrameBlock(sloganUi, "sloganFrame") {
+                authUiModel.sloganFrameBlock = onViewFrameBlock(sloganUi, "sloganFrame")
             }
         }
         if let numberUi = args["numberUi"] as? [String: Any] {
@@ -245,14 +232,8 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             if let value = numberUi["numberFont"] as? [String: Any] {
                 authUiModel.numberFont = value.toUIFont()
             }
-            if let value = numberUi["numberFrameBlock"] as? Bool, value {
-                authUiModel.logoFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("numberFrameBlock", screenSize, superViewSize, frame)
-                    if let value = numberUi["numberFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
-                }
+            if enableFrameBlock(numberUi, "numberFrame") {
+                authUiModel.numberFrameBlock = onViewFrameBlock(numberUi, "numberFrame")
             }
         }
 
@@ -269,14 +250,9 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             if let value = loginBtnUi["autoHideLoginLoading"] as? Bool {
                 authUiModel.autoHideLoginLoading = value
             }
-            if let value = loginBtnUi["logoFrameBlock"] as? Bool, value {
-                authUiModel.logoFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("logoFrameBlock", screenSize, superViewSize, frame)
-                    if let value = loginBtnUi["logoFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
-                }
+
+            if enableFrameBlock(loginBtnUi, "loginBtnFrame") {
+                authUiModel.loginBtnFrameBlock = onViewFrameBlock(loginBtnUi, "loginBtnFrame")
             }
         }
         if let switchUi = args["switchUi"] as? [String: Any] {
@@ -286,14 +262,9 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             if let value = switchUi["changeBtnIsHidden"] as? Bool {
                 authUiModel.changeBtnIsHidden = value
             }
-            if let value = switchUi["changeBtnFrameBlock"] as? Bool, value {
-                authUiModel.changeBtnFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("changeBtnFrameBlock", screenSize, superViewSize, frame)
-                    if let value = switchUi["changeBtnFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
-                }
+
+            if enableFrameBlock(switchUi, "changeBtnFrame") {
+                authUiModel.changeBtnFrameBlock = onViewFrameBlock(switchUi, "changeBtnFrame")
             }
         }
         if let privacyUi = args["privacyUi"] as? [String: Any] {
@@ -346,14 +317,8 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             if let value = privacyUi["privacyFont"] as? [String: Any] {
                 authUiModel.privacyFont = value.toUIFont()
             }
-            if let value = privacyUi["privacyFrameBlock"] as? Bool, value {
-                authUiModel.privacyFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("privacyFrameBlock", screenSize, superViewSize, frame)
-                    if let value = privacyUi["privacyFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
-                }
+            if enableFrameBlock(privacyUi, "privacyFrame") {
+                authUiModel.privacyFrameBlock = onViewFrameBlock(privacyUi, "privacyFrame")
             }
 
             if let value = privacyUi["privacyOperatorColor"] as? Int {
@@ -371,12 +336,8 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
         }
         if let pageUi = args["pageUi"] as? [String: Any] {
             if let value = pageUi["contentViewFrameBlock"] as? Bool, value {
-                authUiModel.contentViewFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("contentViewFrameBlock", screenSize, superViewSize, frame)
-                    if let value = pageUi["contentViewFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
+                if enableFrameBlock(pageUi, "contentViewFrame") {
+                    authUiModel.contentViewFrameBlock = onViewFrameBlock(pageUi, "contentViewFrame")
                 }
             }
             if let value = pageUi["supportedInterfaceOrientations"] as? Int {
@@ -420,33 +381,16 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             if let value = privacyAlertUi["alertCloseItemIsHidden"] as? Bool {
                 authUiModel.alertCloseItemIsHidden = value
             }
-            if let value = privacyAlertUi["alertTitleBarFrameBlock"] as? Bool, value {
-                authUiModel.alertTitleBarFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("alertTitleBarFrameBlock", screenSize, superViewSize, frame)
-                    if let value = privacyAlertUi["alertTitleBarFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
-                }
+            if enableFrameBlock(privacyAlertUi, "alertTitleBarFrame") {
+                authUiModel.alertTitleBarFrameBlock = onViewFrameBlock(privacyAlertUi, "alertTitleBarFrame")
             }
-            if let value = privacyAlertUi["alertTitleFrameBlock"] as? Bool, value {
-                authUiModel.alertTitleFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("alertTitleFrameBlock", screenSize, superViewSize, frame)
-                    if let value = privacyAlertUi["alertTitleFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
-                }
+            if enableFrameBlock(privacyAlertUi, "alertTitleFrame") {
+                authUiModel.alertTitleFrameBlock = onViewFrameBlock(privacyAlertUi, "alertTitleFrame")
             }
-            if let value = privacyAlertUi["alertCloseItemFrameBlock"] as? Bool, value {
-                authUiModel.alertCloseItemFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("alertCloseItemFrameBlock", screenSize, superViewSize, frame)
-                    if let value = privacyAlertUi["alertCloseItemFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
-                }
+            if enableFrameBlock(privacyAlertUi, "alertCloseItemFrame") {
+                authUiModel.alertCloseItemFrameBlock = onViewFrameBlock(privacyAlertUi, "alertCloseItemFrame")
             }
+
             if let value = privacyAlertUi["alertBlurViewColor"] as? Int {
                 authUiModel.alertBlurViewColor = value.toColor()
             }
@@ -576,50 +520,22 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
 //            if let value = privacyAlertUi["privacyAlertMaskExitAnimation"] as? String {
 //                authUiModel.privacyAlertMaskExitAnimation = value
 //            }
-            if let value = privacyAlertUi["privacyAlertFrameBlock"] as? Bool, value {
-                authUiModel.privacyAlertFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("privacyAlertFrameBlock", screenSize, superViewSize, frame)
-                    if let value = privacyAlertUi["privacyAlertFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
-                }
+            if enableFrameBlock(privacyAlertUi, "privacyAlertFrame") {
+                authUiModel.privacyAlertFrameBlock = onViewFrameBlock(privacyAlertUi, "privacyAlertFrame")
             }
-            if let value = privacyAlertUi["privacyAlertTitleFrameBlock"] as? Bool, value {
-                authUiModel.privacyAlertTitleFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("privacyAlertTitleFrameBlock", screenSize, superViewSize, frame)
-                    if let value = privacyAlertUi["privacyAlertTitleFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
-                }
+            if enableFrameBlock(privacyAlertUi, "privacyAlertTitleFrame") {
+                authUiModel.privacyAlertTitleFrameBlock = onViewFrameBlock(privacyAlertUi, "privacyAlertTitleFrame")
             }
-            if let value = privacyAlertUi["privacyAlertPrivacyContentFrameBlock"] as? Bool, value {
-                authUiModel.privacyAlertPrivacyContentFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("privacyAlertPrivacyContentFrameBlock", screenSize, superViewSize, frame)
-                    if let value = privacyAlertUi["privacyAlertPrivacyContentFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
-                }
+
+            if enableFrameBlock(privacyAlertUi, "privacyAlertPrivacyContentFrame") {
+                authUiModel.privacyAlertPrivacyContentFrameBlock = onViewFrameBlock(privacyAlertUi, "privacyAlertPrivacyContentFrame")
             }
-            if let value = privacyAlertUi["privacyAlertButtonFrameBlock"] as? Bool, value {
-                authUiModel.privacyAlertButtonFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("privacyAlertButtonFrameBlock", screenSize, superViewSize, frame)
-                    if let value = privacyAlertUi["privacyAlertButtonFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
-                }
+
+            if enableFrameBlock(privacyAlertUi, "privacyAlertButtonFrame") {
+                authUiModel.privacyAlertButtonFrameBlock = onViewFrameBlock(privacyAlertUi, "privacyAlertButtonFrame")
             }
-            if let value = privacyAlertUi["privacyAlertCloseFrameBlock"] as? Bool, value {
-                authUiModel.privacyAlertCloseFrameBlock = { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-                    self.invokeFrame("privacyAlertCloseFrameBlock", screenSize, superViewSize, frame)
-                    if let value = privacyAlertUi["privacyAlertCloseFrame"] as? [String: Any] {
-                        return value.toCGRect()
-                    }
-                    return frame
-                }
+            if enableFrameBlock(privacyAlertUi, "privacyAlertCloseFrame") {
+                authUiModel.privacyAlertCloseFrameBlock = onViewFrameBlock(privacyAlertUi, "privacyAlertCloseFrame")
             }
             if let value = privacyAlertUi["privacyAlertBtnContent"] as? String {
                 authUiModel.privacyAlertBtnContent = value
@@ -634,6 +550,7 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
 //                authUiModel.privacyAlertCustomViewLayoutBlock = value
 //            }
         }
+        result(true)
     }
 
     // 获取当前的 UIViewController
@@ -714,7 +631,7 @@ extension [String: Any] {
         let isSystemBold = self["isSystemBold"] as? Bool ?? false
         if isSystemBold {
             return UIFont.boldSystemFont(ofSize: fontSize)
-        } else if let fontWeight = self["weight"] as? Int {
+        } else if let fontWeight = self["weight"] as? Double {
             return UIFont.systemFont(ofSize: fontSize, weight: UIFont.Weight(rawValue: CGFloat(fontWeight)))
         } else {
             return UIFont.systemFont(ofSize: fontSize)

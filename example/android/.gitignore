@@ -12,3 +12,4 @@ key.properties
 **/*.keystore
 **/*.jks
 /.kotlin
+/app/src/main/kotlin/com/

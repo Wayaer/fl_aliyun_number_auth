@@ -1,5 +1,5 @@
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
-import 'package:fl_aliyun_number_auth/src/extension.dart';
+import 'package:fl_aliyun_number_auth/src/const/extension.dart';
 import 'package:flutter/material.dart';
 
 /// 配置页面相关函数

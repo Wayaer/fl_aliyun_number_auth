@@ -46,10 +46,13 @@ android {
         consumerProguardFiles 'consumer-rules.pro'
         multiDexEnabled true
     }
-
-    dependencies {
-        implementation(name: 'auth_number_product-2.14.2-log-online-standard-cuum-release', ext: 'aar')
-        implementation(name: 'main-2.2.3-release', ext: 'aar')
-        implementation(name: 'logger-2.2.2-release', ext: 'aar')
-    }
 }
+dependencies {
+    implementation "androidx.appcompat:appcompat:1.7.0"
+    implementation 'com.google.code.gson:gson:2.11.0'
+    // 阿里云sdk
+    implementation(name: 'auth_number_product-2.14.3-log-online-standard-cuum-release', ext: 'aar')
+    implementation(name: 'main-2.2.3-release', ext: 'aar')
+    implementation(name: 'logger-2.2.2-release', ext: 'aar')
+}
+

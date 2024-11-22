@@ -18,7 +18,7 @@ aliyun number auth for flutter
   s.platform = :ios, '13.0'
   s.vendored_frameworks = 'Frameworks/*.framework'
   s.resource = 'Frameworks/ATAuthSDK.framework/ATAuthSDK.bundle'
-  s.static_framework = true
+#   s.static_framework = true
   s.xcconfig = {
      'OTHER_LDFLAGS' => '-ObjC',
      'ENABLE_BITCODE' => 'NO'
