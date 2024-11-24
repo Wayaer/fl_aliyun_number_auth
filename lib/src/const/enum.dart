@@ -10,12 +10,38 @@ enum AuthType {
 enum Typeface { sansSerif, serif, monospace }
 
 enum SystemUiFlag {
-  /// View.SYSTEM_UI_FLAG_LOW_PROFILE：非全屏显示状态，状态栏的部分图标会被隐藏。
+
+  /// 非全屏显示状态，状态栏的部分图标会被隐藏
   lowProfile,
 
-  /// View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN：全屏显示。
+  /// 全屏显示，状态栏区域被隐藏
   layoutFullscreen,
+
+  /// 隐藏导航栏
+  hideNavigation,
+
+  /// 启用沉浸式模式，状态栏和导航栏可通过手势出现
+  immersive,
+
+  /// 启用沉浸式粘性模式，状态栏和导航栏不可通过手势恢复
+  immersiveSticky,
+
+  /// 状态栏区域完全隐藏
+  fullscreen,
+
+  /// 布局扩展到状态栏区域
+  layoutStable,
+
+  /// 使用浅色状态栏图标（白色）
+  lightStatusBar,
+
+  /// 使用浅色导航栏图标（白色）
+  lightNavigationBar,
+
+  /// 状态栏显示为透明，且可见的内容被设置为全屏
+  layoutHideNavigation,
 }
+
 
 enum Gravity {
   /// start = left

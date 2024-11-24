@@ -1,6 +1,6 @@
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fl_aliyun_number_auth/src/const/extension.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
 
 /// 配置授权页Logo
 class LogoUIModelForAndroid {
@@ -9,19 +9,19 @@ class LogoUIModelForAndroid {
   /// false：表示显示。
   final bool? logoHidden;
 
-  /// 设置Logo图片路径（即drawable下文件名称，但无需带文件格式）。
+  /// 设置Logo图片路径。
   final String? logoImgPath;
 
-  /// 设置Logo控件宽度（单位：dp）。
+  /// 设置Logo控件宽度（单位：px）。
   final int? logoWidth;
 
-  /// 设置Logo控件高度（单位：dp）。
+  /// 设置Logo控件高度（单位：px）。
   final int? logoHeight;
 
-  /// 设置Logo控件相对导航栏顶部的位移（单位：dp）。
+  /// 设置Logo控件相对导航栏顶部的位移（单位：px）。
   final int? logoOffsetY;
 
-  /// 设置Logo控件相对底部的位移（单位：dp）。
+  /// 设置Logo控件相对底部的位移（单位：px）。
   final int? logoOffsetYB;
 
   /// 设置Logo图片缩放模式。模式类型：

@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
-import 'package:fl_aliyun_number_auth/src/const/extension.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
 
 /// 配置授权页登录按钮
 class LoginBtnUIModelForAndroid {
@@ -14,22 +14,22 @@ class LoginBtnUIModelForAndroid {
   /// 设置登录按钮文字大小。
   final int? logBtnTextSize;
 
-  /// 设置登录按钮宽度（单位：dp）。
+  /// 设置登录按钮宽度（单位：px）。
   final int? logBtnWidth;
 
-  /// 设置登录按钮高度（单位：dp）。
+  /// 设置登录按钮高度（单位：px）。
   final int? logBtnHeight;
 
-  /// 设置登录按钮相对于屏幕左右边缘边距（单位：dp）。
+  /// 设置登录按钮相对于屏幕左右边缘边距（单位：px）。
   final int? logBtnMarginLeftAndRight;
 
   /// 设置登录按钮背景图片的路径。
   final String? logBtnBackgroundPath;
 
-  /// 设置登录按钮相对导航栏顶部的位移（单位：dp）。
+  /// 设置登录按钮相对导航栏顶部的位移（单位：px）。
   final int? logBtnOffsetY;
 
-  /// 设置登录按钮相对底部的位移（单位：dp）。
+  /// 设置登录按钮相对底部的位移（单位：px）。
   final int? logBtnOffsetYB;
 
   /// 设置登录loading dialog背景图片的路径。
@@ -41,14 +41,6 @@ class LoginBtnUIModelForAndroid {
   /// 设置手机号掩码的布局对齐方式，支持以下三种对齐方式：
   /// [Gravity.start]、[Gravity.centerHorizontal]、[Gravity.end]
   final Gravity? logBtnLayoutGravity;
-
-  /// Drawable
-  /// 设置登录按钮背景图片的drawable对象。
-  final String? logBtnBackgroundDrawable;
-
-  /// Drawable
-  /// 设置登录loading dialog背景图片的drawable对象。
-  final String? loadingImgDrawable;
 
   /// 设置手机号码文本使用字体
   final Typeface? logBtnTypeface;
@@ -66,14 +58,12 @@ class LoginBtnUIModelForAndroid {
     this.loadingImgPath,
     this.logBtnOffsetX,
     this.logBtnLayoutGravity,
-    this.logBtnBackgroundDrawable,
-    this.loadingImgDrawable,
     this.logBtnTypeface,
   });
 
   Map<String, dynamic> toMap() => {
         'logBtnText': logBtnText,
-        'logBtnTextColor': logBtnTextColor?.value,
+        'logBtnTextColor': logBtnTextColor?.toHex(),
         'logBtnTextSize': logBtnTextSize,
         'logBtnWidth': logBtnWidth,
         'logBtnHeight': logBtnHeight,
@@ -84,8 +74,6 @@ class LoginBtnUIModelForAndroid {
         'loadingImgPath': loadingImgPath,
         'logBtnOffsetX': logBtnOffsetX,
         'logBtnLayoutGravity': logBtnLayoutGravity?.index,
-        'logBtnBackgroundDrawable': logBtnBackgroundDrawable,
-        'loadingImgDrawable': loadingImgDrawable,
         'logBtnTypeface': logBtnTypeface?.index,
       };
 }

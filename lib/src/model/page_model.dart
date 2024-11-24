@@ -1,5 +1,5 @@
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
-import 'package:fl_aliyun_number_auth/src/const/extension.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
 import 'package:flutter/material.dart';
 
 /// 配置页面相关函数
@@ -14,14 +14,12 @@ class PageUIModelForAndroid {
   final PageOrientation? screenOrientation;
 
   /// 设置授权页背景图。
-  /// 说明
-  /// drawable资源的目录，不需要加后缀，如图片在drawable中的存放目录是res/drawable-xxhdpi/loading.png,则传入参数为"loading"，setPageBackgroundPath("loading")。
   final String? pageBackgroundPath;
 
-  /// 设置弹窗模式授权页宽度（单位：dp）,设置大于0，即为弹窗模式。
+  /// 设置弹窗模式授权页宽度（单位：px）,设置大于0，即为弹窗模式。
   final int? dialogWidth;
 
-  /// 设置弹窗模式授权页高度（单位：dp），设置大于0，即为弹窗模式。
+  /// 设置弹窗模式授权页高度（单位：px），设置大于0，即为弹窗模式。
   final int? dialogHeight;
 
   /// 设置弹窗授权页的蒙层透明度，取值：0~1。
@@ -30,10 +28,10 @@ class PageUIModelForAndroid {
   /// 介于0和1之间的值，表示不同程度的半透明。
   final double? dialogAlpha;
 
-  /// 设置弹窗模式授权页X轴偏移（单位：dp）。
+  /// 设置弹窗模式授权页X轴偏移（单位：px）。
   final int? dialogOffsetX;
 
-  /// 设置弹窗模式授权页Y轴偏移（单位：dp）。
+  /// 设置弹窗模式授权页Y轴偏移（单位：px）。
   final int? dialogOffsetY;
 
   /// 设置授权页弹窗模式，点击非弹窗区域关闭授权页。
@@ -43,10 +41,8 @@ class PageUIModelForAndroid {
 
   /// 设置授权页是否居于底部。
   final bool? dialogBottom;
-
-  /// Drawable
-  /// 设置授权页背景图的drawable对象。
-  final String? pageBackgroundDrawable;
+  /// 设置授权页是否居于中。
+  final bool? dialogCenter;
 
   /// 自定义协议页跳转Action。
   final String? protocolAction;
@@ -69,7 +65,7 @@ class PageUIModelForAndroid {
     this.dialogOffsetY,
     this.tapAuthPageMaskClosePage,
     this.dialogBottom,
-    this.pageBackgroundDrawable,
+    this.dialogCenter,
     this.protocolAction,
     this.packageName,
     this.webCacheMode,
@@ -87,7 +83,7 @@ class PageUIModelForAndroid {
         'dialogOffsetY': dialogOffsetY,
         'tapAuthPageMaskClosePage': tapAuthPageMaskClosePage,
         'dialogBottom': dialogBottom,
-        'pageBackgroundDrawable': pageBackgroundDrawable,
+        'dialogCenter': dialogCenter,
         'protocolAction': protocolAction,
         'packageName': packageName,
         'webCacheMode': webCacheMode,

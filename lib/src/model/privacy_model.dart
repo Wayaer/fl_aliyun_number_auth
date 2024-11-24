@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
-import 'package:fl_aliyun_number_auth/src/const/extension.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
 
 class PrivacyTextUrl {
   /// 名称
@@ -32,10 +32,10 @@ class PrivacyUIModelForAndroid {
   /// 设置隐私条款名称颜色（基础文字颜色，协议文字颜色）。
   final Color? privacyUrlColor;
 
-  /// 设置隐私条款相对导航栏顶部的位移（单位：dp）。
+  /// 设置隐私条款相对导航栏顶部的位移（单位：px）。
   final int? privacyOffsetY;
 
-  /// 设置隐私条款相对底部的位移（单位：dp）。
+  /// 设置隐私条款相对底部的位移（单位：px）。
   final int? privacyOffsetYB;
 
   /// 设置隐私条款是否默认勾选。
@@ -44,10 +44,10 @@ class PrivacyUIModelForAndroid {
   /// 设置隐私条款文字对齐方式（单位：Gravity.xxx）
   final Gravity? protocolGravity;
 
-  /// 设置隐私条款文字大小（单位：dp）。
+  /// 设置隐私条款文字大小（单位：px）。
   final int? privacyTextSize;
 
-  /// 设置隐私条款距离手机左右边缘的边距（单位：dp）。
+  /// 设置隐私条款距离手机左右边缘的边距（单位：px）。
   final int? privacyMargin;
 
   /// 设置开发者隐私条款前置自定义文案。
@@ -83,19 +83,11 @@ class PrivacyUIModelForAndroid {
   /// 该参数控制了整个隐私栏（包含check box）在其父布局中的对齐方式，而setProtocolGravity控制的是隐私协议文字内容在文本框中的对齐方式。
   final Gravity? protocolLayoutGravity;
 
-  /// 设置隐私栏X轴偏移量（单位：dp）。
+  /// 设置隐私栏X轴偏移量（单位：px）。
   final int? privacyOffsetX;
 
   /// 设置check box未勾选时，点击登录按钮toast是否显示。
   final bool? logBtnToastHidden;
-
-  /// Drawable
-  /// 设置复选框未选中时的图片的drawable对象。
-  final String? uncheckedImgDrawable;
-
-  /// Drawable
-  /// 设置复选框选中时的图片的drawable对象。
-  final String? checkedImgDrawable;
 
   /// 设置协议文本使用字体。
   final Typeface? protocolTypeface;
@@ -112,10 +104,10 @@ class PrivacyUIModelForAndroid {
   /// 设置授权页运营商协议文本颜色
   final Color? privacyOperatorColor;
 
-  /// 设置隐私协议栏复选框宽度（单位：dp）。
+  /// 设置隐私协议栏复选框宽度（单位：px）。
   final int? checkBoxWidth;
 
-  /// 设置隐私协议栏复选框高度（单位：dp）。
+  /// 设置隐私协议栏复选框高度（单位：px）。
   final int? checkBoxHeight;
 
   const PrivacyUIModelForAndroid({
@@ -141,8 +133,6 @@ class PrivacyUIModelForAndroid {
     this.protocolLayoutGravity,
     this.privacyOffsetX,
     this.logBtnToastHidden,
-    this.uncheckedImgDrawable,
-    this.checkedImgDrawable,
     this.protocolTypeface,
     this.privacyOneColor,
     this.privacyTwoColor,
@@ -156,8 +146,8 @@ class PrivacyUIModelForAndroid {
         'privacyOne': privacyOne?.toMap(),
         'privacyTwo': privacyTwo?.toMap(),
         'privacyThree': privacyThree?.toMap(),
-        'privacyColor': privacyColor?.value,
-        'privacyUrlColor': privacyUrlColor?.value,
+        'privacyColor': privacyColor?.toHex(),
+        'privacyUrlColor': privacyUrlColor?.toHex(),
         'privacyOffsetY': privacyOffsetY,
         'privacyOffsetYB': privacyOffsetYB,
         'privacyState': privacyState,
@@ -175,13 +165,11 @@ class PrivacyUIModelForAndroid {
         'protocolLayoutGravity': protocolLayoutGravity?.index,
         'privacyOffsetX': privacyOffsetX,
         'logBtnToastHidden': logBtnToastHidden,
-        'uncheckedImgDrawable': uncheckedImgDrawable,
-        'checkedImgDrawable': checkedImgDrawable,
         'protocolTypeface': protocolTypeface?.index,
-        'privacyOneColor': privacyOneColor?.value,
-        'privacyTwoColor': privacyTwoColor?.value,
-        'privacyThreeColor': privacyThreeColor?.value,
-        'privacyOperatorColor': privacyOperatorColor?.value,
+        'privacyOneColor': privacyOneColor?.toHex(),
+        'privacyTwoColor': privacyTwoColor?.toHex(),
+        'privacyThreeColor': privacyThreeColor?.toHex(),
+        'privacyOperatorColor': privacyOperatorColor?.toHex(),
         'checkBoxWidth': checkBoxWidth,
         'checkBoxHeight': checkBoxHeight,
       };
@@ -289,9 +277,9 @@ class PrivacyUIModelForIOS {
         'privacyFont': privacyFont?.toMap(),
         'privacyFrameBlock': privacyFrameBlock != null,
         'privacyFrame': privacyFrame?.toMap(),
-        'privacyOperatorColor': privacyOperatorColor?.value,
-        'privacyOneColor': privacyOneColor?.value,
-        'privacyTwoColor': privacyTwoColor?.value,
-        'privacyThreeColor': privacyThreeColor?.value,
+        'privacyOperatorColor': privacyOperatorColor?.toHex(),
+        'privacyOneColor': privacyOneColor?.toHex(),
+        'privacyTwoColor': privacyTwoColor?.toHex(),
+        'privacyThreeColor': privacyThreeColor?.toHex(),
       };
 }

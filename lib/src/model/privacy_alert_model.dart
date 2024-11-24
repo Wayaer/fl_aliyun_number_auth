@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
-import 'package:fl_aliyun_number_auth/src/const/extension.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
 
 /// 二次隐私协议弹窗页面
 class PrivacyAlertUIModelForAndroid {
@@ -17,7 +17,7 @@ class PrivacyAlertUIModelForAndroid {
 
   /// 设置二次隐私协议弹窗背景蒙层是否显示。
   /// true（默认值）：表示显示。
-  ///
+  /// false：表示不显示。
   final bool? privacyAlertMaskIsNeedShow;
 
   /// 设置二次隐私协议弹窗蒙层透明度。默认值0.3。
@@ -53,10 +53,10 @@ class PrivacyAlertUIModelForAndroid {
   /// 设置弹窗高度。
   final int? privacyAlertHeight;
 
-  /// 设置弹窗水平偏移量。（单位：dp）
+  /// 设置弹窗水平偏移量。（单位：px）
   final int? privacyAlertOffsetX;
 
-  /// 设置弹窗竖直偏移量。（单位：dp）
+  /// 设置弹窗竖直偏移量。（单位：px）
   final int? privacyAlertOffsetY;
 
   /// 设置二次隐私协议弹窗标题背景颜色。
@@ -65,10 +65,10 @@ class PrivacyAlertUIModelForAndroid {
   /// 设置二次隐私协议弹窗标题支持居中、居左，默认居中显示。
   final Gravity? privacyAlertTitleAlignment;
 
-  /// 设置标题文字水平偏移量。（单位：dp）
+  /// 设置标题文字水平偏移量。（单位：px）
   final int? privacyAlertTitleOffsetX;
 
-  /// 设置标题文字竖直偏移量。（单位：dp）
+  /// 设置标题文字竖直偏移量。（单位：px）
   final int? privacyAlertTitleOffsetY;
 
   /// 设置标题文本。
@@ -104,23 +104,19 @@ class PrivacyAlertUIModelForAndroid {
   /// 设置按钮背景图片路径。
   final String? privacyAlertBtnBackgroundImgPath;
 
-  /// Drawable
-  /// 设置确认按钮背景图片对象。
-  final String? privacyAlertBtnBackgroundImgDrawable;
-
   /// 设置确认按钮文字颜色。
   final Color? privacyAlertBtnTextColor;
 
   /// 设置确认按钮文字颜色路径。
-  final String? privacyAlertBtnTextColorPath;
+  // final String? privacyAlertBtnTextColorPath;
 
   /// 设置确认按钮文字大小，默认值18 sp。
   final int? privacyAlertBtnTextSize;
 
-  /// 设置确认按钮宽度。（单位：dp）
+  /// 设置确认按钮宽度。（单位：px）
   final int? privacyAlertBtnWidth;
 
-  /// 设置确认按钮高度。（单位：dp）
+  /// 设置确认按钮高度。（单位：px）
   final int? privacyAlertBtnHeight;
 
   /// 设置右上角的关闭按钮。
@@ -134,14 +130,10 @@ class PrivacyAlertUIModelForAndroid {
   /// 设置关闭按钮缩放类型
   final ImageScaleType? privacyAlertCloseScaleType;
 
-  /// Drawable
-  /// 设置关闭按钮图片。
-  final String? privacyAlertCloseImgDrawable;
-
-  /// 设置关闭按钮宽度。（单位：dp）
+  /// 设置关闭按钮宽度。（单位：px）
   final int? privacyAlertCloseImgWidth;
 
-  /// 设置关闭按钮高度。（单位：dp）
+  /// 设置关闭按钮高度。（单位：px）
   final int? privacyAlertCloseImgHeight;
 
   /// 设置确认按钮布局方式。
@@ -228,16 +220,14 @@ class PrivacyAlertUIModelForAndroid {
     this.privacyAlertContentHorizontalMargin,
     this.privacyAlertContentVerticalMargin,
     this.privacyAlertBtnBackgroundImgPath,
-    this.privacyAlertBtnBackgroundImgDrawable,
     this.privacyAlertBtnTextColor,
-    this.privacyAlertBtnTextColorPath,
+    // this.privacyAlertBtnTextColorPath,
     this.privacyAlertBtnTextSize,
     this.privacyAlertBtnWidth,
     this.privacyAlertBtnHeight,
     this.privacyAlertCloseBtnShow,
     this.privacyAlertCloseImgPath,
     this.privacyAlertCloseScaleType,
-    this.privacyAlertCloseImgDrawable,
     this.privacyAlertCloseImgWidth,
     this.privacyAlertCloseImgHeight,
     this.privacyAlertBtnGravity,
@@ -264,44 +254,41 @@ class PrivacyAlertUIModelForAndroid {
         'privacyAlertMaskIsNeedShow': privacyAlertMaskIsNeedShow,
         'privacyAlertMaskAlpha': privacyAlertMaskAlpha,
         'privacyAlertAlpha': privacyAlertAlpha,
-        'privacyAlertBackgroundColor': privacyAlertBackgroundColor?.value,
+        'privacyAlertBackgroundColor': privacyAlertBackgroundColor?.toHex(),
         'privacyAlertEntryAnimation': privacyAlertEntryAnimation,
         'privacyAlertExitAnimation': privacyAlertExitAnimation,
         'privacyAlertCornerRadiusArray': privacyAlertCornerRadiusArray,
-        'privacyAlertAlignment': privacyAlertAlignment,
+        'privacyAlertAlignment': privacyAlertAlignment?.index,
         'privacyAlertWidth': privacyAlertWidth,
         'privacyAlertHeight': privacyAlertHeight,
         'privacyAlertOffsetX': privacyAlertOffsetX,
         'privacyAlertOffsetY': privacyAlertOffsetY,
         'privacyAlertTitleBackgroundColor':
-            privacyAlertTitleBackgroundColor?.value,
+            privacyAlertTitleBackgroundColor?.toHex(),
         'privacyAlertTitleAlignment': privacyAlertTitleAlignment?.index,
         'privacyAlertTitleOffsetX': privacyAlertTitleOffsetX,
         'privacyAlertTitleOffsetY': privacyAlertTitleOffsetY,
         'privacyAlertTitleContent': privacyAlertTitleContent,
         'privacyAlertTitleTextSize': privacyAlertTitleTextSize,
-        'privacyAlertTitleColor': privacyAlertTitleColor?.value,
+        'privacyAlertTitleColor': privacyAlertTitleColor?.toHex(),
         'privacyAlertContentBackgroundColor':
-            privacyAlertContentBackgroundColor?.value,
+            privacyAlertContentBackgroundColor?.toHex(),
         'privacyAlertContentTextSize': privacyAlertContentTextSize,
         'privacyAlertContentAlignment': privacyAlertContentAlignment?.index,
-        'privacyAlertContentColor': privacyAlertContentColor?.value,
-        'privacyAlertContentBaseColor': privacyAlertContentBaseColor?.value,
+        'privacyAlertContentColor': privacyAlertContentColor?.toHex(),
+        'privacyAlertContentBaseColor': privacyAlertContentBaseColor?.toHex(),
         'privacyAlertContentHorizontalMargin':
             privacyAlertContentHorizontalMargin,
         'privacyAlertContentVerticalMargin': privacyAlertContentVerticalMargin,
         'privacyAlertBtnBackgroundImgPath': privacyAlertBtnBackgroundImgPath,
-        'privacyAlertBtnBackgroundImgDrawable':
-            privacyAlertBtnBackgroundImgDrawable,
-        'privacyAlertBtnTextColor': privacyAlertBtnTextColor?.value,
-        'privacyAlertBtnTextColorPath': privacyAlertBtnTextColorPath,
+        'privacyAlertBtnTextColor': privacyAlertBtnTextColor?.toHex(),
+        // 'privacyAlertBtnTextColorPath': privacyAlertBtnTextColorPath,
         'privacyAlertBtnTextSize': privacyAlertBtnTextSize,
         'privacyAlertBtnWidth': privacyAlertBtnWidth,
         'privacyAlertBtnHeight': privacyAlertBtnHeight,
         'privacyAlertCloseBtnShow': privacyAlertCloseBtnShow,
         'privacyAlertCloseImgPath': privacyAlertCloseImgPath,
         'privacyAlertCloseScaleType': privacyAlertCloseScaleType?.index,
-        'privacyAlertCloseImgDrawable': privacyAlertCloseImgDrawable,
         'privacyAlertCloseImgWidth': privacyAlertCloseImgWidth,
         'privacyAlertCloseImgHeight': privacyAlertCloseImgHeight,
         'privacyAlertBtnGravity':
@@ -317,10 +304,10 @@ class PrivacyAlertUIModelForAndroid {
         'privacyAlertBtnTypeface': privacyAlertBtnTypeface?.index,
         'privacyAlertBefore': privacyAlertBefore,
         'privacyAlertEnd': privacyAlertEnd,
-        'privacyAlertOneColor': privacyAlertOneColor?.value,
-        'privacyAlertTwoColor': privacyAlertTwoColor?.value,
-        'privacyAlertThreeColor': privacyAlertThreeColor?.value,
-        'privacyAlertOperatorColor': privacyAlertOperatorColor?.value,
+        'privacyAlertOneColor': privacyAlertOneColor?.toHex(),
+        'privacyAlertTwoColor': privacyAlertTwoColor?.toHex(),
+        'privacyAlertThreeColor': privacyAlertThreeColor?.toHex(),
+        'privacyAlertOperatorColor': privacyAlertOperatorColor?.toHex(),
       };
 }
 
@@ -594,7 +581,7 @@ class PrivacyAlertUIModelForIOS {
   /// 这里仅提供基本框架，具体实现需要根据实际情况进行
 
   Map<String, dynamic> toMap() => {
-        'alertTitleBarColor': alertTitleBarColor?.value,
+        'alertTitleBarColor': alertTitleBarColor?.toHex(),
         'alertBarIsHidden': alertBarIsHidden,
         'alertTitle': alertTitle?.toMap(),
         'alertCloseImage': alertCloseImage,
@@ -605,7 +592,7 @@ class PrivacyAlertUIModelForIOS {
         'alertTitleFrame': alertTitleFrame?.toMap(),
         'alertCloseItemFrameBlock': alertCloseItemFrameBlock != null,
         'alertCloseItemFrame': alertCloseItemFrame?.toMap(),
-        'alertBlurViewColor': alertBlurViewColor?.value,
+        'alertBlurViewColor': alertBlurViewColor?.toHex(),
         'alertBlurViewAlpha': alertBlurViewAlpha,
         'alertCornerRadiusArray': alertCornerRadiusArray,
 
@@ -616,16 +603,16 @@ class PrivacyAlertUIModelForIOS {
         /// 'privacyAlertEntryAnimation': privacyAlertEntryAnimation,
         /// 'privacyAlertExitAnimation': privacyAlertExitAnimation,
         'privacyAlertCornerRadiusArray': privacyAlertCornerRadiusArray,
-        'privacyAlertBackgroundColor': privacyAlertBackgroundColor?.value,
+        'privacyAlertBackgroundColor': privacyAlertBackgroundColor?.toHex(),
         'privacyAlertAlpha': privacyAlertAlpha,
         'privacyAlertTitleFont': privacyAlertTitleFont?.toMap(),
-        'privacyAlertTitleColor': privacyAlertTitleColor?.value,
+        'privacyAlertTitleColor': privacyAlertTitleColor?.toHex(),
         'privacyAlertTitleBackgroundColor':
-            privacyAlertTitleBackgroundColor?.value,
+            privacyAlertTitleBackgroundColor?.toHex(),
         'privacyAlertTitleAlignment': privacyAlertTitleAlignment?.index,
         'privacyAlertContentFont': privacyAlertContentFont?.toMap(),
         'privacyAlertContentBackgroundColor':
-            privacyAlertContentBackgroundColor?.value,
+            privacyAlertContentBackgroundColor?.toHex(),
         'privacyAlertContentColors':
             privacyAlertContentColors?.map((e) => e.value).toList(),
         'privacyAlertContentAlignment': privacyAlertContentAlignment?.index,
@@ -637,12 +624,12 @@ class PrivacyAlertUIModelForIOS {
         'privacyAlertCloseButtonImage': privacyAlertCloseButtonImage,
         'privacyAlertMaskIsNeedShow': privacyAlertMaskIsNeedShow,
         'tapPrivacyAlertMaskCloseAlert': tapPrivacyAlertMaskCloseAlert,
-        'privacyAlertMaskColor': privacyAlertMaskColor?.value,
+        'privacyAlertMaskColor': privacyAlertMaskColor?.toHex(),
         'privacyAlertMaskAlpha': privacyAlertMaskAlpha,
-        'privacyAlertOperatorColor': privacyAlertOperatorColor?.value,
-        'privacyAlertOneColor': privacyAlertOneColor?.value,
-        'privacyAlertTwoColor': privacyAlertTwoColor?.value,
-        'privacyAlertThreeColor': privacyAlertThreeColor?.value,
+        'privacyAlertOperatorColor': privacyAlertOperatorColor?.toHex(),
+        'privacyAlertOneColor': privacyAlertOneColor?.toHex(),
+        'privacyAlertTwoColor': privacyAlertTwoColor?.toHex(),
+        'privacyAlertThreeColor': privacyAlertThreeColor?.toHex(),
         'privacyAlertPreText': privacyAlertPreText,
         'privacyAlertSufText': privacyAlertSufText,
 

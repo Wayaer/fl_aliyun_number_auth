@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
-import 'package:fl_aliyun_number_auth/src/const/extension.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
 
 /// 配置授权页Slogan
 class SloganUIModelForAndroid {
@@ -14,10 +14,10 @@ class SloganUIModelForAndroid {
   /// 设置Slogan文字大小。
   final int? sloganTextSize;
 
-  /// 设置Slogan相对导航栏顶部的位移（单位：dp）。
+  /// 设置Slogan相对导航栏顶部的位移（单位：px）。
   final int? sloganOffsetY;
 
-  /// 设置Slogan相对底部的位移（单位：dp）。
+  /// 设置Slogan相对底部的位移（单位：px）。
   final int? sloganOffsetYB;
 
   /// 设置slogan文本使用字体。
@@ -34,7 +34,7 @@ class SloganUIModelForAndroid {
 
   Map<String, dynamic> toMap() => {
         'sloganText': sloganText,
-        'sloganTextColor': sloganTextColor?.value,
+        'sloganTextColor': sloganTextColor?.toHex(),
         'sloganTextSize': sloganTextSize,
         'sloganOffsetY': sloganOffsetY,
         'sloganOffsetYB': sloganOffsetYB,

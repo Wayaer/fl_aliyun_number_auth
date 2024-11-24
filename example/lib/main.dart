@@ -1,6 +1,7 @@
 import 'dart:math';
 
-import 'package:example/config.dart';
+import 'package:example/src/android_ui.dart';
+import 'package:example/src/ios_ui.dart';
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -31,13 +32,15 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+const androidSecret = 'androidSecret';
+const iosSecret = 'iosSecret';
+
 class _HomePageState extends State<HomePage> {
-  AuthInfo authInfo = AuthInfo(
-      android: AuthInfoForAndroid(
-          secret: androidSecret,
-          enableActivityResultListener: true,
-          enableAuthUIControlClickListener: true),
-      ios: AuthInfoForIOS(secret: iosSecret));
+  AuthInfoForAndroid androidAuthInfo = AuthInfoForAndroid(
+      secret: androidSecret,
+      enableActivityResultListener: true,
+      enableAuthUIControlClickListener: true);
+  AuthInfoForIOS iosAuthInfo = AuthInfoForIOS(secret: iosSecret);
 
   String resultText = "";
 
@@ -95,7 +98,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void setAuthInfo() async {
-    final result = await FlAliYunNumberAuth.setAuthInfo(authInfo);
+    final result = await FlAliYunNumberAuth.setAuthInfo(
+        android: androidAuthInfo, ios: iosAuthInfo);
     setResultText = 'setAuthInfo:${result?.toMap()}';
   }
 
@@ -115,8 +119,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void setAuthUI() async {
-    final result =
-        await FlAliYunNumberAuth.setAuthUI(android: androidUI, ios: iosUI);
+    final result = await FlAliYunNumberAuth.setAuthUI(
+        android: buildAndroidUi(context), ios: buildIOSDialogUi(context));
     setResultText = 'setAuthUI:$result';
   }
 
@@ -125,37 +129,6 @@ class _HomePageState extends State<HomePage> {
     log(resultText);
     setState(() {});
   }
-
-  AuthUIModelForAndroid androidUI = AuthUIModelForAndroid();
-  AuthUIModelForIOS iosUI = AuthUIModelForIOS(
-      statusBarUi: StatusBarUIModelForIOS(
-          preferredStatusBarStyle: UIStatusBarStyle.darkContent),
-      navUi: NavUIModelForIOS(
-        navBackImage: 'assets/icon_close_gray.png',
-        navColor: Colors.deepPurpleAccent,
-        navTitle: NSAttributedString(
-            text: 'Title',
-            color: Colors.amber,
-            backgroundColor: Colors.grey,
-            wordSpacing: 10,
-            font: UIFont(size: 24, weight: UIFontWeight.bold)),
-        navMoreView: UILabel('更多'),
-        navBackButtonFrameBlock:
-            (Size screenSize, Size superViewSize, Rect frame) {
-          log("navBackButtonFrameBlock: screenSize:$screenSize superViewSize:$superViewSize frame:$frame");
-        },
-        navTitleFrameBlock: (Size screenSize, Size superViewSize, Rect frame) {
-          log("navTitleFrameBlock: screenSize:$screenSize superViewSize:$superViewSize frame:$frame");
-        },
-        navMoreViewFrameBlock:
-            (Size screenSize, Size superViewSize, Rect frame) {
-          log("navTitleFrameBlock: screenSize:$screenSize superViewSize:$superViewSize frame:$frame");
-        },
-        privacyNavColor: Colors.red,
-        privacyNavTitleFont: UIFont(size: 24, weight: UIFontWeight.light),
-        privacyNavTitleColor: Colors.black,
-        privacyNavBackImage: 'assets/icon_close_gray.png',
-      ));
 }
 
 void log(String? message) {
@@ -172,4 +145,10 @@ class ElevatedText extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(onPressed: onPressed, child: Text(text));
   }
+}
+
+extension ExtensionInt on int {
+  // 将 int 转换为 px
+  int toPX(BuildContext context) =>
+      (this * MediaQuery.of(context).devicePixelRatio).toInt();
 }

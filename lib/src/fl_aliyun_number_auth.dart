@@ -15,10 +15,16 @@ class FlAliYunNumberAuth {
       FlAliYunNumberAuthForAndroid();
 
   /// 初始化设置
-  static Future<AuthResultModel?> setAuthInfo(AuthInfo authInfo) async {
+  static Future<AuthResultModel?> setAuthInfo({
+    required AuthInfoForAndroid android,
+    required AuthInfoForIOS ios,
+  }) async {
     if (!_supported) return null;
-    final result = await _channel.invokeMethod<Map<dynamic, dynamic>>(
-        'setAuthSDKInfo', authInfo.toMap());
+    final result =
+        await _channel.invokeMethod<Map<dynamic, dynamic>>('setAuthSDKInfo', {
+      if (_isAndroid) ...android.toMap(),
+      if (_isIOS) ...ios.toMap(),
+    });
     if (result == null) return null;
     final model = AuthResultModel.fromMap(result);
     setMethodCallHandler();

@@ -1,5 +1,6 @@
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
 
 /// 配置授权页状态栏
 class StatusBarUIModelForAndroid {
@@ -31,11 +32,11 @@ class StatusBarUIModelForAndroid {
   });
 
   Map<String, dynamic> toMap() => {
-        'statusBarColor': statusBarColor?.value,
+        'statusBarColor': statusBarColor?.toHex(),
         'lightColor': lightColor,
         'statusBarHidden': statusBarHidden,
         'statusBarUIFlag': statusBarUIFlag?.index,
-        'webViewStatusBarColor': webViewStatusBarColor?.value,
+        'webViewStatusBarColor': webViewStatusBarColor?.toHex(),
       };
 }
 

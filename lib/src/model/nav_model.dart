@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
-import 'package:fl_aliyun_number_auth/src/const/extension.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
 
 /// 配置授权页导航栏
 class NavUIModelForAndroid {
@@ -21,8 +21,17 @@ class NavUIModelForAndroid {
   /// 参数包含：Typeface.sansSerif、Typeface.serif、Typeface.monospace。
   final Typeface? navTypeface;
 
-  /// 设置导航栏返回键图片路径（即drawable下文件名称，但无需带文件格式）。
+  /// 设置导航栏返回键图片路径。
   final String? navReturnImgPath;
+
+  /// 设置导航栏返回键图片控件宽度（单位：px）。
+  final int? navReturnImgWidth;
+
+  /// 设置导航栏返回键图片控件高度（单位：px）。
+  final int? navReturnImgHeight;
+
+  /// 设置导航栏返回键图片图片缩放模式。模式类型：
+  final ImageScaleType? navReturnImgScaleType;
 
   /// 设置导航栏返回按钮隐藏。取值：
   /// true：表示隐藏。
@@ -46,11 +55,17 @@ class NavUIModelForAndroid {
   /// 设置协议页导航栏返回按钮图片路径，不设置则与授权页设置一致。
   final String? webNavReturnImgPath;
 
+  /// 设置webview是否隐藏进度条
+  final bool? webHiddeProgress;
+
+  /// 设置webview是否支持javascript
+  final bool? webSupportedJavascript;
+
+  ///  设置webview 状态栏颜色
+  final Color? webViewStatusBarColor;
+
   /// 设置底部虚拟按键背景色（系统版本5.0以上可设置）。
   final Color? bottomNavColor;
-
-  /// Drawable
-  final String? navReturnImgDrawable;
 
   const NavUIModelForAndroid({
     this.navColor,
@@ -59,31 +74,41 @@ class NavUIModelForAndroid {
     this.navTextSize,
     this.navTypeface,
     this.navReturnImgPath,
+    this.navReturnImgWidth,
+    this.navReturnImgHeight,
+    this.navReturnImgScaleType,
     this.navReturnHidden,
     this.navHidden,
     this.webNavColor,
     this.webNavTextColor,
     this.webNavTextSize,
     this.webNavReturnImgPath,
+    this.webHiddeProgress,
+    this.webSupportedJavascript,
+    this.webViewStatusBarColor,
     this.bottomNavColor,
-    this.navReturnImgDrawable,
   });
 
   Map<String, dynamic> toMap() => {
-        'navColor': navColor?.value,
+        'navColor': navColor?.toHex(),
         'navText': navText,
-        'navTextColor': navTextColor?.value,
+        'navTextColor': navTextColor?.toHex(),
         'navTextSize': navTextSize,
         'navTypeface': navTypeface?.index,
         'navReturnImgPath': navReturnImgPath,
+        'navReturnImgWidth': navReturnImgWidth,
+        'navReturnImgHeight': navReturnImgHeight,
+        'navReturnImgScaleType': navReturnImgScaleType?.index,
         'navReturnHidden': navReturnHidden,
         'navHidden': navHidden,
-        'webNavColor': webNavColor?.value,
-        'webNavTextColor': webNavTextColor?.value,
+        'webNavColor': webNavColor?.toHex(),
+        'webNavTextColor': webNavTextColor?.toHex(),
         'webNavTextSize': webNavTextSize,
         'webNavReturnImgPath': webNavReturnImgPath,
-        'bottomNavColor': bottomNavColor?.value,
-        'navReturnImgDrawable': navReturnImgDrawable,
+        'webHiddeProgress': webHiddeProgress,
+        'webSupportedJavascript': webSupportedJavascript,
+        'webViewStatusBarColor': webViewStatusBarColor?.toHex(),
+        'bottomNavColor': bottomNavColor?.toHex(),
       };
 }
 
@@ -162,7 +187,7 @@ class NavUIModelForIOS {
 
   Map<String, dynamic> toMap() => {
         'navIsHidden': navIsHidden,
-        'navColor': navColor?.value,
+        'navColor': navColor?.toHex(),
         'navTitle': navTitle?.toMap(),
         'navBackImage': navBackImage,
         'hideNavBackItem': hideNavBackItem,
@@ -173,9 +198,9 @@ class NavUIModelForIOS {
         'navTitleFrame': navTitleFrame?.toMap(),
         'navMoreViewFrameBlock': navMoreViewFrameBlock != null,
         'navMoreViewFrame': navMoreViewFrame?.toMap(),
-        'privacyNavColor': privacyNavColor?.value,
+        'privacyNavColor': privacyNavColor?.toHex(),
         'privacyNavTitleFont': privacyNavTitleFont?.toMap(),
-        'privacyNavTitleColor': privacyNavTitleColor?.value,
+        'privacyNavTitleColor': privacyNavTitleColor?.toHex(),
         'privacyNavBackImage': privacyNavBackImage,
       };
 }

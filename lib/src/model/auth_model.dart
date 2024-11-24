@@ -56,9 +56,9 @@ class AuthUIModelForAndroid {
     this.logoUi,
     this.sloganUi,
     this.numberUi,
-    this.privacyUi,
     this.loginBtnUi,
     this.switchUi,
+    this.privacyUi,
     this.pageUi,
     this.privacyAlertUi,
     this.onActivityResult,
@@ -248,6 +248,9 @@ class AuthResultModel {
         msg = map['msg'] as String?,
         isFailed = map['isFailed'] as bool?;
 
-  Map<String, dynamic> toMap() =>
-      {'resultCode': resultCode, 'msg': msg, 'isFailed': isFailed};
+  Map<String, dynamic> toMap() => {
+        'resultCode': resultCode,
+        'msg': msg,
+        if (isFailed != null) 'isFailed': isFailed
+      };
 }

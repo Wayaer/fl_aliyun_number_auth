@@ -1,5 +1,6 @@
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
 
 typedef ViewFrameBlockForIOS = void Function(
     Size screenSize, Size superViewSize, Rect frame);
@@ -50,8 +51,8 @@ class NSAttributedString {
 
   Map<String, dynamic> toMap() => {
         'text': text,
-        'color': color?.value,
-        'backgroundColor': backgroundColor?.value,
+        'color': color?.toHex(),
+        'backgroundColor': backgroundColor?.toHex(),
         'wordSpacing': wordSpacing,
         'font': font?.toMap(),
       };
@@ -93,7 +94,7 @@ class UILabel extends UIView {
   Map<String, dynamic> toMap() => {
         ...super.toMap(),
         'text': text,
-        'color': color?.value,
+        'color': color?.toHex(),
         'font': font?.toMap(),
       };
 }

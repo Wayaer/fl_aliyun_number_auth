@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
-import 'package:fl_aliyun_number_auth/src/const/extension.dart';
+import 'package:fl_aliyun_number_auth/src/extension.dart';
 
 /// 配置切换控件方式
 class SwitchUIModelForAndroid {
@@ -17,10 +17,10 @@ class SwitchUIModelForAndroid {
   /// 设置切换按钮文字大小。
   final int? switchAccTextSize;
 
-  /// 设置切换按钮相对导航栏顶部的位移（单位：dp）。
+  /// 设置切换按钮相对导航栏顶部的位移（单位：px）。
   final int? switchOffsetY;
 
-  /// 设置切换按钮相对底部的位移（单位：dp）。
+  /// 设置切换按钮相对底部的位移（单位：px）。
   final int? switchOffsetYB;
 
   /// 设置切换按钮文本使用字体。
@@ -39,7 +39,7 @@ class SwitchUIModelForAndroid {
   Map<String, dynamic> toMap() => {
         'switchAccHidden': switchAccHidden,
         'switchAccText': switchAccText,
-        'switchAccTextColor': switchAccTextColor?.value,
+        'switchAccTextColor': switchAccTextColor?.toHex(),
         'switchAccTextSize': switchAccTextSize,
         'switchOffsetY': switchOffsetY,
         'switchOffsetYB': switchOffsetYB,

@@ -1,15 +1,3 @@
-class AuthInfo {
-  /// android 配置信息
-  final AuthInfoForAndroid android;
-
-  /// ios 配置信息
-  final AuthInfoForIOS ios;
-
-  AuthInfo({required this.android, required this.ios});
-
-  Map<String, dynamic> toMap() => {...android.toMap(), ...ios.toMap()};
-}
-
 class AuthInfoForAndroid {
   /// 启用 授权页返回监听
   /// 仅支持android
