@@ -24,18 +24,18 @@ class AuthListener(
 
     override fun onTokenFailed(s: String?, s1: String?) {
         println("onTokenFailed=2: $s =$s1")
-        resultSuccess(mapOf("code" to toMap(s), "isFailed" to true, "msg" to s1))
+        resultSuccess(toMap(s) + mapOf("isFailed" to true, "msg" to s1))
     }
 
     override fun onTokenFailed(str: String?) {
         println("onTokenFailed=1: $str")
-        resultSuccess(mapOf("code" to toMap(str), "isFailed" to true))
+        resultSuccess(toMap(str) + mapOf("isFailed" to true))
     }
 
     override fun onActivityResult(requestCode: Int, code: Int, data: Intent?) {
         channel.invokeMethod(
             "onActivityResult",
-            mapOf("requestCode" to requestCode, "code" to code, "data" to data?.data)
+            mapOf("requestCode" to requestCode, "code" to code, "data" to data?.data?.toString())
         )
     }
 
@@ -44,6 +44,7 @@ class AuthListener(
     }
 
     private fun resultSuccess(any: Any?) {
+        println("resultSuccess: $any")
         result?.success(any)
         this.result = null
     }

@@ -268,7 +268,7 @@ class PrivacyUIModelForIOS {
         'privacyOne': privacyOne?.toMap(),
         'privacyTwo': privacyTwo?.toMap(),
         'privacyThree': privacyThree?.toMap(),
-        'privacyColors': privacyColors?.map((e) => e.value).toList(),
+        'privacyColors': privacyColors?.map((e) => e.toHex()).toList(),
         'privacyAlignment': privacyAlignment?.index,
         'privacyPreText': privacyPreText,
         'privacySufText': privacySufText,

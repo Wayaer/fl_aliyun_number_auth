@@ -130,9 +130,9 @@ class AuthUIModelForIOS {
     this.logoUi,
     this.sloganUi,
     this.numberUi,
-    this.privacyUi,
     this.loginBtnUi,
     this.switchUi,
+    this.privacyUi,
     this.pageUi,
     this.privacyAlertUi,
   });
@@ -243,14 +243,34 @@ class AuthResultModel {
   /// 仅在android返回
   final bool? isFailed;
 
+  /// 仅在android返回
+  final double? requestCode;
+
+  /// 仅在android返回
+  final String? requestId;
+
+  /// 仅在android返回
+  final String? vendorName;
+
+  ///
+  final String? token;
+
   AuthResultModel.fromMap(Map<dynamic, dynamic> map)
       : resultCode = map['resultCode'] as String? ?? map['code'] as String?,
         msg = map['msg'] as String?,
-        isFailed = map['isFailed'] as bool?;
+        isFailed = map['isFailed'] as bool?,
+        requestCode = map['requestCode'] as double?,
+        requestId = map['requestId'] as String?,
+        token = map['token'] as String?,
+        vendorName = map['vendorName'] as String?;
 
   Map<String, dynamic> toMap() => {
         'resultCode': resultCode,
         'msg': msg,
-        if (isFailed != null) 'isFailed': isFailed
+        'isFailed': isFailed,
+        'requestCode': requestCode,
+        'requestId': requestId,
+        'token': token,
+        'vendorName': vendorName
       };
 }

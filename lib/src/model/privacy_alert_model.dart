@@ -614,11 +614,11 @@ class PrivacyAlertUIModelForIOS {
         'privacyAlertContentBackgroundColor':
             privacyAlertContentBackgroundColor?.toHex(),
         'privacyAlertContentColors':
-            privacyAlertContentColors?.map((e) => e.value).toList(),
+            privacyAlertContentColors?.map((e) => e.toHex()).toList(),
         'privacyAlertContentAlignment': privacyAlertContentAlignment?.index,
         'privacyAlertBtnBackgroundImages': privacyAlertBtnBackgroundImages,
         'privacyAlertButtonTextColors':
-            privacyAlertButtonTextColors?.map((e) => e.value).toList(),
+            privacyAlertButtonTextColors?.map((e) => e.toHex()).toList(),
         'privacyAlertButtonFont': privacyAlertButtonFont?.toMap(),
         'privacyAlertCloseButtonIsNeedShow': privacyAlertCloseButtonIsNeedShow,
         'privacyAlertCloseButtonImage': privacyAlertCloseButtonImage,

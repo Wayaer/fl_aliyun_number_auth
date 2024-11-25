@@ -41,6 +41,7 @@ class PageUIModelForAndroid {
 
   /// 设置授权页是否居于底部。
   final bool? dialogBottom;
+
   /// 设置授权页是否居于中。
   final bool? dialogCenter;
 
@@ -124,7 +125,7 @@ class PageUIModelForIOS {
   Map<String, dynamic> toMap() => {
         'contentViewFrameBlock': contentViewFrameBlock != null,
         'contentViewFrame': contentViewFrame?.toMap(),
-        'supportedInterfaceOrientations': supportedInterfaceOrientations,
+        'supportedInterfaceOrientations': supportedInterfaceOrientations?.index,
         'presentDirection': presentDirection?.index,
         'customViewBlock': customViewBlock != null,
         'customViewLayoutBlock': customViewLayoutBlock != null,

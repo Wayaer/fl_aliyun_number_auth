@@ -21,7 +21,7 @@ class FlAliYunNumberAuth {
   }) async {
     if (!_supported) return null;
     final result =
-        await _channel.invokeMethod<Map<dynamic, dynamic>>('setAuthSDKInfo', {
+    await _channel.invokeMethod<Map<dynamic, dynamic>>('setAuthSDKInfo', {
       if (_isAndroid) ...android.toMap(),
       if (_isIOS) ...ios.toMap(),
     });

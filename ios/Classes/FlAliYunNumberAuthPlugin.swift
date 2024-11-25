@@ -63,7 +63,9 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
         case "getCurrentCarrierName":
             result(TXCommonUtils.getCurrentCarrierName())
         case "setAuthUI":
-            setAuthUI(call, result)
+            print("\(call.method)===\(call.arguments)")
+            setAuthUI(call)
+            result(true)
         case "quitPrivacyAlert":
             authHelper.closePrivactAlertView()
             result(true)
@@ -104,15 +106,14 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             let args = call.arguments as! [String: Any]
             let isDebug = args["isDebug"] as! Bool
             if isDebug {
-                authHelper.getLoginToken(withTimeout: TimeInterval(args["timeout"] as! Int), controller: controller, model: authUiModel) { dict in
-                    result(dict)
-                }
-            } else {
                 authHelper.debugLoginUI(with: controller, model: authUiModel) { dict in
                     result(dict)
                 }
+            } else {
+                authHelper.getLoginToken(withTimeout: TimeInterval(args["timeout"] as! Int), controller: controller, model: authUiModel) { dict in
+                    result(dict)
+                }
             }
-
         } else {
             result(nil)
         }
@@ -141,7 +142,7 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
         args["\(key)Block"] != nil || (args[key] as? [String: Any]) != nil
     }
 
-    func setAuthUI(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+    func setAuthUI(_ call: FlutterMethodCall) {
         let args = call.arguments as! [String: Any]
         if let statusBar = args["statusBarUi"] as? [String: Any] {
             if let value = statusBar["prefersStatusBarHidden"] as? Bool {
@@ -155,8 +156,8 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             if let value = navUi["navIsHidden"] as? Bool {
                 authUiModel.navIsHidden = value
             }
-            if let value = navUi["navColor"] as? Int {
-                authUiModel.navColor = value.toColor()
+            if let value = (navUi["navColor"] as? String)?.toColor() {
+                authUiModel.navColor = value
             }
             if let value = navUi["navTitle"] as? [String: Any] {
                 if let text = value.toNSAttributedString() { authUiModel.navTitle = text }
@@ -184,14 +185,15 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             if enableFrameBlock(navUi, "navMoreViewFrame") {
                 authUiModel.navMoreViewFrameBlock = onViewFrameBlock(navUi, "navMoreViewFrame")
             }
-            if let value = navUi["privacyNavColor"] as? Int {
-                authUiModel.privacyNavColor = value.toColor()
+
+            if let value = (navUi["privacyNavColor"] as? String)?.toColor() {
+                authUiModel.privacyNavColor = value
             }
             if let value = navUi["privacyNavTitleFont"] as? [String: Any] {
                 authUiModel.privacyNavTitleFont = value.toUIFont()
             }
-            if let value = navUi["privacyNavTitleColor"] as? Int {
-                authUiModel.privacyNavTitleColor = value.toColor()
+            if let value = (navUi["privacyNavTitleColor"] as? String)?.toColor() {
+                authUiModel.privacyNavTitleColor = value
             }
 //            if let value = navUi["privacyNavBackImage"] as? String {
 //                if let image = value.toUIImage(registrar) {
@@ -226,8 +228,8 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             }
         }
         if let numberUi = args["numberUi"] as? [String: Any] {
-            if let value = numberUi["numberColor"] as? Int {
-                authUiModel.numberColor = value.toColor()
+            if let value = (numberUi["numberColor"] as? String)?.toColor() {
+                authUiModel.numberColor = value
             }
             if let value = numberUi["numberFont"] as? [String: Any] {
                 authUiModel.numberFont = value.toUIFont()
@@ -292,10 +294,11 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             if let privacy = privacyUi["privacyThree"] as? [String: String] {
                 authUiModel.privacyThree = [privacy["text"]!, privacy["url"]!]
             }
-            if let value = privacyUi["privacyColors"] as? [Int] {
-                authUiModel.privacyColors = value.map { color in
-                    color.toColor()
+            if let value = privacyUi["privacyColors"] as? [String] {
+                let colors = value.map { str in
+                    str.toColor()
                 }
+                authUiModel.privacyColors = colors.filter { $0 != nil }.map { $0! }
             }
             if let value = privacyUi["privacyAlignment"] as? Int {
                 if let alignment = NSTextAlignment(rawValue: value) {
@@ -320,18 +323,17 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             if enableFrameBlock(privacyUi, "privacyFrame") {
                 authUiModel.privacyFrameBlock = onViewFrameBlock(privacyUi, "privacyFrame")
             }
-
-            if let value = privacyUi["privacyOperatorColor"] as? Int {
-                authUiModel.privacyOperatorColor = value.toColor()
+            if let value = (privacyUi["privacyOperatorColor"] as? String)?.toColor() {
+                authUiModel.privacyOperatorColor = value
             }
-            if let value = privacyUi["privacyOneColor"] as? Int {
-                authUiModel.privacyOneColor = value.toColor()
+            if let value = (privacyUi["privacyOneColor"] as? String)?.toColor() {
+                authUiModel.privacyOneColor = value
             }
-            if let value = privacyUi["privacyTwoColor"] as? Int {
-                authUiModel.privacyTwoColor = value.toColor()
+            if let value = (privacyUi["privacyTwoColor"] as? String)?.toColor() {
+                authUiModel.privacyTwoColor = value
             }
-            if let value = privacyUi["privacyThreeColor"] as? Int {
-                authUiModel.privacyThreeColor = value.toColor()
+            if let value = (privacyUi["privacyThreeColor"] as? String)?.toColor() {
+                authUiModel.privacyThreeColor = value
             }
         }
         if let pageUi = args["pageUi"] as? [String: Any] {
@@ -364,8 +366,8 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
 //                        }
         }
         if let privacyAlertUi = args["privacyAlertUi"] as? [String: Any] {
-            if let value = privacyAlertUi["alertTitleBarColor"] as? Int {
-                authUiModel.alertTitleBarColor = value.toColor()
+            if let value = (privacyAlertUi["alertTitleBarColor"] as? String)?.toColor() {
+                authUiModel.alertTitleBarColor = value
             }
             if let value = privacyAlertUi["alertBarIsHidden"] as? Bool {
                 authUiModel.alertBarIsHidden = value
@@ -391,15 +393,15 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
                 authUiModel.alertCloseItemFrameBlock = onViewFrameBlock(privacyAlertUi, "alertCloseItemFrame")
             }
 
-            if let value = privacyAlertUi["alertBlurViewColor"] as? Int {
-                authUiModel.alertBlurViewColor = value.toColor()
+            if let value = (privacyAlertUi["alertBlurViewColor"] as? String)?.toColor() {
+                authUiModel.alertBlurViewColor = value
             }
             if let value = privacyAlertUi["alertBlurViewAlpha"] as? Double {
                 authUiModel.alertBlurViewAlpha = value
             }
             if let value = privacyAlertUi["alertCornerRadiusArray"] as? [Int] {
                 authUiModel.alertCornerRadiusArray = value.map { i in
-                    NSNumber(value: i)
+                    NSNumber(value: i.toLogicalUnit())
                 }
             }
 
@@ -421,11 +423,12 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
 //            }
             if let value = privacyAlertUi["privacyAlertCornerRadiusArray"] as? [Int] {
                 authUiModel.privacyAlertCornerRadiusArray = value.map { i in
-                    NSNumber(value: i)
+                    NSNumber(value: i.toLogicalUnit())
                 }
             }
-            if let value = privacyAlertUi["privacyAlertBackgroundColor"] as? Int {
-                authUiModel.privacyAlertBackgroundColor = value.toColor()
+
+            if let value = (privacyAlertUi["privacyAlertBackgroundColor"] as? String)?.toColor() {
+                authUiModel.privacyAlertBackgroundColor = value
             }
             if let value = privacyAlertUi["privacyAlertAlpha"] as? Double {
                 authUiModel.privacyAlertAlpha = value
@@ -433,11 +436,11 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             if let value = privacyAlertUi["privacyAlertTitleFont"] as? [String: Any] {
                 authUiModel.privacyAlertTitleFont = value.toUIFont()
             }
-            if let value = privacyAlertUi["privacyAlertTitleColor"] as? Int {
-                authUiModel.privacyAlertTitleColor = value.toColor()
+            if let value = (privacyAlertUi["privacyAlertTitleColor"] as? String)?.toColor() {
+                authUiModel.privacyAlertTitleColor = value
             }
-            if let value = privacyAlertUi["privacyAlertTitleBackgroundColor"] as? Int {
-                authUiModel.privacyAlertTitleBackgroundColor = value.toColor()
+            if let value = (privacyAlertUi["privacyAlertTitleBackgroundColor"] as? String)?.toColor() {
+                authUiModel.privacyAlertTitleBackgroundColor = value
             }
             if let value = privacyAlertUi["privacyAlertTitleAlignment"] as? Int {
                 if let alignment = NSTextAlignment(rawValue: value) {
@@ -447,14 +450,17 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             if let value = privacyAlertUi["privacyAlertContentFont"] as? [String: Any] {
                 authUiModel.privacyAlertContentFont = value.toUIFont()
             }
-            if let value = privacyAlertUi["privacyAlertContentBackgroundColor"] as? Int {
-                authUiModel.privacyAlertContentBackgroundColor = value.toColor()
+            if let value = (privacyAlertUi["privacyAlertContentBackgroundColor"] as? String)?.toColor() {
+                authUiModel.privacyAlertContentBackgroundColor = value
             }
-            if let value = privacyAlertUi["privacyAlertContentColors"] as? [Int] {
-                authUiModel.privacyAlertContentColors = value.map { color in
-                    color.toColor()
+
+            if let value = privacyAlertUi["privacyAlertContentColors"] as? [String] {
+                let colors = value.map { str in
+                    str.toColor()
                 }
+                authUiModel.privacyAlertContentColors = colors.filter { $0 != nil }.map { $0! }
             }
+
             if let value = privacyAlertUi["privacyAlertTitleAlignment"] as? Int {
                 if let alignment = NSTextAlignment(rawValue: value) {
                     authUiModel.privacyAlertTitleAlignment = alignment
@@ -466,11 +472,14 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
                 }
                 authUiModel.privacyAlertBtnBackgroundImages = imgs.filter { $0 != nil }.map { $0! }
             }
-            if let value = privacyAlertUi["privacyAlertButtonTextColors"] as? [Int] {
-                authUiModel.privacyAlertButtonTextColors = value.map { color in
-                    color.toColor()
+
+            if let value = privacyAlertUi["privacyAlertButtonTextColors"] as? [String] {
+                let colors = value.map { str in
+                    str.toColor()
                 }
+                authUiModel.privacyAlertButtonTextColors = colors.filter { $0 != nil }.map { $0! }
             }
+
             if let value = privacyAlertUi["privacyAlertButtonFont"] as? [String: Any] {
                 authUiModel.privacyAlertButtonFont = value.toUIFont()
             }
@@ -488,24 +497,28 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             if let value = privacyAlertUi["tapPrivacyAlertMaskCloseAlert"] as? Bool {
                 authUiModel.tapPrivacyAlertMaskCloseAlert = value
             }
-            if let value = privacyAlertUi["privacyAlertMaskColor"] as? Int {
-                authUiModel.privacyAlertMaskColor = value.toColor()
+
+            if let value = (privacyAlertUi["privacyAlertMaskColor"] as? String)?.toColor() {
+                authUiModel.privacyAlertMaskColor = value
             }
             if let value = privacyAlertUi["privacyAlertMaskAlpha"] as? Double {
                 authUiModel.privacyAlertMaskAlpha = value.toCGFloat()
             }
 
-            if let value = privacyAlertUi["privacyAlertOperatorColor"] as? Int {
-                authUiModel.privacyAlertOperatorColor = value.toColor()
+            if let value = (privacyAlertUi["privacyAlertOperatorColor"] as? String)?.toColor() {
+                authUiModel.privacyAlertOperatorColor = value
             }
-            if let value = privacyAlertUi["privacyAlertOneColor"] as? Int {
-                authUiModel.privacyAlertOneColor = value.toColor()
+
+            if let value = (privacyAlertUi["privacyAlertOneColor"] as? String)?.toColor() {
+                authUiModel.privacyAlertOneColor = value
             }
-            if let value = privacyAlertUi["privacyAlertTwoColor"] as? Int {
-                authUiModel.privacyAlertTwoColor = value.toColor()
+
+            if let value = (privacyAlertUi["privacyAlertTwoColor"] as? String)?.toColor() {
+                authUiModel.privacyAlertTwoColor = value
             }
-            if let value = privacyAlertUi["privacyAlertThreeColor"] as? Int {
-                authUiModel.privacyAlertThreeColor = value.toColor()
+
+            if let value = (privacyAlertUi["privacyAlertThreeColor"] as? String)?.toColor() {
+                authUiModel.privacyAlertThreeColor = value
             }
             if let value = privacyAlertUi["privacyAlertPreText"] as? String {
                 authUiModel.privacyAlertPreText = value
@@ -550,7 +563,6 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
 //                authUiModel.privacyAlertCustomViewLayoutBlock = value
 //            }
         }
-        result(true)
     }
 
     // 获取当前的 UIViewController
@@ -572,11 +584,12 @@ extension [String: Any] {
             if let value = self["font"] as? [String: Any] {
                 attributes[NSAttributedString.Key.font] = value.toUIFont()
             }
-            if let value = self["color"] as? Int {
-                attributes[NSAttributedString.Key.foregroundColor] = value.toColor()
+
+            if let value = (self["color"] as? String)?.toColor() {
+                attributes[NSAttributedString.Key.foregroundColor] = value
             }
-            if let value = self["backgroundColor"] as? Int {
-                attributes[NSAttributedString.Key.backgroundColor] = value.toColor()
+            if let value = (self["backgroundColor"] as? String)?.toColor() {
+                attributes[NSAttributedString.Key.backgroundColor] = value
             }
             if let value = self["wordSpacing"] as? Double {
                 attributes[NSAttributedString.Key.kern] = value.toCGFloat()
@@ -588,10 +601,10 @@ extension [String: Any] {
 
     func toUILabel() -> UILabel? {
         if let text = self["text"] as? String {
-            var label = UILabel()
+            let label = UILabel()
             label.text = text
-            if let value = self["color"] as? Int {
-                label.textColor = value.toColor()
+            if let value = (self["color"] as? String)?.toColor() {
+                label.textColor = value
             }
             if let value = self["font"] as? [String: Any] {
                 label.font = value.toUIFont()
@@ -603,8 +616,8 @@ extension [String: Any] {
 
     func toUIImageView() -> UIImageView? {
         if let image = (self["path"] as? String)?.toUIImage() {
-            var imageView = UIImageView(image: image)
-            if let width = self["width"] as? Double, let height = self["height"] as? Double {
+            let imageView = UIImageView(image: image)
+            if let width = (self["width"] as? Double)?.toLogicalUnit(), let height = (self["height"] as? Double)?.toLogicalUnit() {
                 imageView.frame = CGRect(x: 0, y: 0, width: width, height: height)
             }
             if let value = self["contentMode"] as? Int, let contentMode = UIView.ContentMode(rawValue: value) {
@@ -627,7 +640,7 @@ extension [String: Any] {
     }
 
     func toUIFont() -> UIFont {
-        let fontSize = (self["size"] as? Int)?.toCGFloat() ?? UIFont.systemFontSize
+        let fontSize = (self["size"] as? Int)?.toLogicalUnit() ?? UIFont.systemFontSize
         let isSystemBold = self["isSystemBold"] as? Bool ?? false
         if isSystemBold {
             return UIFont.boldSystemFont(ofSize: fontSize)
@@ -639,7 +652,7 @@ extension [String: Any] {
     }
 
     func toCGRect() -> CGRect {
-        CGRect(x: self["x"] as! Double, y: self["y"] as! Double, width: self["width"] as! Double, height: self["height"] as! Double)
+        CGRect(x: (self["x"] as! Double).toLogicalUnit(), y: (self["y"] as! Double).toLogicalUnit(), width: (self["width"] as! Double).toLogicalUnit(), height: (self["height"] as! Double).toLogicalUnit())
     }
 }
 
@@ -660,39 +673,76 @@ extension String {
     }
 }
 
-extension Int {
+extension String {
     // 从整数转换为UIColor（支持透明度）
-    func toColor() -> UIColor {
-        let alpha = CGFloat((self >> 24) & 0xFF) / 255.0 // 获取透明度部分
-        let red = CGFloat((self >> 16) & 0xFF) / 255.0 // 获取红色部分
-        let green = CGFloat((self >> 8) & 0xFF) / 255.0 // 获取绿色部分
-        let blue = CGFloat(self & 0xFF) / 255.0 // 获取蓝色部分
-        return UIColor(red: red, green: green, blue: blue, alpha: alpha)
+    func toColor() -> UIColor? {
+        // 去掉字符串中的 '#' 符号
+        let hexString = replacingOccurrences(of: "#", with: "")
+
+        // 确保字符串长度为 8，即 #RRGGBBAA 格式
+        guard hexString.count == 8 else {
+            return nil
+        }
+
+        // 使用 Scanner 来扫描十六进制字符串并转换为数字
+        let scanner = Scanner(string: hexString)
+        var hexNumber: UInt64 = 0
+
+        // 扫描十六进制字符串
+        if scanner.scanHexInt64(&hexNumber) {
+            // 提取 ARGB 分量
+            let alpha = Double((hexNumber & 0xFF000000) >> 24) / 255.0
+            let red = Double((hexNumber & 0x00FF0000) >> 16) / 255.0
+            let green = Double((hexNumber & 0x0000FF00) >> 8) / 255.0
+            let blue = Double(hexNumber & 0x000000FF) / 255.0
+
+            // 返回创建的 Color
+            return UIColor(red: red, green: green, blue: blue, alpha: alpha)
+        }
+
+        // 如果解析失败，返回 nil
+        return nil
+    }
+}
+
+extension CGFloat {
+    func toPX() -> CGFloat {
+        return self * UIScreen.main.scale
     }
 }
 
 extension Double {
-    //
     func toCGFloat() -> CGFloat {
         CGFloat(self)
+    }
+
+    func toLogicalUnit() -> Double {
+        return CGFloat(self) / UIScreen.main.scale
+    }
+
+    func toPX() -> CGFloat {
+        return self * UIScreen.main.scale
     }
 }
 
 extension Int {
-    //
     func toCGFloat() -> CGFloat {
         CGFloat(self)
+    }
+
+    func toLogicalUnit() -> Double {
+        return CGFloat(self) / UIScreen.main.scale
     }
 }
 
 extension CGSize {
-    func toMap() -> [String: Double] {
-        ["width": width, "height": height]
+    func toMap() -> [String: CGFloat] {
+        ["width": width.toPX(), "height": height.toPX()]
     }
 }
 
 extension CGRect {
     func toMap() -> [String: Any] {
-        ["x": origin.x, "y": origin.y, "width": size.width, "height": size.height]
+        ["x": origin.x.toPX(), "y": origin.y.toPX(), "width": size.width.toPX(), "height": size.height.toPX()]
     }
 }

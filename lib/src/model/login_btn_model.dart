@@ -99,7 +99,7 @@ class LoginBtnUIModelForIOS {
   const LoginBtnUIModelForIOS({
     this.loginBtnText,
     this.loginBtnBgImgs,
-    this.autoHideLoginLoading = true,
+    this.autoHideLoginLoading,
     this.loginBtnFrameBlock,
     this.loginBtnFrame,
   });
