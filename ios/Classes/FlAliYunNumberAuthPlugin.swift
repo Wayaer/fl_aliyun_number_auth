@@ -134,6 +134,11 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             if let value = args[key] as? [String: Any] {
                 return value.toCGRect()
             }
+            if let value = args[key.replacingOccurrences(of: "Frame", with: "Size")] as? [String: Any] {
+                if let frame = value.toCGSize()?.resizeRect(originalRect: frame) {
+                    return frame
+                }
+            }
             return frame
         }
     }
@@ -177,7 +182,7 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             }
 
             if enableFrameBlock(navUi, "navBackButtonFrame") {
-                authUiModel.navMoreViewFrameBlock = onViewFrameBlock(navUi, "navBackButtonFrame")
+                authUiModel.navBackButtonFrameBlock = onViewFrameBlock(navUi, "navBackButtonFrame")
             }
             if enableFrameBlock(navUi, "navTitleFrame") {
                 authUiModel.navTitleFrameBlock = onViewFrameBlock(navUi, "navBackButtonFrame")
@@ -578,6 +583,13 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
 }
 
 extension [String: Any] {
+    func toCGSize() -> CGSize? {
+        if let w = (self["width"] as? Double)?.toLogicalUnit(), let h = (self["height"] as? Double)?.toLogicalUnit() {
+            return CGSize(width: w, height: h)
+        }
+        return nil
+    }
+
     func toNSAttributedString() -> NSAttributedString? {
         if let text = self["text"] as? String {
             var attributes: [NSAttributedString.Key: Any] = [:]
@@ -738,6 +750,19 @@ extension Int {
 extension CGSize {
     func toMap() -> [String: CGFloat] {
         ["width": width.toPX(), "height": height.toPX()]
+    }
+
+    func resizeRect(originalRect: CGRect) -> CGRect {
+        // 计算原矩形的中心点
+        let centerX = originalRect.origin.x + originalRect.size.width / 2
+        let centerY = originalRect.origin.y + originalRect.size.height / 2
+
+        // 计算新的矩形的原点
+        let newOriginX = centerX - width / 2
+        let newOriginY = centerY - height / 2
+
+        // 返回新的 CGRect
+        return CGRect(x: newOriginX, y: newOriginY, width: width, height: height)
     }
 }
 

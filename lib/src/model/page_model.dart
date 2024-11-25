@@ -99,7 +99,9 @@ class PageUIModelForIOS {
   /// 通过[contentViewFrameBlock]构建frame
   /// 如果不传递则使用默认
   final Rect? contentViewFrame;
-
+  /// 通过[navMoreViewFrameBlock]构建size
+  /// [navMoreViewFrame] 优先 [navMoreViewSize]
+  final Size? navMoreViewSize;
   /// 横屏、竖屏模式设置，注意：在刘海屏，UIInterfaceOrientationMaskPortraitUpsideDown 属性慎用！
   final UIInterfaceOrientationMask? supportedInterfaceOrientations;
 

@@ -2,9 +2,6 @@ import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_aliyun_number_auth/src/extension.dart';
 
-typedef ViewFrameBlockForIOS = void Function(
-    Size screenSize, Size superViewSize, Rect frame);
-
 class UIFont {
   /// 字体大小
   final int? size;
@@ -121,5 +118,33 @@ class UIImageView extends UIView {
         'width': size?.width,
         'height': size?.height,
         'contentMode': contentMode?.index,
+      };
+}
+
+typedef ViewFrameBlockCallbackForIOS = void Function(
+    Size screenSize, Size superViewSize, Rect frame);
+
+class ViewFrameBlockForIOS {
+  /// 构建frame，view布局或布局发生变化时调用，不实现则按默认处理，不能超出父视图content view，width不能小于父视图宽度的一半。
+  final ViewFrameBlockCallbackForIOS? frameBlock;
+
+  /// 通过[frameBlock]构建frame
+  /// 如果不传递则使用默认
+  final Rect? frame;
+
+  /// 通过[frameBlock]构建size
+  /// [frame] 优先 [size]
+  final Size? size;
+
+  const ViewFrameBlockForIOS({
+    this.frameBlock,
+    this.frame,
+    this.size,
+  });
+
+  Map<String, dynamic> toMap() => {
+        'frameBlock': frameBlock != null,
+        'frame': frame?.toMap(),
+        'size': size?.toMap(),
       };
 }

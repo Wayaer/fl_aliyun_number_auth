@@ -140,20 +140,28 @@ class NavUIModelForIOS {
   /// 如果不传递则使用默认
   final Rect? navBackButtonFrame;
 
+  /// 通过[navBackButtonFrameBlock]构建size
+  /// [navBackButtonFrame] 优先 [navBackButtonSize]
+  final Size? navBackButtonSize;
+
   /// 构建导航栏标题的frame（布局）
   final ViewFrameBlockForIOS? navTitleFrameBlock;
 
   /// 通过[navTitleFrameBlock]构建frame
   /// 如果不传递则使用默认
   final Rect? navTitleFrame;
-
+  /// 通过[navTitleFrameBlock]构建size
+  /// [navTitleFrame] 优先 [navTitleSize]
+  final Size? navTitleSize;
   /// 构建导航栏右侧more view的frame（布局）
   final ViewFrameBlockForIOS? navMoreViewFrameBlock;
 
   /// 通过[navMoreViewFrameBlock]构建frame
   /// 如果不传递则使用默认
   final Rect? navMoreViewFrame;
-
+  /// 通过[navMoreViewFrameBlock]构建size
+  /// [navMoreViewFrame] 优先 [navMoreViewSize]
+  final Size? navMoreViewSize;
   /// 协议详情页导航栏背景颜色设置
   final Color? privacyNavColor;
 

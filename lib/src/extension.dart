@@ -5,6 +5,10 @@ extension ExtensionRect on Rect {
       {'x': left, 'y': top, 'width': width, 'height': height};
 }
 
+extension ExtensionSize on Size {
+  Map<String, dynamic> toMap() => {'width': width, 'height': height};
+}
+
 extension ExtensionOffset on Offset {
   Map<String, dynamic> toMap() => {'x': dx, 'y': dy};
 }

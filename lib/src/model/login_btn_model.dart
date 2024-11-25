@@ -95,7 +95,9 @@ class LoginBtnUIModelForIOS {
   /// 通过[loginBtnFrameBlock]构建frame
   /// 如果不传递则使用默认
   final Rect? loginBtnFrame;
-
+  /// 通过[loginBtnFrameBlock]构建size
+  /// [loginBtnFrame] 优先 [loginBtnSize]
+  final Size? loginBtnSize;
   const LoginBtnUIModelForIOS({
     this.loginBtnText,
     this.loginBtnBgImgs,

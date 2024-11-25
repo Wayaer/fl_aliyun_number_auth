@@ -67,6 +67,9 @@ class NumberUIModelForIOS {
   /// 通过[numberFrameBlock]构建frame
   /// 如果不传递则使用默认
   final Rect? numberFrame;
+  /// 通过[numberFrameBlock]构建size
+  /// [numberFrame] 优先 [numberSize]
+  final Size? numberSize;
 
   const NumberUIModelForIOS({
     this.numberColor,

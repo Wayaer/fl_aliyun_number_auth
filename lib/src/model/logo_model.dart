@@ -62,7 +62,9 @@ class LogoUIModelForIOS {
   /// 通过[logoFrameBlock]构建frame
   /// 如果不传递则使用默认
   final Rect? logoFrame;
-
+  /// 通过[logoFrameBlock]构建size
+  /// [logoFrame] 优先 [logoSize]
+  final Size? logoSize;
   /// 构造函数，提供默认值
   const LogoUIModelForIOS({
     this.logoImage,
