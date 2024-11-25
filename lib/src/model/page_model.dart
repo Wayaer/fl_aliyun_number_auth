@@ -96,12 +96,6 @@ class PageUIModelForIOS {
   /// 全屏、弹窗模式设置，授权页面中，渲染并显示所有空间的view，称为content view，不实现该block默认为全屏模式。* 实现弹窗的方案 x > 0 || y > 0, width < 屏幕宽度 || height < 屏幕高度。
   final ViewFrameBlockForIOS? contentViewFrameBlock;
 
-  /// 通过[contentViewFrameBlock]构建frame
-  /// 如果不传递则使用默认
-  final Rect? contentViewFrame;
-  /// 通过[navMoreViewFrameBlock]构建size
-  /// [navMoreViewFrame] 优先 [navMoreViewSize]
-  final Size? navMoreViewSize;
   /// 横屏、竖屏模式设置，注意：在刘海屏，UIInterfaceOrientationMaskPortraitUpsideDown 属性慎用！
   final UIInterfaceOrientationMask? supportedInterfaceOrientations;
 
@@ -117,7 +111,6 @@ class PageUIModelForIOS {
 
   const PageUIModelForIOS({
     this.contentViewFrameBlock,
-    this.contentViewFrame,
     this.supportedInterfaceOrientations,
     this.presentDirection,
     this.customViewBlock,
@@ -125,8 +118,7 @@ class PageUIModelForIOS {
   });
 
   Map<String, dynamic> toMap() => {
-        'contentViewFrameBlock': contentViewFrameBlock != null,
-        'contentViewFrame': contentViewFrame?.toMap(),
+        'contentViewFrameBlock': contentViewFrameBlock?.toMap(),
         'supportedInterfaceOrientations': supportedInterfaceOrientations?.index,
         'presentDirection': presentDirection?.index,
         'customViewBlock': customViewBlock != null,

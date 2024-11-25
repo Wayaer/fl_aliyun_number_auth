@@ -167,65 +167,75 @@ class AuthUIModelForIOS {
         frameMap['height'] as double);
     switch (key) {
       case 'navBackButtonFrameBlock':
-        navUi?.navBackButtonFrameBlock?.call(screenSize, superViewSize, frame);
+        navUi?.navBackButtonFrameBlock?.frameBlock
+            ?.call(screenSize, superViewSize, frame);
         break;
       case 'navTitleFrameBlock':
-        navUi?.navTitleFrameBlock?.call(screenSize, superViewSize, frame);
+        navUi?.navTitleFrameBlock?.frameBlock
+            ?.call(screenSize, superViewSize, frame);
         break;
       case 'navMoreViewFrameBlock':
-        navUi?.navMoreViewFrameBlock?.call(screenSize, superViewSize, frame);
+        navUi?.navMoreViewFrameBlock?.frameBlock
+            ?.call(screenSize, superViewSize, frame);
         break;
       case 'logoFrameBlock':
-        logoUi?.logoFrameBlock?.call(screenSize, superViewSize, frame);
+        logoUi?.logoFrameBlock?.frameBlock
+            ?.call(screenSize, superViewSize, frame);
         break;
       case 'sloganFrameBlock':
-        sloganUi?.sloganFrameBlock?.call(screenSize, superViewSize, frame);
+        sloganUi?.sloganFrameBlock?.frameBlock
+            ?.call(screenSize, superViewSize, frame);
         break;
       case 'numberFrameBlock':
-        numberUi?.numberFrameBlock?.call(screenSize, superViewSize, frame);
+        numberUi?.numberFrameBlock?.frameBlock
+            ?.call(screenSize, superViewSize, frame);
         break;
       case 'loginBtnFrameBlock':
-        loginBtnUi?.loginBtnFrameBlock?.call(screenSize, superViewSize, frame);
+        loginBtnUi?.loginBtnFrameBlock?.frameBlock
+            ?.call(screenSize, superViewSize, frame);
         break;
       case 'changeBtnFrameBlock':
-        switchUi?.changeBtnFrameBlock?.call(screenSize, superViewSize, frame);
+        switchUi?.changeBtnFrameBlock?.frameBlock
+            ?.call(screenSize, superViewSize, frame);
         break;
       case 'privacyFrameBlock':
-        privacyUi?.privacyFrameBlock?.call(screenSize, superViewSize, frame);
+        privacyUi?.privacyFrameBlock?.frameBlock
+            ?.call(screenSize, superViewSize, frame);
         break;
       case 'contentViewFrameBlock':
-        pageUi?.contentViewFrameBlock?.call(screenSize, superViewSize, frame);
+        pageUi?.contentViewFrameBlock?.frameBlock
+            ?.call(screenSize, superViewSize, frame);
         break;
       case 'alertTitleBarFrameBlock':
-        privacyAlertUi?.alertTitleBarFrameBlock
+        privacyAlertUi?.alertTitleBarFrameBlock?.frameBlock
             ?.call(screenSize, superViewSize, frame);
         break;
       case 'alertTitleFrameBlock':
-        privacyAlertUi?.alertTitleFrameBlock
+        privacyAlertUi?.alertTitleFrameBlock?.frameBlock
             ?.call(screenSize, superViewSize, frame);
         break;
       case 'alertCloseItemFrameBlock':
-        privacyAlertUi?.alertCloseItemFrameBlock
+        privacyAlertUi?.alertCloseItemFrameBlock?.frameBlock
             ?.call(screenSize, superViewSize, frame);
         break;
       case 'privacyAlertFrameBlock':
-        privacyAlertUi?.privacyAlertFrameBlock
+        privacyAlertUi?.privacyAlertFrameBlock?.frameBlock
             ?.call(screenSize, superViewSize, frame);
         break;
       case 'privacyAlertTitleFrameBlock':
-        privacyAlertUi?.privacyAlertTitleFrameBlock
+        privacyAlertUi?.privacyAlertTitleFrameBlock?.frameBlock
             ?.call(screenSize, superViewSize, frame);
         break;
       case 'privacyAlertPrivacyContentFrameBlock':
-        privacyAlertUi?.privacyAlertPrivacyContentFrameBlock
+        privacyAlertUi?.privacyAlertPrivacyContentFrameBlock?.frameBlock
             ?.call(screenSize, superViewSize, frame);
         break;
       case 'privacyAlertButtonFrameBlock':
-        privacyAlertUi?.privacyAlertButtonFrameBlock
+        privacyAlertUi?.privacyAlertButtonFrameBlock?.frameBlock
             ?.call(screenSize, superViewSize, frame);
         break;
       case 'privacyAlertCloseFrameBlock':
-        privacyAlertUi?.privacyAlertCloseFrameBlock
+        privacyAlertUi?.privacyAlertCloseFrameBlock?.frameBlock
             ?.call(screenSize, superViewSize, frame);
         break;
     }

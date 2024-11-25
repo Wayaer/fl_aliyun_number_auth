@@ -331,23 +331,11 @@ class PrivacyAlertUIModelForIOS {
   /// 构建标题栏的frame，view布局或布局发生变化时调用，不实现则按默认处理，实现时仅有height生效。
   final ViewFrameBlockForIOS? alertTitleBarFrameBlock;
 
-  /// 通过[alertTitleBarFrameBlock]构建frame
-  /// 如果不传递则使用默认
-  final Rect? alertTitleBarFrame;
-
   /// 构建标题栏的frame，view布局或布局发生变化时调用，不实现则按默认处理。
   final ViewFrameBlockForIOS? alertTitleFrameBlock;
 
-  /// 通过[alertTitleFrameBlock]构建frame
-  /// 如果不传递则使用默认
-  final Rect? alertTitleFrame;
-
   /// 构建标题栏右侧关闭按钮的frame、view布局或布局发生变化时调用，不实现则按默认处理。
   final ViewFrameBlockForIOS? alertCloseItemFrameBlock;
-
-  /// 通过[alertCloseItemFrameBlock]构建frame
-  /// 如果不传递则使用默认
-  final Rect? alertCloseItemFrame;
 
   /// 底部蒙层背景色，默认黑色，对应Int类型表示颜色。
   final Color? alertBlurViewColor;
@@ -466,37 +454,17 @@ class PrivacyAlertUIModelForIOS {
   /// 设置二次隐私协议弹窗尺寸。
   final ViewFrameBlockForIOS? privacyAlertFrameBlock;
 
-  /// 通过[privacyAlertFrameBlock]构建frame
-  /// 如果不传递则使用默认
-  final Rect? privacyAlertFrame;
-
   /// 设置二次隐私协议弹窗标题尺寸。
   final ViewFrameBlockForIOS? privacyAlertTitleFrameBlock;
-
-  /// 通过[privacyAlertTitleFrameBlock]构建frame
-  /// 如果不传递则使用默认
-  final Rect? privacyAlertTitleFrame;
 
   /// 设置二次隐私协议弹窗内容尺寸。
   final ViewFrameBlockForIOS? privacyAlertPrivacyContentFrameBlock;
 
-  /// 通过[privacyAlertPrivacyContentFrameBlock]构建frame
-  /// 如果不传递则使用默认
-  final Rect? privacyAlertPrivacyContentFrame;
-
   /// 设置二次隐私协议弹窗按钮尺寸。
   final ViewFrameBlockForIOS? privacyAlertButtonFrameBlock;
 
-  /// 通过[privacyAlertButtonFrameBlock]构建frame
-  /// 如果不传递则使用默认
-  final Rect? privacyAlertButtonFrame;
-
   /// 设置二次隐私协议弹窗右侧关闭按钮尺寸。
   final ViewFrameBlockForIOS? privacyAlertCloseFrameBlock;
-
-  /// 通过[privacyAlertCloseFrameBlock]构建frame
-  /// 如果不传递则使用默认
-  final Rect? privacyAlertCloseFrame;
 
   /// 设置二次隐私协议弹窗按钮文字内容。
   final String? privacyAlertBtnContent;
@@ -517,11 +485,8 @@ class PrivacyAlertUIModelForIOS {
     this.alertCloseImage,
     this.alertCloseItemIsHidden,
     this.alertTitleBarFrameBlock,
-    this.alertTitleBarFrame,
     this.alertTitleFrameBlock,
-    this.alertTitleFrame,
     this.alertCloseItemFrameBlock,
-    this.alertCloseItemFrame,
     this.alertBlurViewColor,
     this.alertBlurViewAlpha,
     this.alertCornerRadiusArray,
@@ -562,15 +527,10 @@ class PrivacyAlertUIModelForIOS {
     /// this.privacyAlertMaskEntryAnimation,
     /// this.privacyAlertMaskExitAnimation,
     this.privacyAlertFrameBlock,
-    this.privacyAlertFrame,
     this.privacyAlertTitleFrameBlock,
-    this.privacyAlertTitleFrame,
     this.privacyAlertPrivacyContentFrameBlock,
-    this.privacyAlertPrivacyContentFrame,
     this.privacyAlertButtonFrameBlock,
-    this.privacyAlertButtonFrame,
     this.privacyAlertCloseFrameBlock,
-    this.privacyAlertCloseFrame,
     this.privacyAlertBtnContent,
     this.privacyAlertTitleContent,
     this.privacyAlertCustomViewBlock,
@@ -586,12 +546,10 @@ class PrivacyAlertUIModelForIOS {
         'alertTitle': alertTitle?.toMap(),
         'alertCloseImage': alertCloseImage,
         'alertCloseItemIsHidden': alertCloseItemIsHidden,
-        'alertTitleBarFrameBlock': alertTitleBarFrameBlock != null,
-        'alertTitleBarFrame': alertTitleBarFrame?.toMap(),
-        'alertTitleFrameBlock': alertTitleFrameBlock != null,
-        'alertTitleFrame': alertTitleFrame?.toMap(),
-        'alertCloseItemFrameBlock': alertCloseItemFrameBlock != null,
-        'alertCloseItemFrame': alertCloseItemFrame?.toMap(),
+        'alertTitleBarFrameBlock': alertTitleBarFrameBlock?.toMap(),
+        'alertTitleFrameBlock': alertTitleFrameBlock?.toMap(),
+
+        'alertCloseItemFrameBlock': alertCloseItemFrameBlock?.toMap(),
         'alertBlurViewColor': alertBlurViewColor?.toHex(),
         'alertBlurViewAlpha': alertBlurViewAlpha,
         'alertCornerRadiusArray': alertCornerRadiusArray,
@@ -635,18 +593,12 @@ class PrivacyAlertUIModelForIOS {
 
         /// 'privacyAlertMaskEntryAnimation': privacyAlertMaskEntryAnimation,
         /// 'privacyAlertMaskExitAnimation': privacyAlertMaskExitAnimation,
-        'privacyAlertFrameBlock': privacyAlertFrameBlock != null,
-        'privacyAlertFrame': privacyAlertFrame?.toMap(),
-        'privacyAlertTitleFrameBlock': privacyAlertTitleFrameBlock != null,
-        'privacyAlertTitleFrame': privacyAlertTitleFrame?.toMap(),
+        'privacyAlertFrameBlock': privacyAlertFrameBlock?.toMap(),
+        'privacyAlertTitleFrameBlock': privacyAlertTitleFrameBlock?.toMap(),
         'privacyAlertPrivacyContentFrameBlock':
-            privacyAlertPrivacyContentFrameBlock != null,
-        'privacyAlertPrivacyContentFrame':
-            privacyAlertPrivacyContentFrame?.toMap(),
-        'privacyAlertButtonFrameBlock': privacyAlertButtonFrameBlock != null,
-        'privacyAlertButtonFrame': privacyAlertButtonFrame?.toMap(),
-        'privacyAlertCloseFrameBlock': privacyAlertCloseFrameBlock != null,
-        'privacyAlertCloseFrame': privacyAlertCloseFrame?.toMap(),
+            privacyAlertPrivacyContentFrameBlock?.toMap(),
+        'privacyAlertButtonFrameBlock': privacyAlertButtonFrameBlock?.toMap(),
+        'privacyAlertCloseFrameBlock': privacyAlertCloseFrameBlock?.toMap(),
         'privacyAlertBtnContent': privacyAlertBtnContent,
         'privacyAlertTitleContent': privacyAlertTitleContent,
         'privacyAlertCustomViewBlock': privacyAlertCustomViewBlock != null,

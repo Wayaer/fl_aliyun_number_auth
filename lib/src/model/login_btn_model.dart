@@ -92,25 +92,17 @@ class LoginBtnUIModelForIOS {
   /// 构建登录按钮frame，view布局或布局发生变化时调用，不实现则按默认处理，不能超出父视图content view，height不能小于40，width不能小于父视图宽度的一半。
   final ViewFrameBlockForIOS? loginBtnFrameBlock;
 
-  /// 通过[loginBtnFrameBlock]构建frame
-  /// 如果不传递则使用默认
-  final Rect? loginBtnFrame;
-  /// 通过[loginBtnFrameBlock]构建size
-  /// [loginBtnFrame] 优先 [loginBtnSize]
-  final Size? loginBtnSize;
   const LoginBtnUIModelForIOS({
     this.loginBtnText,
     this.loginBtnBgImgs,
     this.autoHideLoginLoading,
     this.loginBtnFrameBlock,
-    this.loginBtnFrame,
   });
 
   Map<String, dynamic> toMap() => {
         'loginBtnText': loginBtnText?.toMap(),
         'loginBtnBgImgs': loginBtnBgImgs,
         'autoHideLoginLoading': autoHideLoginLoading,
-        'loginBtnFrameBlock': loginBtnFrameBlock != null,
-        'loginBtnFrame': loginBtnFrame?.toMap()
+        'loginBtnFrameBlock': loginBtnFrameBlock?.toMap(),
       };
 }

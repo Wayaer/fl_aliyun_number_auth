@@ -64,24 +64,15 @@ class NumberUIModelForIOS {
   /// 构建号码的frame，view布局或布局发生变化时调用，只有x，y生效，不实现则按默认处理，设置不能超出父视图content view
   final ViewFrameBlockForIOS? numberFrameBlock;
 
-  /// 通过[numberFrameBlock]构建frame
-  /// 如果不传递则使用默认
-  final Rect? numberFrame;
-  /// 通过[numberFrameBlock]构建size
-  /// [numberFrame] 优先 [numberSize]
-  final Size? numberSize;
-
   const NumberUIModelForIOS({
     this.numberColor,
     this.numberFont,
     this.numberFrameBlock,
-    this.numberFrame,
   });
 
   Map<String, dynamic> toMap() => {
         'numberColor': numberColor?.toHex(),
         'numberFont': numberFont?.toMap(),
-        'numberFrameBlock': numberFrameBlock != null,
-        'numberFrame': numberFrame?.toMap(),
+        'numberFrameBlock': numberFrameBlock?.toMap(),
       };
 }

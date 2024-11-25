@@ -121,8 +121,9 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
 
     func onViewFrameBlock(_ args: [String: Any], _ key: String) -> PNSBuildFrameBlock {
         let blockKey = "\(key)Block"
+        let map = args[blockKey] as! [String: Any]
         return { (screenSize: CGSize, superViewSize: CGSize, frame: CGRect) -> CGRect in
-            if args[blockKey] != nil {
+            if map["frameBlock"] != nil {
                 self.channel.invokeMethod("onViewFrameBlock", arguments: [
                     "key": blockKey,
                     "screenSize": screenSize.toMap(),
@@ -131,10 +132,12 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
                 ])
             }
 
-            if let value = args[key] as? [String: Any] {
+            // frame
+            if let value = map["frame"] as? [String: Any] {
                 return value.toCGRect()
             }
-            if let value = args[key.replacingOccurrences(of: "Frame", with: "Size")] as? [String: Any] {
+            // size
+            if let value = map["size"] as? [String: Any] {
                 if let frame = value.toCGSize()?.resizeRect(originalRect: frame) {
                     return frame
                 }
@@ -144,7 +147,10 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
     }
 
     func enableFrameBlock(_ args: [String: Any], _ key: String) -> Bool {
-        args["\(key)Block"] != nil || (args[key] as? [String: Any]) != nil
+        if let block = args["\(key)Block"] as? [String: Any] {
+            return block["frameBlock"] != nil || (args["frame"] as? [String: Any]) != nil || (args["size"] as? [String: Any]) != nil
+        }
+        return false
     }
 
     func setAuthUI(_ call: FlutterMethodCall) {
