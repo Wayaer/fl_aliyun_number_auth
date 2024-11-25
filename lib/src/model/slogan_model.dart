@@ -53,21 +53,15 @@ class SloganUIModelForIOS {
   /// 构建slogan的frame，view布局或者布局发生变化时调用，不实现则按默认处理
   final ViewFrameBlockForIOS? sloganFrameBlock;
 
-  /// 通过[sloganFrameBlock]构建frame
-  /// 如果不传递则使用默认
-  final Rect? sloganFrame;
-
   SloganUIModelForIOS({
     this.sloganText,
     this.sloganIsHidden,
     this.sloganFrameBlock,
-    this.sloganFrame,
   });
 
   Map<String, dynamic> toMap() => {
         'sloganText': sloganText?.toMap(),
         'sloganIsHidden': sloganIsHidden,
-        'sloganFrameBlock': sloganFrameBlock != null,
-        'sloganFrame': sloganFrame?.toMap(),
+        'sloganFrameBlock': sloganFrameBlock?.toMap(),
       };
 }

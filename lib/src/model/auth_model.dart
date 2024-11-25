@@ -207,15 +207,15 @@ class AuthUIModelForIOS {
             ?.call(screenSize, superViewSize, frame);
         break;
       case 'alertTitleBarFrameBlock':
-        privacyAlertUi?.alertTitleBarFrameBlock?.frameBlock
+        pageUi?.alertTitleBarFrameBlock?.frameBlock
             ?.call(screenSize, superViewSize, frame);
         break;
       case 'alertTitleFrameBlock':
-        privacyAlertUi?.alertTitleFrameBlock?.frameBlock
+        pageUi?.alertTitleFrameBlock?.frameBlock
             ?.call(screenSize, superViewSize, frame);
         break;
       case 'alertCloseItemFrameBlock':
-        privacyAlertUi?.alertCloseItemFrameBlock?.frameBlock
+        pageUi?.alertCloseItemFrameBlock?.frameBlock
             ?.call(screenSize, superViewSize, frame);
         break;
       case 'privacyAlertFrameBlock':

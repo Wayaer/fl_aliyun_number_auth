@@ -124,20 +124,20 @@ class NavUIModelForIOS {
   /// 包含标题内容、文字大小和颜色等
   final NSAttributedString? navTitle;
 
+  /// 构建导航栏标题的frame（布局）
+  final ViewFrameBlockForIOS? navTitleFrameBlock;
+
   /// 设置导航栏返回图片
   final String? navBackImage;
 
   /// 设置导航栏返回按钮是否隐藏
   final bool? hideNavBackItem;
 
-  /// 导航栏右侧自定义控件，可以包含手势操作或按钮
-  final UIView? navMoreView;
-
   /// 构建导航栏返回按钮的frame（布局）
   final ViewFrameBlockForIOS? navBackButtonFrameBlock;
 
-  /// 构建导航栏标题的frame（布局）
-  final ViewFrameBlockForIOS? navTitleFrameBlock;
+  /// 导航栏右侧自定义控件，可以包含手势操作或按钮
+  final UIView? navMoreView;
 
   /// 构建导航栏右侧more view的frame（布局）
   final ViewFrameBlockForIOS? navMoreViewFrameBlock;

@@ -109,12 +109,64 @@ class PageUIModelForIOS {
   /// 您可以在除了协议、掩码、登录按钮之外的区域添加自定义控件。
   final Function? customViewLayoutBlock;
 
+  /// 标题栏背景颜色。
+  final Color? alertTitleBarColor;
+
+  /// 标题栏是否隐藏。
+  final bool? alertBarIsHidden;
+
+  /// 标题栏标题内容、大小、颜色，对应[Map<String, dynamic>]类型，在Dart中需要额外处理以匹配具体结构。
+  final NSAttributedString? alertTitle;
+
+  /// 标题栏右侧关闭按钮图片设置。
+  final String? alertCloseImage;
+
+  /// 标题栏右侧关闭按钮是否显示，默认false（NO）。
+  final bool? alertCloseItemIsHidden;
+
+  /// 构建标题栏的frame，view布局或布局发生变化时调用，不实现则按默认处理，实现时仅有height生效。
+  final ViewFrameBlockForIOS? alertTitleBarFrameBlock;
+
+  /// 构建标题栏的frame，view布局或布局发生变化时调用，不实现则按默认处理。
+  final ViewFrameBlockForIOS? alertTitleFrameBlock;
+
+  /// 构建标题栏右侧关闭按钮的frame、view布局或布局发生变化时调用，不实现则按默认处理。
+  final ViewFrameBlockForIOS? alertCloseItemFrameBlock;
+
+  /// 底部蒙层背景色，默认黑色，对应Int类型表示颜色。
+  final Color? alertBlurViewColor;
+
+  /// 底部蒙层背景透明度，默认0.5。
+  final double? alertBlurViewAlpha;
+
+  /// contentView的四个圆角值，顺序为左上、左下、右下、右上，需要填充4个值，不足4个值则无效，如果值<=0则为直角。
+  final List<int>? alertCornerRadiusArray;
+
+  /// 设置授权页弹窗模式，点击非弹窗区域关闭授权页。true，关闭；false，不关闭。
+  final bool? tapAuthPageMaskClosePage;
+
+  ///  弹窗位置是否根据键盘弹起关闭动态调整，仅在键盘弹起后遮挡弹窗的情况生效，调整后弹窗将居于键盘上方，默认NO
+  final bool? alertFrameChangeWithKeyboard;
+
   const PageUIModelForIOS({
     this.contentViewFrameBlock,
     this.supportedInterfaceOrientations,
     this.presentDirection,
     this.customViewBlock,
     this.customViewLayoutBlock,
+    this.alertTitleBarColor,
+    this.alertBarIsHidden,
+    this.alertTitle,
+    this.alertCloseImage,
+    this.alertCloseItemIsHidden,
+    this.alertTitleBarFrameBlock,
+    this.alertTitleFrameBlock,
+    this.alertCloseItemFrameBlock,
+    this.alertBlurViewColor,
+    this.alertBlurViewAlpha,
+    this.alertCornerRadiusArray,
+    this.tapAuthPageMaskClosePage,
+    this.alertFrameChangeWithKeyboard,
   });
 
   Map<String, dynamic> toMap() => {
@@ -123,5 +175,18 @@ class PageUIModelForIOS {
         'presentDirection': presentDirection?.index,
         'customViewBlock': customViewBlock != null,
         'customViewLayoutBlock': customViewLayoutBlock != null,
+        'alertTitleBarColor': alertTitleBarColor?.toHex(),
+        'alertBarIsHidden': alertBarIsHidden,
+        'alertTitle': alertTitle?.toMap(),
+        'alertCloseImage': alertCloseImage,
+        'alertCloseItemIsHidden': alertCloseItemIsHidden,
+        'alertTitleBarFrameBlock': alertTitleBarFrameBlock?.toMap(),
+        'alertTitleFrameBlock': alertTitleFrameBlock?.toMap(),
+        'alertCloseItemFrameBlock': alertCloseItemFrameBlock?.toMap(),
+        'alertBlurViewColor': alertBlurViewColor?.toHex(),
+        'alertBlurViewAlpha': alertBlurViewAlpha,
+        'alertCornerRadiusArray': alertCornerRadiusArray,
+        'tapAuthPageMaskClosePage': tapAuthPageMaskClosePage,
+        'alertFrameChangeWithKeyboard': alertFrameChangeWithKeyboard,
       };
 }

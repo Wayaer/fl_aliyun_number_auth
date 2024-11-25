@@ -1,3 +1,1 @@
-class PNSLoggerHandler {
-
-}
+class PNSLoggerHandler {}

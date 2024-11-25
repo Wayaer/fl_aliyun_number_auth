@@ -136,15 +136,21 @@ class ViewFrameBlockForIOS {
   /// [frame] 优先 [size]
   final Size? size;
 
+  /// 通过[frameBlock]构建size
+  /// 再原始尺寸中怕偏移
+  final Offset? offset;
+
   const ViewFrameBlockForIOS({
     this.frameBlock,
     this.frame,
     this.size,
+    this.offset,
   });
 
   Map<String, dynamic> toMap() => {
         'frameBlock': frameBlock != null,
         'frame': frame?.toMap(),
         'size': size?.toMap(),
+        'offset': offset?.toMap(),
       };
 }

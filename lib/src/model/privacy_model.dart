@@ -222,10 +222,6 @@ class PrivacyUIModelForIOS {
   /// 构建协议整体（包括checkBox）的frame，view布局或布局发生变化时调用，不实现则按默认处理，如果设置的width小于checkBox的宽度则不生效，最小值为0，最大width，height为父视图宽高，最终会根据设置进来的width对协议文本进行自适应，得到的size是协议空间的最终大小。
   final ViewFrameBlockForIOS? privacyFrameBlock;
 
-  /// 通过[privacyFrameBlock]构建frame
-  /// 如果不传递则使用默认
-  final Rect? privacyFrame;
-
   /// 运营商协议内容颜色 ，优先级最高，如果privacyOperatorColors不设置，则取privacyColors中的点击文案颜色，privacyColors不设置，则是默认色
   final Color? privacyOperatorColor;
 
@@ -254,7 +250,6 @@ class PrivacyUIModelForIOS {
       this.privacyOperatorSufText,
       this.privacyFont,
       this.privacyFrameBlock,
-      this.privacyFrame,
       this.privacyOperatorColor,
       this.privacyOneColor,
       this.privacyTwoColor,
@@ -275,8 +270,7 @@ class PrivacyUIModelForIOS {
         'privacyOperatorPreText': privacyOperatorPreText,
         'privacyOperatorSufText': privacyOperatorSufText,
         'privacyFont': privacyFont?.toMap(),
-        'privacyFrameBlock': privacyFrameBlock != null,
-        'privacyFrame': privacyFrame?.toMap(),
+        'privacyFrameBlock': privacyFrameBlock?.toMap(),
         'privacyOperatorColor': privacyOperatorColor?.toHex(),
         'privacyOneColor': privacyOneColor?.toHex(),
         'privacyTwoColor': privacyTwoColor?.toHex(),

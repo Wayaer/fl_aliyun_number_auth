@@ -21,7 +21,7 @@ class FlAliYunNumberAuth {
   }) async {
     if (!_supported) return null;
     final result =
-    await _channel.invokeMethod<Map<dynamic, dynamic>>('setAuthSDKInfo', {
+        await _channel.invokeMethod<Map<dynamic, dynamic>>('setAuthSDKInfo', {
       if (_isAndroid) ...android.toMap(),
       if (_isIOS) ...ios.toMap(),
     });
@@ -139,6 +139,7 @@ class FlAliYunNumberAuth {
     if (!_supported) return null;
     _androidAuthUi = android;
     _iosAuthUi = ios;
+    print(_iosAuthUi?.toMap());
     return await _channel.invokeMethod<bool>('setAuthUI', {
       if (_isAndroid && android != null) ...android.toMap(),
       if (_isIOS && ios != null) ...ios.toMap(),
@@ -148,7 +149,7 @@ class FlAliYunNumberAuth {
   /// 设置监听器
   static void setMethodCallHandler() {
     _channel.setMethodCallHandler((MethodCall call) async {
-      debugPrint('setMethodCallHandler:${call.method} ${call.arguments}');
+      // debugPrint('setMethodCallHandler:${call.method} ${call.arguments}');
       switch (call.method) {
         case 'onViewFrameBlock':
           _iosAuthUi?.onViewFrameBlock(call.arguments as Map<dynamic, dynamic>);

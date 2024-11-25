@@ -10,7 +10,6 @@ enum AuthType {
 enum Typeface { sansSerif, serif, monospace }
 
 enum SystemUiFlag {
-
   /// 非全屏显示状态，状态栏的部分图标会被隐藏
   lowProfile,
 
@@ -41,7 +40,6 @@ enum SystemUiFlag {
   /// 状态栏显示为透明，且可见的内容被设置为全屏
   layoutHideNavigation,
 }
-
 
 enum Gravity {
   /// start = left

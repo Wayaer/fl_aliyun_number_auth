@@ -313,43 +313,6 @@ class PrivacyAlertUIModelForAndroid {
 
 /// 二次隐私协议弹窗页面
 class PrivacyAlertUIModelForIOS {
-  /// 标题栏背景颜色。
-  final Color? alertTitleBarColor;
-
-  /// 标题栏是否隐藏。
-  final bool? alertBarIsHidden;
-
-  /// 标题栏标题内容、大小、颜色，对应[Map<String, dynamic>]类型，在Dart中需要额外处理以匹配具体结构。
-  final NSAttributedString? alertTitle; // 由于具体结构未给出，这里使用dynamic
-
-  /// 标题栏右侧关闭按钮图片设置。
-  final String? alertCloseImage; // 对应UIImage，在Dart中需要转换为合适的类型，如File/Uint8List等
-
-  /// 标题栏右侧关闭按钮是否显示，默认false（NO）。
-  final bool? alertCloseItemIsHidden;
-
-  /// 构建标题栏的frame，view布局或布局发生变化时调用，不实现则按默认处理，实现时仅有height生效。
-  final ViewFrameBlockForIOS? alertTitleBarFrameBlock;
-
-  /// 构建标题栏的frame，view布局或布局发生变化时调用，不实现则按默认处理。
-  final ViewFrameBlockForIOS? alertTitleFrameBlock;
-
-  /// 构建标题栏右侧关闭按钮的frame、view布局或布局发生变化时调用，不实现则按默认处理。
-  final ViewFrameBlockForIOS? alertCloseItemFrameBlock;
-
-  /// 底部蒙层背景色，默认黑色，对应Int类型表示颜色。
-  final Color? alertBlurViewColor;
-
-  /// 底部蒙层背景透明度，默认0.5。
-  final double? alertBlurViewAlpha;
-
-  /// contentView的四个圆角值，顺序为左上、左下、右下、右上，需要填充4个值，不足4个值则无效，如果值<=0则为直角。
-  final List<int>? alertCornerRadiusArray;
-
-  /// 注意：setTapAuthPageMaskClosePage字段未在给出的代码段中明确提及，但根据字段说明添加
-  /// 设置授权页弹窗模式，点击非弹窗区域关闭授权页。true，关闭；false，不关闭。
-  /// final bool? setTapAuthPageMaskClosePage;
-
   /// 设置二次隐私协议弹窗是否显示。取值：
   /// NO（默认值）：表示不显示。
   /// YES：表示显示。
@@ -397,7 +360,7 @@ class PrivacyAlertUIModelForIOS {
   /// 设置二次隐私协议弹窗协议内容颜色数组。
   final List<Color>? privacyAlertContentColors;
 
-  /// 设置二次隐私协议弹窗协议内容颜色，默认值[#999999,#1890FF]。
+  /// 设置二次隐私协议弹窗协议内容
   final NSTextAlignment? privacyAlertContentAlignment;
 
   /// 设置二次隐私协议弹窗按钮背景图片。
@@ -479,19 +442,6 @@ class PrivacyAlertUIModelForIOS {
   final Function? privacyAlertCustomViewLayoutBlock;
 
   const PrivacyAlertUIModelForIOS({
-    this.alertTitleBarColor,
-    this.alertBarIsHidden,
-    this.alertTitle,
-    this.alertCloseImage,
-    this.alertCloseItemIsHidden,
-    this.alertTitleBarFrameBlock,
-    this.alertTitleFrameBlock,
-    this.alertCloseItemFrameBlock,
-    this.alertBlurViewColor,
-    this.alertBlurViewAlpha,
-    this.alertCornerRadiusArray,
-
-    /// this.setTapAuthPageMaskClosePage,
     this.privacyAlertIsNeedShow,
     this.privacyAlertIsNeedAutoLogin,
 
@@ -541,20 +491,6 @@ class PrivacyAlertUIModelForIOS {
   /// 这里仅提供基本框架，具体实现需要根据实际情况进行
 
   Map<String, dynamic> toMap() => {
-        'alertTitleBarColor': alertTitleBarColor?.toHex(),
-        'alertBarIsHidden': alertBarIsHidden,
-        'alertTitle': alertTitle?.toMap(),
-        'alertCloseImage': alertCloseImage,
-        'alertCloseItemIsHidden': alertCloseItemIsHidden,
-        'alertTitleBarFrameBlock': alertTitleBarFrameBlock?.toMap(),
-        'alertTitleFrameBlock': alertTitleFrameBlock?.toMap(),
-
-        'alertCloseItemFrameBlock': alertCloseItemFrameBlock?.toMap(),
-        'alertBlurViewColor': alertBlurViewColor?.toHex(),
-        'alertBlurViewAlpha': alertBlurViewAlpha,
-        'alertCornerRadiusArray': alertCornerRadiusArray,
-
-        /// 'setTapAuthPageMaskClosePage': setTapAuthPageMaskClosePage,
         'privacyAlertIsNeedShow': privacyAlertIsNeedShow,
         'privacyAlertIsNeedAutoLogin': privacyAlertIsNeedAutoLogin,
 
