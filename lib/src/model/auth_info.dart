@@ -36,6 +36,7 @@ class LoggerModel {
   final bool enable;
 
   /// 上传日志
+  /// 仅支持android
   final bool enableUpload;
 
   /// 启用自定义日志处理器
