@@ -45,6 +45,14 @@ class _HomePageState extends State<HomePage> {
   String resultText = "";
 
   @override
+  void initState() {
+    super.initState();
+    FlAliYunNumberAuth().addCallback((result) {
+      setResultText = 'addCallback:${result?.toMap()}';
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(children: [
       Container(
@@ -77,50 +85,50 @@ class _HomePageState extends State<HomePage> {
   }
 
   void getCurrentCarrierName() async {
-    final result = await FlAliYunNumberAuth.getCurrentCarrierName();
+    final result = await FlAliYunNumberAuth().getCurrentCarrierName();
     setResultText = 'getCurrentCarrierName:$result';
   }
 
   void queryCheckBoxIsChecked() async {
-    final result = await FlAliYunNumberAuth.queryCheckBoxIsChecked();
+    final result = await FlAliYunNumberAuth().queryCheckBoxIsChecked();
     setResultText = 'queryCheckBoxIsChecked:$result';
   }
 
   void setCheckboxIsChecked() async {
     final result =
-        await FlAliYunNumberAuth.setCheckboxIsChecked(Random().nextBool());
+        await FlAliYunNumberAuth().setCheckboxIsChecked(Random().nextBool());
     setResultText = 'setCheckboxIsChecked:$result';
   }
 
   void getVersion() async {
-    final result = await FlAliYunNumberAuth.getVersion();
+    final result = await FlAliYunNumberAuth().getVersion();
     setResultText = 'getVersion:$result';
   }
 
   void setAuthInfo() async {
-    final result = await FlAliYunNumberAuth.setAuthInfo(
-        android: androidAuthInfo, ios: iosAuthInfo);
+    final result = await FlAliYunNumberAuth()
+        .setAuthInfo(android: androidAuthInfo, ios: iosAuthInfo);
     setResultText = 'setAuthInfo:${result?.toMap()}';
   }
 
   void checkEnvAvailable() async {
-    final result = await FlAliYunNumberAuth.checkEnvAvailable(AuthType.login);
-    setResultText = 'checkEnvAvailable:${result?.toMap()}';
+    final result = await FlAliYunNumberAuth().checkEnvAvailable(AuthType.login);
+    setResultText = 'checkEnvAvailable:$result';
   }
 
   void getLoginToken() async {
-    final result = await FlAliYunNumberAuth.getLoginToken();
-    setResultText = 'getLoginToken:${result?.toMap()}';
+    final result = await FlAliYunNumberAuth().getLoginToken();
+    setResultText = 'getLoginToken:$result';
   }
 
   void accelerateLoginPage() async {
-    final result = await FlAliYunNumberAuth.accelerateLoginPage();
-    setResultText = 'accelerateLoginPage:${result?.toMap()}';
+    final result = await FlAliYunNumberAuth().accelerateLoginPage();
+    setResultText = 'accelerateLoginPage:$result';
   }
 
   void setAuthUI() async {
-    final result = await FlAliYunNumberAuth.setAuthUI(
-        android: buildAndroidUi(context), ios: buildIOSUi(context));
+    final result = await FlAliYunNumberAuth()
+        .setAuthUI(android: buildAndroidUi(context), ios: buildIOSUi(context));
     setResultText = 'setAuthUI:$result';
   }
 

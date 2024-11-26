@@ -10,43 +10,34 @@ import com.mobile.auth.gatewayauth.PreLoginResultListener
 import com.mobile.auth.gatewayauth.TokenResultListener
 import io.flutter.plugin.common.MethodChannel
 
-class AuthListener(
-    private val channel: MethodChannel
-) : TokenResultListener, PreLoginResultListener, ActivityResultListener,
-    AuthUIControlClickListener {
-    var result: MethodChannel.Result? = null
+class AuthListener(private val channel: MethodChannel) : TokenResultListener, PreLoginResultListener, ActivityResultListener, AuthUIControlClickListener {
     private val gson = Gson()
 
     override fun onTokenSuccess(str: String?) {
         println("onTokenSuccess: $str")
-        resultSuccess(toMap(str))
+        onAuthResult(toMap(str))
     }
 
     override fun onTokenFailed(s: String?, s1: String?) {
         println("onTokenFailed=2: $s =$s1")
-        resultSuccess(toMap(s) + mapOf("isFailed" to true, "msg" to s1))
+        onAuthResult(toMap(s) + mapOf("isFailed" to true, "msg" to s1))
     }
 
     override fun onTokenFailed(str: String?) {
         println("onTokenFailed=1: $str")
-        resultSuccess(toMap(str) + mapOf("isFailed" to true))
+        onAuthResult(toMap(str) + mapOf("isFailed" to true))
     }
 
     override fun onActivityResult(requestCode: Int, code: Int, data: Intent?) {
-        channel.invokeMethod(
-            "onActivityResult",
-            mapOf("requestCode" to requestCode, "code" to code, "data" to data?.data?.toString())
-        )
+        channel.invokeMethod("onActivityResult", mapOf("requestCode" to requestCode, "code" to code, "data" to data?.data?.toString()))
     }
 
     override fun onClick(code: String?, context: Context?, jsonString: String?) {
         channel.invokeMethod("onAuthUIClick", mapOf("code" to code, "json" to jsonString))
     }
 
-    private fun resultSuccess(any: Any?) {
-        println("resultSuccess: $any")
-        result?.success(any)
-        this.result = null
+    private fun onAuthResult(any: Any?) {
+        channel.invokeMethod("onAuthResult", any)
     }
 
     private fun toMap(str: String?): Map<String, Any?> {

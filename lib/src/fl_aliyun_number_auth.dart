@@ -1,21 +1,44 @@
+import 'dart:async';
+
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 const MethodChannel _channel = MethodChannel('fl_aliyun_number_auth');
 
+typedef AuthResultCallback = void Function(AuthResultModel? result);
+
 class FlAliYunNumberAuth {
-  const FlAliYunNumberAuth._();
+  factory FlAliYunNumberAuth() => _singleton ??= FlAliYunNumberAuth._();
+
+  static FlAliYunNumberAuth? _singleton;
+
+  FlAliYunNumberAuth._() {
+    _setMethodCallHandler();
+  }
 
   /// ios 端特有方法
-  static FlAliYunNumberAuthForIOS get iosMethod => FlAliYunNumberAuthForIOS();
+  FlAliYunNumberAuthForIOS get iosMethod => FlAliYunNumberAuthForIOS();
 
   /// android 端特有方法
-  static FlAliYunNumberAuthForAndroid get androidMethod =>
+  FlAliYunNumberAuthForAndroid get androidMethod =>
       FlAliYunNumberAuthForAndroid();
 
+  /// 结果回调监听
+  AuthResultCallback? _authResultCallback;
+
+  /// 添加结果回调
+  addCallback(AuthResultCallback callback) {
+    _authResultCallback = callback;
+  }
+
+  /// 移除结果回调
+  removeCallback() {
+    _authResultCallback = null;
+  }
+
   /// 初始化设置
-  static Future<AuthResultModel?> setAuthInfo({
+  Future<AuthResultModel?> setAuthInfo({
     required AuthInfoForAndroid android,
     required AuthInfoForIOS ios,
   }) async {
@@ -26,13 +49,11 @@ class FlAliYunNumberAuth {
       if (_isIOS) ...ios.toMap(),
     });
     if (result == null) return null;
-    final model = AuthResultModel.fromMap(result);
-    setMethodCallHandler();
-    return model;
+    return AuthResultModel.fromMap(result);
   }
 
   /// 日志设置
-  static Future<bool?> setLoggerInfo(LoggerModel logger) async {
+  Future<bool?> setLoggerInfo(LoggerModel logger) async {
     if (!_supported) return null;
     return await _channel.invokeMethod<bool>('setLoggerInfo', logger.toMap());
   }
@@ -40,22 +61,37 @@ class FlAliYunNumberAuth {
   /// 一键登录获取Token
   /// 获取登录Token 调起一键登录授权页面，在用户授权后获取一键登录的Token
   /// timeout 接口超时时间 默认10s
-  static Future<AuthResultModel?> getLoginToken({
+  /// [authResultCallback] 返回结果回调
+  Future<bool?> getLoginToken({
     Duration timeout = const Duration(seconds: 10),
 
     /// ios 模拟环境
     bool isDebug = false,
   }) async {
     if (!_supported) return null;
-    final result = await _channel.invokeMethod<Map<dynamic, dynamic>>(
-        'getLoginToken',
+    return await _channel.invokeMethod<bool>('getLoginToken',
         {'timeout': timeout.inMilliseconds, 'isDebug': isDebug});
-    if (result == null) return null;
-    return AuthResultModel.fromMap(result);
+  }
+
+  /// 加速拉起授权页
+  /// [authResultCallback] 返回结果回调
+  Future<bool?> accelerateLoginPage(
+      {Duration timeout = const Duration(seconds: 10)}) async {
+    if (!_supported) return null;
+    return await _channel.invokeMethod<bool>(
+        'accelerateLoginPage', timeout.inMilliseconds);
+  }
+
+  /// SDK环境检查函数，检查终端是否支持号码认证，带返回code的
+  /// [authResultCallback] 返回结果回调
+  Future<bool?> checkEnvAvailable(AuthType type) async {
+    if (!_supported) return null;
+    return await _channel.invokeMethod<bool>(
+        'checkEnvAvailable', type.index + 1);
   }
 
   /// 注销登录页面
-  static Future<bool?> quitLoginPage({
+  Future<bool?> quitLoginPage({
     /// 仅支持ios
     bool animated = true,
   }) async {
@@ -64,72 +100,52 @@ class FlAliYunNumberAuth {
         .invokeMethod<bool>('quitLoginPage', {'animated': animated});
   }
 
-  /// 加速拉起授权页
-  static Future<AuthResultModel?> accelerateLoginPage(
-      {Duration timeout = const Duration(seconds: 10)}) async {
-    if (!_supported) return null;
-    final result = await _channel.invokeMethod<Map<dynamic, dynamic>>(
-        'accelerateLoginPage', {'timeout': timeout.inMilliseconds});
-    if (result == null) return null;
-    return AuthResultModel.fromMap(result);
-  }
-
   /// 获取版本号
-  static Future<String?> getVersion() async {
+  Future<String?> getVersion() async {
     if (!_supported) return null;
     return await _channel.invokeMethod<String>('getVersion');
   }
 
-  /// SDK环境检查函数，检查终端是否支持号码认证，带返回code的
-  static Future<AuthResultModel?> checkEnvAvailable(AuthType type) async {
-    if (!_supported) return null;
-    final result = await _channel.invokeMethod<Map<dynamic, dynamic>>(
-        'checkEnvAvailable', {'authType': type.index + 1});
-    if (result == null) return null;
-    return AuthResultModel.fromMap(result);
-  }
-
   /// 设置授权页协议框是否勾选
-  static Future<bool?> setCheckboxIsChecked(bool isCheck) async {
+  Future<bool?> setCheckboxIsChecked(bool isCheck) async {
     if (!_supported) return null;
-    return await _channel
-        .invokeMethod<bool>('setCheckboxIsChecked', {'isChecked': isCheck});
+    return await _channel.invokeMethod<bool>('setCheckboxIsChecked', isCheck);
   }
 
   /// 获取授权页协议勾选框选中状态
   /// true 选中 false 未选中 null 未初始化
-  static Future<bool?> queryCheckBoxIsChecked() async {
+  Future<bool?> queryCheckBoxIsChecked() async {
     return await _channel.invokeMethod<bool>('queryCheckBoxIsChecked');
   }
 
   /// 结束授权页loading动画
-  static Future<bool?> hideLoginLoading() async {
+  Future<bool?> hideLoginLoading() async {
     if (!_supported) return null;
     return await _channel.invokeMethod<bool>('hideLoginLoading');
   }
 
   /// 获取上网卡运营商 CMCC(中国移动)、CUCC(中国联通)、CTCC(中国电信)
-  static Future<String?> getCurrentCarrierName() async {
+  Future<String?> getCurrentCarrierName() async {
     if (!_supported) return null;
     return await _channel.invokeMethod<String>('getCurrentCarrierName');
   }
 
   /// 二次弹窗取消事件
-  static Future<bool?> quitPrivacyAlert() async {
+  Future<bool?> quitPrivacyAlert() async {
     if (!_supported) return null;
     return await _channel.invokeMethod<bool>('quitPrivacyAlert');
   }
 
-  static AuthUIModelForAndroid? _androidAuthUi;
+  AuthUIModelForAndroid? _androidAuthUi;
 
-  static AuthUIModelForAndroid? get androidAuthUi => _androidAuthUi;
+  AuthUIModelForAndroid? get androidAuthUi => _androidAuthUi;
 
-  static AuthUIModelForIOS? _iosAuthUi;
+  AuthUIModelForIOS? _iosAuthUi;
 
-  static AuthUIModelForIOS? get iosAuthUi => _iosAuthUi;
+  AuthUIModelForIOS? get iosAuthUi => _iosAuthUi;
 
   /// 设置授权页UI
-  static Future<bool?> setAuthUI({
+  Future<bool?> setAuthUI({
     /// android 授权页配置
     AuthUIModelForAndroid? android,
 
@@ -139,7 +155,6 @@ class FlAliYunNumberAuth {
     if (!_supported) return null;
     _androidAuthUi = android;
     _iosAuthUi = ios;
-    print(_iosAuthUi?.toMap());
     return await _channel.invokeMethod<bool>('setAuthUI', {
       if (_isAndroid && android != null) ...android.toMap(),
       if (_isIOS && ios != null) ...ios.toMap(),
@@ -147,10 +162,19 @@ class FlAliYunNumberAuth {
   }
 
   /// 设置监听器
-  static void setMethodCallHandler() {
+  void _setMethodCallHandler() {
     _channel.setMethodCallHandler((MethodCall call) async {
-      // debugPrint('setMethodCallHandler:${call.method} ${call.arguments}');
       switch (call.method) {
+        case 'onAuthResult':
+          AuthResultModel? model;
+          try {
+            model = AuthResultModel.fromMap(
+                call.arguments as Map<dynamic, dynamic>);
+          } catch (e) {
+            debugPrint("AuthResultCallback : $e");
+          }
+          _authResultCallback?.call(model);
+          break;
         case 'onViewFrameBlock':
           _iosAuthUi?.onViewFrameBlock(call.arguments as Map<dynamic, dynamic>);
           break;
@@ -170,6 +194,18 @@ class FlAliYunNumberAuth {
       }
     });
   }
+
+  /// 授权页协议内容动画执行，注意：必须设置privacyAnimation属性，才会执行动画
+  Future<bool?> privacyAnimationStart() async {
+    if (!_isIOS) return null;
+    return await _channel.invokeMethod<bool>('privacyAnimationStart');
+  }
+
+  /// 授权页checkbox动画执行，注意：必须设置checkboxAnimation属性，才会执行动画
+  Future<bool?> checkBoxAnimationStart() async {
+    if (!_isIOS) return null;
+    return await _channel.invokeMethod<bool>('checkBoxAnimationStart');
+  }
 }
 
 bool _supported = _isAndroid || _isIOS;
@@ -185,18 +221,6 @@ class FlAliYunNumberAuthForIOS {
   FlAliYunNumberAuthForIOS._();
 
   static FlAliYunNumberAuthForIOS? _singleton;
-
-  /// 授权页协议内容动画执行，注意：必须设置privacyAnimation属性，才会执行动画
-  Future<bool> privacyAnimationStart() async {
-    if (!_isIOS) return false;
-    return await _channel.invokeMethod<bool>('privacyAnimationStart') ?? false;
-  }
-
-  /// 授权页checkbox动画执行，注意：必须设置checkboxAnimation属性，才会执行动画
-  Future<bool> checkboxAnimationStart() async {
-    if (!_isIOS) return false;
-    return await _channel.invokeMethod<bool>('checkboxAnimationStart') ?? false;
-  }
 
   /// 判断当前设备蜂窝数据网络是否开启，即3G/4G
   Future<String?> checkDeviceCellularDataEnable() async {
@@ -244,7 +268,7 @@ class FlAliYunNumberAuthForIOS {
   Future<String?> getMobilePrivateIPAddress(bool preferIPv4) async {
     if (!_isIOS) return null;
     return await _channel.invokeMethod<String>(
-        'getMobilePrivateIPAddress', {'preferIPv4': preferIPv4});
+        'getMobilePrivateIPAddress', preferIPv4);
   }
 
   /// 获取当前设备的唯一标识ID
@@ -262,31 +286,55 @@ class FlAliYunNumberAuthForAndroid {
 
   static FlAliYunNumberAuthForAndroid? _singleton;
 
+  /// 加速拉起 Verify
+  /// [authResultCallback] 返回结果回调
+  Future<bool?> accelerateVerify(
+      {Duration timeout = const Duration(seconds: 10)}) async {
+    if (!_supported) return null;
+    return await _channel.invokeMethod<bool>(
+        'accelerateVerify', timeout.inMilliseconds);
+  }
+
+  /// getVerifyToken
+  /// timeout 接口超时时间 默认10s
+  /// [authResultCallback] 返回结果回调
+  Future<bool?> getVerifyToken(
+      {Duration timeout = const Duration(seconds: 10)}) async {
+    if (!_supported) return null;
+    return await _channel.invokeMethod<bool>(
+        'getVerifyToken', timeout.inMilliseconds);
+  }
+
+  /// 授权页隐藏导航栏
+  Future<bool?> keepAllPageHideNavigationBar() async {
+    if (!_isAndroid) return null;
+    return await _channel.invokeMethod<bool>('keepAllPageHideNavigationBar');
+  }
+
   /// 授权页是否跟随系统深色模式
   Future<bool?> setAuthPageUseDayLight(bool authPageUseDayLight) async {
     if (!_isAndroid) return null;
     return await _channel.invokeMethod<bool>(
-        'setAuthPageUseDayLight', {'authPageUseDayLight': authPageUseDayLight});
+        'setAuthPageUseDayLight', authPageUseDayLight);
   }
 
   /// 授权页物理返回键禁用
   Future<bool?> closeAuthPageReturnBack(bool close) async {
     if (!_isAndroid) return null;
-    return await _channel
-        .invokeMethod<bool>('closeAuthPageReturnBack', {'close': close});
+    return await _channel.invokeMethod<bool>('closeAuthPageReturnBack', close);
   }
 
   /// 横屏水滴屏全屏适配
   Future<bool?> keepAuthPageLandscapeFullScreen(bool fullScreen) async {
     if (!_isAndroid) return null;
     return await _channel.invokeMethod<bool>(
-        'keepAuthPageLandscapeFullScreen', {'fullScreen': fullScreen});
+        'keepAuthPageLandscapeFullScreen', fullScreen);
   }
 
   /// 删除预取号码信息
   Future<bool?> clearPreInfo() async {
     if (!_isAndroid) return null;
-    return await _channel.invokeMethod<bool>('clearPreInfo') ?? false;
+    return await _channel.invokeMethod<bool>('clearPreInfo');
   }
 
   /// 用户控制返回键及左上角返回按钮效果
@@ -300,14 +348,14 @@ class FlAliYunNumberAuthForAndroid {
   /// 调用该方法后移除相关utdid的使用。
   Future<bool?> prohibitUseUtdid() async {
     if (!_isAndroid) return null;
-    return await _channel.invokeMethod<bool>('prohibitUseUtdid') ?? false;
+    return await _channel.invokeMethod<bool>('prohibitUseUtdid');
   }
 
   /// 授权页是否扩大协议按钮选择范围至我已阅读并同意
   Future<bool?> expandAuthPageCheckedScope(Duration expand) async {
     if (!_isAndroid) return null;
-    return await _channel
-        .invokeMethod<bool>('expandAuthPageCheckedScope', {'expand': expand});
+    return await _channel.invokeMethod<bool>(
+        'expandAuthPageCheckedScope', expand);
   }
 
   /// addAuthRegisterViewConfig
@@ -344,11 +392,13 @@ class FlAliYunNumberAuthForAndroid {
 
   /// 移除所有添加的自定义布局
   Future<bool?> removePrivacyRegisterXmlConfig() async {
+    if (!_isAndroid) return null;
     return await _channel.invokeMethod<bool>('removePrivacyRegisterXmlConfig');
   }
 
   /// 二次弹窗动态添加控件
   Future<bool?> addPrivacyAuthRegisterViewConfig() async {
+    if (!_isAndroid) return null;
     return await _channel
         .invokeMethod<bool>('addPrivacyAuthRegisterViewConfig');
   }
@@ -356,6 +406,7 @@ class FlAliYunNumberAuthForAndroid {
   /// 移除所有动态添加的控件
   /// 在调用addPrivacyAuthRegistViewConfig之前调用removePrivacyAuthRegisterViewConfig先移除所有动态添加的控件。
   Future<bool?> removePrivacyAuthRegisterViewConfig() async {
+    if (!_isAndroid) return null;
     return await _channel
         .invokeMethod<bool>('removePrivacyAuthRegisterViewConfig');
   }

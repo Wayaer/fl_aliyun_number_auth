@@ -250,6 +250,18 @@ class AuthResultModel {
   /// result msg
   final String? msg;
 
+  /// requestId
+  final String? requestId;
+
+  /// token
+  final String? token;
+
+  /// 仅在ios返回
+  final String? innerMsg;
+
+  /// 仅在ios返回
+  final String? innerCode;
+
   /// 仅在android返回
   final bool? isFailed;
 
@@ -257,30 +269,28 @@ class AuthResultModel {
   final double? requestCode;
 
   /// 仅在android返回
-  final String? requestId;
-
-  /// 仅在android返回
   final String? vendorName;
-
-  ///
-  final String? token;
 
   AuthResultModel.fromMap(Map<dynamic, dynamic> map)
       : resultCode = map['resultCode'] as String? ?? map['code'] as String?,
         msg = map['msg'] as String?,
-        isFailed = map['isFailed'] as bool?,
-        requestCode = map['requestCode'] as double?,
         requestId = map['requestId'] as String?,
         token = map['token'] as String?,
+        isFailed = map['isFailed'] as bool?,
+        innerMsg = map['innerMsg'] as String?,
+        innerCode = map['innerCode'] as String?,
+        requestCode = map['requestCode'] as double?,
         vendorName = map['vendorName'] as String?;
 
   Map<String, dynamic> toMap() => {
         'resultCode': resultCode,
         'msg': msg,
+        'token': token,
+        'requestId': requestId,
+        'innerMsg': innerMsg,
+        'innerCode': innerCode,
         'isFailed': isFailed,
         'requestCode': requestCode,
-        'requestId': requestId,
-        'token': token,
         'vendorName': vendorName
       };
 }

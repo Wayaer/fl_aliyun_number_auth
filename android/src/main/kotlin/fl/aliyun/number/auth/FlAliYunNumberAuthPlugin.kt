@@ -39,6 +39,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         authHelper = PhoneNumberAuthHelper.getInstance(binding.activity, authListener)
+        authHelper.setAuthListener(authListener)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
@@ -55,7 +56,6 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
-        println("onMethodCall: ${call.method} ${call.arguments}")
         when (call.method) {
             "setAuthSDKInfo" -> {
                 val args = call.arguments as Map<*, *>
@@ -81,10 +81,29 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
             }
 
             "getLoginToken" -> {
-                authListener.result = result
                 val args = call.arguments as Map<*, *>
-                authHelper.setAuthListener(authListener)
                 authHelper.getLoginToken(context, args["timeout"] as Int)
+                result.success(true)
+            }
+
+            "accelerateLoginPage" -> {
+                authHelper.accelerateLoginPage(call.arguments as Int, authListener)
+                result.success(true)
+            }
+
+            "accelerateVerify" -> {
+                authHelper.accelerateVerify(call.arguments as Int, authListener)
+                result.success(true)
+            }
+
+            "getVerifyToken" -> {
+                authHelper.getVerifyToken(call.arguments as Int)
+                result.success(true)
+            }
+
+            "checkEnvAvailable" -> {
+                authHelper.checkEnvAvailable(call.arguments as Int)
+                result.success(true)
             }
 
             "quitLoginPage" -> {
@@ -92,40 +111,20 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                 result.success(true)
             }
 
-            "accelerateLoginPage" -> {
-                authListener.result = result
-                val args = call.arguments as Map<*, *>
-                authHelper.accelerateLoginPage(args["timeout"] as Int, authListener)
-            }
-
-            "getVersion" -> {
-                result.success(PhoneNumberAuthHelper.getVersion())
-            }
-
-            "checkEnvAvailable" -> {
-                authListener.result = result
-                val args = call.arguments as Map<*, *>
-                authHelper.checkEnvAvailable(args["authType"] as Int)
-            }
+            "getVersion" -> result.success(PhoneNumberAuthHelper.getVersion())
 
             "setCheckboxIsChecked" -> {
-                val args = call.arguments as Map<*, *>
-                authHelper.setProtocolChecked(args["isChecked"] as Boolean)
+                authHelper.setProtocolChecked(call.arguments as Boolean)
                 result.success(true)
             }
 
-            "queryCheckBoxIsChecked" -> {
-                result.success(authHelper.queryCheckBoxIsChecked())
-            }
-
+            "queryCheckBoxIsChecked" -> result.success(authHelper.queryCheckBoxIsChecked())
             "hideLoginLoading" -> {
                 authHelper.hideLoginLoading()
                 result.success(true)
             }
 
-            "getCurrentCarrierName" -> {
-                result.success(authHelper.currentCarrierName)
-            }
+            "getCurrentCarrierName" -> result.success(authHelper.currentCarrierName)
 
             "setAuthUI" -> setAuthUI(call, result)
             "quitPrivacyAlert" -> {
@@ -133,22 +132,35 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                 result.success(true)
             }
 
+            "checkBoxAnimationStart" -> {
+                authHelper.checkBoxAnimationStart()
+                result.success(true)
+            }
+
+            "privacyAnimationStart" -> {
+                authHelper.privacyAnimationStart()
+                result.success(true)
+            }
+
+
             /// 以下为android 特有
             "setAuthPageUseDayLight" -> {
-                val args = call.arguments as Map<*, *>
-                authHelper.setAuthPageUseDayLight(args["authPageUseDayLight"] as Boolean)
+                authHelper.setAuthPageUseDayLight(call.arguments as Boolean)
+                result.success(true)
+            }
+
+            "keepAllPageHideNavigationBar" -> {
+                authHelper.keepAllPageHideNavigationBar()
                 result.success(true)
             }
 
             "closeAuthPageReturnBack" -> {
-                val args = call.arguments as Map<*, *>
-                authHelper.closeAuthPageReturnBack(args["close"] as Boolean)
+                authHelper.closeAuthPageReturnBack(call.arguments as Boolean)
                 result.success(true)
             }
 
             "keepAuthPageLandscapeFullScreen" -> {
-                val args = call.arguments as Map<*, *>
-                authHelper.keepAuthPageLandscapeFullSreen(args["fullScreen"] as Boolean)
+                authHelper.keepAuthPageLandscapeFullSreen(call.arguments as Boolean)
                 result.success(true)
             }
 
@@ -168,11 +180,9 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
             }
 
             "expandAuthPageCheckedScope" -> {
-                val args = call.arguments as Map<*, *>
-                authHelper.expandAuthPageCheckedScope(args["expand"] as Boolean)
+                authHelper.expandAuthPageCheckedScope(call.arguments as Boolean)
                 result.success(true)
             }
-
 
             "addAuthRegisterViewConfig" -> addAuthRegisterViewConfig(call, result)
             "removeAuthRegisterViewConfig" -> {
@@ -275,36 +285,24 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                 (navUi["navTextSize"] as Int?)?.let { authUIConfigBuilder.setNavTextSizeDp(it.toDp()) }
                 (navUi["navTypeface"] as Int?)?.let { authUIConfigBuilder.setNavTypeface(typefaces[it]) }
                 (navUi["navReturnImgPath"] as String?)?.let {
-                    authUIConfigBuilder.setNavReturnImgPath(
-                        it.toImagePath()
-                    )
+                    authUIConfigBuilder.setNavReturnImgPath(it.toImagePath())
                 }
                 (navUi["navReturnImgWidth"] as Int?)?.let {
-                    authUIConfigBuilder.setNavReturnImgWidth(
-                        it.toDp()
-                    )
+                    authUIConfigBuilder.setNavReturnImgWidth(it.toDp())
                 }
                 (navUi["navReturnImgHeight"] as Int?)?.let {
-                    authUIConfigBuilder.setNavReturnImgHeight(
-                        it.toDp()
-                    )
+                    authUIConfigBuilder.setNavReturnImgHeight(it.toDp())
                 }
                 (navUi["navReturnImgScaleType"] as Int?)?.let {
-                    authUIConfigBuilder.setNavReturnScaleType(
-                        ImageView.ScaleType.entries[it]
-                    )
+                    authUIConfigBuilder.setNavReturnScaleType(ImageView.ScaleType.entries[it])
                 }
                 (navUi["navReturnHidden"] as Boolean?)?.let {
-                    authUIConfigBuilder.setNavReturnHidden(
-                        it
-                    )
+                    authUIConfigBuilder.setNavReturnHidden(it)
                 }
                 (navUi["navHidden"] as Boolean?)?.let { authUIConfigBuilder.setNavHidden(it) }
                 (navUi["webNavColor"] as String?)?.let { authUIConfigBuilder.setWebNavColor(it.toColorInt()) }
                 (navUi["webNavTextColor"] as String?)?.let {
-                    authUIConfigBuilder.setWebNavTextColor(
-                        it.toColorInt()
-                    )
+                    authUIConfigBuilder.setWebNavTextColor(it.toColorInt())
                 }
                 (navUi["webNavTextSize"] as Int?)?.let { authUIConfigBuilder.setWebNavTextSizeDp(it.toDp()) }
                 (navUi["webNavReturnImgPath"] as String?)?.let {
@@ -312,14 +310,10 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                 }
 
                 (navUi["webHiddeProgress"] as Boolean?)?.let {
-                    authUIConfigBuilder.setWebHiddeProgress(
-                        it
-                    )
+                    authUIConfigBuilder.setWebHiddeProgress(it)
                 }
                 (navUi["webViewStatusBarColor"] as String?)?.let {
-                    authUIConfigBuilder.setWebViewStatusBarColor(
-                        it.toColorInt()
-                    )
+                    authUIConfigBuilder.setWebViewStatusBarColor(it.toColorInt())
                 }
                 (navUi["webSupportedJavascript"] as Boolean?)?.let {
                     authUIConfigBuilder.setWebSupportedJavascript(it)
@@ -337,9 +331,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                 (logoUi["logoOffsetY"] as Int?)?.let { authUIConfigBuilder.setLogoOffsetY(it.toDp()) }
                 (logoUi["logoOffsetYB"] as Int?)?.let { authUIConfigBuilder.setLogoOffsetY_B(it.toDp()) }
                 (logoUi["logoScaleType"] as Int?)?.let {
-                    authUIConfigBuilder.setLogoScaleType(
-                        ImageView.ScaleType.entries[it]
-                    )
+                    authUIConfigBuilder.setLogoScaleType(ImageView.ScaleType.entries[it])
                 }
             }
             val sloganUi = args["sloganUi"] as Map<*, *>?
@@ -349,15 +341,11 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                     authUIConfigBuilder.setSloganTextColor(Color.parseColor(it))
                 }
                 (sloganUi["sloganTextSize"] as Int?)?.let {
-                    authUIConfigBuilder.setSloganTextSizeDp(
-                        it.toDp()
-                    )
+                    authUIConfigBuilder.setSloganTextSizeDp(it.toDp())
                 }
                 (sloganUi["sloganOffsetY"] as Int?)?.let { authUIConfigBuilder.setSloganOffsetY(it.toDp()) }
                 (sloganUi["sloganOffsetYB"] as Int?)?.let {
-                    authUIConfigBuilder.setSloganOffsetY_B(
-                        it.toDp()
-                    )
+                    authUIConfigBuilder.setSloganOffsetY_B(it.toDp())
                 }
                 (sloganUi["sloganTypeface"] as Int?)?.let {
                     authUIConfigBuilder.setSloganTypeface(typefaces[it])
@@ -368,9 +356,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                 (numberUi["numberColor"] as String?)?.let { authUIConfigBuilder.setNumberColor(it.toColorInt()) }
                 (numberUi["numberTextSize"] as Int?)?.let { authUIConfigBuilder.setNumberSizeDp(it.toDp()) }
                 (numberUi["numFieldOffsetY"] as Int?)?.let {
-                    authUIConfigBuilder.setNumFieldOffsetY(
-                        it.toDp()
-                    )
+                    authUIConfigBuilder.setNumFieldOffsetY(it.toDp())
                 }
                 (numberUi["numFieldOffsetYB"] as Int?)?.let {
                     authUIConfigBuilder.setNumFieldOffsetY_B(it.toDp())
@@ -385,9 +371,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                     authUIConfigBuilder.setNumberTypeface(typefaces[it])
                 }
                 (numberUi["numberTextSpace"] as Double?)?.let {
-                    authUIConfigBuilder.setNumberTextSpace(
-                        it.toDp().toFloat()
-                    )
+                    authUIConfigBuilder.setNumberTextSpace(it.toDp().toFloat())
                 }
             }
             val loginBtnUi = args["loginBtnUi"] as Map<*, *>?
@@ -397,9 +381,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                     authUIConfigBuilder.setLogBtnTextColor(it.toColorInt())
                 }
                 (loginBtnUi["logBtnTextSize"] as Int?)?.let {
-                    authUIConfigBuilder.setLogBtnTextSizeDp(
-                        it.toDp()
-                    )
+                    authUIConfigBuilder.setLogBtnTextSizeDp(it.toDp())
                 }
                 (loginBtnUi["logBtnWidth"] as Int?)?.let { authUIConfigBuilder.setLogBtnWidth(it.toDp()) }
                 (loginBtnUi["logBtnHeight"] as Int?)?.let { authUIConfigBuilder.setLogBtnHeight(it.toDp()) }
@@ -411,9 +393,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                 }
                 (loginBtnUi["logBtnOffsetY"] as Int?)?.let { authUIConfigBuilder.setLogBtnOffsetY(it.toDp()) }
                 (loginBtnUi["logBtnOffsetYB"] as Int?)?.let {
-                    authUIConfigBuilder.setLogBtnOffsetY_B(
-                        it.toDp()
-                    )
+                    authUIConfigBuilder.setLogBtnOffsetY_B(it.toDp())
                 }
                 (loginBtnUi["loadingImgPath"] as String?)?.let {
                     authUIConfigBuilder.setLoadingImgPath(it.toImagePath())
@@ -446,25 +426,17 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                 }
                 (privacyUi["privacyColor"] as String?)?.let { color ->
                     (privacyUi["privacyUrlColor"] as String?)?.let { urlColor ->
-                        authUIConfigBuilder.setAppPrivacyColor(
-                            color.toColorInt(), urlColor.toColorInt()
-                        )
+                        authUIConfigBuilder.setAppPrivacyColor(color.toColorInt(), urlColor.toColorInt())
                     }
                 }
                 (privacyUi["privacyOffsetY"] as Int?)?.let {
-                    authUIConfigBuilder.setPrivacyOffsetY(
-                        it.toDp()
-                    )
+                    authUIConfigBuilder.setPrivacyOffsetY(it.toDp())
                 }
                 (privacyUi["privacyOffsetYB"] as Int?)?.let {
-                    authUIConfigBuilder.setPrivacyOffsetY_B(
-                        it.toDp()
-                    )
+                    authUIConfigBuilder.setPrivacyOffsetY_B(it.toDp())
                 }
                 (privacyUi["privacyState"] as Boolean?)?.let {
-                    authUIConfigBuilder.setPrivacyState(
-                        it
-                    )
+                    authUIConfigBuilder.setPrivacyState(it)
                 }
                 (privacyUi["protocolGravity"] as Int?)?.let {
                     authUIConfigBuilder.setProtocolGravity(gravity[it])
@@ -474,9 +446,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                 }
                 (privacyUi["privacyMargin"] as Int?)?.let { authUIConfigBuilder.setPrivacyMargin(it.toDp()) }
                 (privacyUi["privacyBefore"] as String?)?.let {
-                    authUIConfigBuilder.setPrivacyBefore(
-                        it
-                    )
+                    authUIConfigBuilder.setPrivacyBefore(it)
                 }
                 (privacyUi["privacyEnd"] as String?)?.let { authUIConfigBuilder.setPrivacyEnd(it) }
                 (privacyUi["checkboxHidden"] as Boolean?)?.let {
@@ -486,9 +456,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                     authUIConfigBuilder.setUncheckedImgPath(it.toImagePath())
                 }
                 (privacyUi["checkedImgPath"] as String?)?.let {
-                    authUIConfigBuilder.setCheckedImgPath(
-                        it.toImagePath()
-                    )
+                    authUIConfigBuilder.setCheckedImgPath(it.toImagePath())
                 }
                 (privacyUi["checkBoxMarginTop"] as Int?)?.let {
                     authUIConfigBuilder.setCheckBoxMarginTop(it.toDp())
@@ -503,9 +471,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                     authUIConfigBuilder.setProtocolLayoutGravity(gravity[it])
                 }
                 (privacyUi["privacyOffsetX"] as Int?)?.let {
-                    authUIConfigBuilder.setPrivacyOffsetX(
-                        it.toDp()
-                    )
+                    authUIConfigBuilder.setPrivacyOffsetX(it.toDp())
                 }
                 (privacyUi["logBtnToastHidden"] as Boolean?)?.let {
                     authUIConfigBuilder.setLogBtnToastHidden(it)
@@ -527,9 +493,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                 }
                 (privacyUi["checkBoxWidth"] as Int?)?.let { authUIConfigBuilder.setCheckBoxWidth(it.toDp()) }
                 (privacyUi["checkBoxHeight"] as Int?)?.let {
-                    authUIConfigBuilder.setCheckBoxHeight(
-                        it.toDp()
-                    )
+                    authUIConfigBuilder.setCheckBoxHeight(it.toDp())
                 }
             }
             val switchUi = args["switchUi"] as Map<*, *>?
@@ -538,9 +502,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                     authUIConfigBuilder.setSwitchAccHidden(it)
                 }
                 (switchUi["switchAccText"] as String?)?.let {
-                    authUIConfigBuilder.setSwitchAccText(
-                        it
-                    )
+                    authUIConfigBuilder.setSwitchAccText(it)
                 }
                 (switchUi["switchAccTextColor"] as String?)?.let {
                     authUIConfigBuilder.setSwitchAccTextColor(it.toColorInt())
@@ -550,9 +512,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                 }
                 (switchUi["switchOffsetY"] as Int?)?.let { authUIConfigBuilder.setSwitchOffsetY(it.toDp()) }
                 (switchUi["switchOffsetYB"] as Int?)?.let {
-                    authUIConfigBuilder.setSwitchOffsetY_B(
-                        it.toDp()
-                    )
+                    authUIConfigBuilder.setSwitchOffsetY_B(it.toDp())
                 }
                 (switchUi["switchTypeface"] as Int?)?.let {
                     authUIConfigBuilder.setSwitchTypeface(typefaces[it])
@@ -584,9 +544,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                 (pageUi["dialogBottom"] as Boolean?)?.let { authUIConfigBuilder.setDialogBottom(it) }
                 (pageUi["dialogCenter"] as Boolean?)?.let { authUIConfigBuilder.setDialogCenterm(it) }
                 (pageUi["protocolAction"] as String?)?.let {
-                    authUIConfigBuilder.setProtocolAction(
-                        it
-                    )
+                    authUIConfigBuilder.setProtocolAction(it)
                 }
                 (pageUi["packageName"] as String?)?.let { authUIConfigBuilder.setPackageName(it) }
                 (pageUi["webCacheMode"] as Int?)?.let { authUIConfigBuilder.setWebCacheMode(it) }
@@ -618,8 +576,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                     authUIConfigBuilder.setPrivacyAlertExitAnimation(it)
                 }
                 (privacyAlertUi["privacyAlertCornerRadiusArray"] as ArrayList<*>?)?.let { list ->
-                    authUIConfigBuilder.setPrivacyAlertCornerRadiusArray(list.map { it as Int }
-                        .toIntArray())
+                    authUIConfigBuilder.setPrivacyAlertCornerRadiusArray(list.map { it as Int }.toIntArray())
                 }
                 (privacyAlertUi["privacyAlertAlignment"] as Int?)?.let {
                     authUIConfigBuilder.setPrivacyAlertAlignment(gravity[it])
@@ -709,8 +666,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                     authUIConfigBuilder.setPrivacyAlertCloseImgHeight(it.toDp())
                 }
                 (privacyAlertUi["privacyAlertBtnGravity"] as ArrayList<*>?)?.let { list ->
-                    authUIConfigBuilder.setPrivacyAlertBtnGrivaty(list.map { it as Int }
-                        .toIntArray())
+                    authUIConfigBuilder.setPrivacyAlertBtnGrivaty(list.map { it as Int }.toIntArray())
                 }
                 (privacyAlertUi["privacyAlertBtnContent"] as String?)?.let {
                     authUIConfigBuilder.setPrivacyAlertBtnContent(it)
@@ -765,8 +721,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
         result.success(true)
     }
 
-    private val systemUiFlag = arrayListOf(
-        View.SYSTEM_UI_FLAG_LOW_PROFILE,           // 非全屏显示状态，状态栏的部分图标会被隐藏
+    private val systemUiFlag = arrayListOf(View.SYSTEM_UI_FLAG_LOW_PROFILE,           // 非全屏显示状态，状态栏的部分图标会被隐藏
         View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN,    // 全屏显示，状态栏区域被隐藏
         View.SYSTEM_UI_FLAG_HIDE_NAVIGATION,      // 隐藏导航栏
         View.SYSTEM_UI_FLAG_IMMERSIVE,            // 启用沉浸式模式，状态栏和导航栏可通过手势出现

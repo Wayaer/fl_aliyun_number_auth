@@ -31,51 +31,51 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             let args = call.arguments as! [String: Any]
             let reporter = authHelper.getReporter()
             reporter.setConsolePrintLoggerEnable(args["enable"] as! Bool)
-            reporter.setUploadEnable(args["enableUpload"] as! Bool)
-            if args["enableHandler"] as! Bool {}
+//            reporter.setUploadEnable(args["enableUpload"] as! Bool)
+//            if args["enableHandler"] as! Bool {}
             result(true)
         case "getLoginToken":
             getLoginToken(call, result)
+        case "setAuthUI":
+            setAuthUI(call)
+            result(true)
         case "quitLoginPage":
             let args = call.arguments as! [String: Any]
             authHelper.cancelLoginVC(animated: args["animated"] as! Bool) {
                 result(true)
             }
         case "accelerateLoginPage":
-            let args = call.arguments as! [String: Any]
-            authHelper.accelerateLoginPage(withTimeout: TimeInterval(args["timeout"] as! Int)) { dict in
-                result(dict)
+            authHelper.accelerateLoginPage(withTimeout: TimeInterval(call.arguments as! Int)) { dict in
+                self.onAuthResult(dict)
             }
+            result(true)
         case "getVersion":
             result(authHelper.getVersion())
         case "checkEnvAvailable":
-            let args = call.arguments as! [String: Any]
-            authHelper.checkEnvAvailable(with: PNSAuthType(rawValue: args["authType"] as! Int)!) { dict in
-                result(dict)
+            authHelper.checkEnvAvailable(with: PNSAuthType(rawValue: call.arguments as! Int)!) { dict in
+                self.onAuthResult(dict)
             }
+            result(true)
         case "setCheckboxIsChecked":
-            let args = call.arguments as! [String: Any]
-            authHelper.setCheckboxIsChecked(args["isChecked"] as! Bool)
+            authHelper.setCheckboxIsChecked(call.arguments as! Bool)
+            result(true)
         case "queryCheckBoxIsChecked":
             result(authHelper.queryCheckBoxIsChecked())
         case "hideLoginLoading":
-            result(authHelper.hideLoginLoading())
+            authHelper.hideLoginLoading()
+            result(true)
         case "getCurrentCarrierName":
             result(TXCommonUtils.getCurrentCarrierName())
-        case "setAuthUI":
-            setAuthUI(call)
-            result(true)
         case "quitPrivacyAlert":
             authHelper.closePrivactAlertView()
             result(true)
-
-        /// 以下为ios特有
         case "privacyAnimationStart":
             authHelper.privacyAnimationStart()
             result(true)
-        case "checkboxAnimationStart":
+        case "checkBoxAnimationStart":
             authHelper.checkboxAnimationStart()
             result(true)
+        /// 以下为ios特有
         case "checkDeviceCellularDataEnable":
             result(TXCommonUtils.checkDeviceCellularDataEnable())
         case "isChinaUnicom":
@@ -91,13 +91,16 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
         case "reachableViaWWAN":
             result(TXCommonUtils.reachableViaWWAN())
         case "getMobilePrivateIPAddress":
-            let args = call.arguments as! [String: Any]
-            result(TXCommonUtils.getMobilePrivateIPAddress(args["preferIPv4"] as! Bool))
+            result(TXCommonUtils.getMobilePrivateIPAddress(call.arguments as! Bool))
         case "getUniqueID":
             result(TXCommonUtils.getUniqueID())
         default:
             result(FlutterMethodNotImplemented)
         }
+    }
+
+    func onAuthResult(_ any: Any?) {
+        channel.invokeMethod("onAuthResult", arguments: any)
     }
 
     func getLoginToken(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
@@ -106,15 +109,16 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             let isDebug = args["isDebug"] as! Bool
             if isDebug {
                 authHelper.debugLoginUI(with: controller, model: authUiModel) { dict in
-                    result(dict)
+                    self.onAuthResult(dict)
                 }
             } else {
                 authHelper.getLoginToken(withTimeout: TimeInterval(args["timeout"] as! Int), controller: controller, model: authUiModel) { dict in
-                    result(dict)
+                    self.onAuthResult(dict)
                 }
             }
+            result(true)
         } else {
-            result(nil)
+            result(false)
         }
     }
 
@@ -139,11 +143,7 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
                         newFrame = newFrame.resizeRect(size)
                     }
                     if let offset = offsetMap?.toCGPoint() {
-                        print("offset \(offset)")
-                        print("old  \(newFrame)")
                         newFrame = newFrame.offsetBy(offset)
-                        print("new  \(newFrame)")
-                        print("======")
                     }
                     if let map = frameMap {
                         newFrame = map.toCGRect()
