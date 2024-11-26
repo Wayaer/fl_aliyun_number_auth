@@ -2,8 +2,8 @@
 
 ## 官方文档
 
-[android文档](https://help.aliyun.com/zh/pnvs/developer-reference/the-android-client-access)
-[ios文档](https://help.aliyun.com/zh/pnvs/developer-reference/the-ios-client-access)
+- [android官方文档](https://help.aliyun.com/zh/pnvs/developer-reference/the-android-client-access)
+- [ios官方文档](https://help.aliyun.com/zh/pnvs/developer-reference/the-ios-client-access)
 
 - 插件仅连接原生 sdk 的方法和参数，包含 UI 配置（自定义 UI 还未实现完整）
 - 一键登录和预取号码流程，请参数官方文档
