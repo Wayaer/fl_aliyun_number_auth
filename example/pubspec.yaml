@@ -1,6 +1,6 @@
 name: example
 description: "Demonstrates how to use the fl_aliyun_number_auth plugin."
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 
 environment:
   sdk: ^3.5.4

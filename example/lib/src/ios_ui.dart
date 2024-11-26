@@ -50,7 +50,7 @@ AuthUIModelForIOS buildIOSUi(BuildContext context) {
             offset: Offset(0, -30.0.toPx(context)),
           )),
       sloganUi: SloganUIModelForIOS(
-          sloganText: NSAttributedString(text: '欢迎来到芯赛虎智能生活', color: bodyColor),
+          sloganText: NSAttributedString(text: '欢迎登录', color: bodyColor),
           sloganIsHidden: false,
           sloganFrameBlock: ViewFrameBlockForIOS(
             offset: Offset(0, -80.0.toPx(context)),
