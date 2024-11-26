@@ -47,6 +47,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+
+    /// 添加result 回调
     FlAliYunNumberAuth().addCallback((result) {
       setResultText = 'addCallback:${result?.toMap()}';
     });
@@ -71,38 +73,24 @@ class _HomePageState extends State<HomePage> {
           ElevatedText('setAuthInfo', onPressed: setAuthInfo),
           ElevatedText('setAuthUI', onPressed: setAuthUI),
           ElevatedText('checkEnvAvailable', onPressed: checkEnvAvailable),
-          ElevatedText('getLoginToken', onPressed: getLoginToken),
           ElevatedText('accelerateLoginPage', onPressed: accelerateLoginPage),
+          ElevatedText('getLoginToken', onPressed: getLoginToken),
+          ElevatedText('quitLoginPage', onPressed: quitLoginPage),
+          ElevatedText('hideLoginLoading', onPressed: hideLoginLoading),
+          ElevatedText('quitPrivacyAlert', onPressed: quitPrivacyAlert),
           ElevatedText('setCheckboxIsChecked', onPressed: setCheckboxIsChecked),
           ElevatedText('queryCheckBoxIsChecked',
               onPressed: queryCheckBoxIsChecked),
           ElevatedText('getCurrentCarrierName',
               onPressed: getCurrentCarrierName),
+          ElevatedText('privacyAnimationStart',
+              onPressed: privacyAnimationStart),
+          ElevatedText('checkBoxAnimationStart',
+              onPressed: checkBoxAnimationStart),
           ElevatedText('getVersion', onPressed: getVersion),
         ])
       ]))),
     ]);
-  }
-
-  void getCurrentCarrierName() async {
-    final result = await FlAliYunNumberAuth().getCurrentCarrierName();
-    setResultText = 'getCurrentCarrierName:$result';
-  }
-
-  void queryCheckBoxIsChecked() async {
-    final result = await FlAliYunNumberAuth().queryCheckBoxIsChecked();
-    setResultText = 'queryCheckBoxIsChecked:$result';
-  }
-
-  void setCheckboxIsChecked() async {
-    final result =
-        await FlAliYunNumberAuth().setCheckboxIsChecked(Random().nextBool());
-    setResultText = 'setCheckboxIsChecked:$result';
-  }
-
-  void getVersion() async {
-    final result = await FlAliYunNumberAuth().getVersion();
-    setResultText = 'getVersion:$result';
   }
 
   void setAuthInfo() async {
@@ -111,14 +99,15 @@ class _HomePageState extends State<HomePage> {
     setResultText = 'setAuthInfo:${result?.toMap()}';
   }
 
+  void setAuthUI() async {
+    final result = await FlAliYunNumberAuth()
+        .setAuthUI(android: buildAndroidUi(context), ios: buildIOSUi(context));
+    setResultText = 'setAuthUI:$result';
+  }
+
   void checkEnvAvailable() async {
     final result = await FlAliYunNumberAuth().checkEnvAvailable(AuthType.login);
     setResultText = 'checkEnvAvailable:$result';
-  }
-
-  void getLoginToken() async {
-    final result = await FlAliYunNumberAuth().getLoginToken();
-    setResultText = 'getLoginToken:$result';
   }
 
   void accelerateLoginPage() async {
@@ -126,10 +115,55 @@ class _HomePageState extends State<HomePage> {
     setResultText = 'accelerateLoginPage:$result';
   }
 
-  void setAuthUI() async {
-    final result = await FlAliYunNumberAuth()
-        .setAuthUI(android: buildAndroidUi(context), ios: buildIOSUi(context));
-    setResultText = 'setAuthUI:$result';
+  void getLoginToken() async {
+    final result = await FlAliYunNumberAuth().getLoginToken();
+    setResultText = 'getLoginToken:$result';
+  }
+
+  void quitLoginPage() async {
+    final result = await FlAliYunNumberAuth().quitLoginPage();
+    setResultText = 'quitLoginPage:$result';
+  }
+
+  void hideLoginLoading() async {
+    final result = await FlAliYunNumberAuth().hideLoginLoading();
+    setResultText = 'hideLoginLoading:$result';
+  }
+
+  void quitPrivacyAlert() async {
+    final result = await FlAliYunNumberAuth().quitPrivacyAlert();
+    setResultText = 'quitPrivacyAlert:$result';
+  }
+
+  void setCheckboxIsChecked() async {
+    final result =
+        await FlAliYunNumberAuth().setCheckboxIsChecked(Random().nextBool());
+    setResultText = 'setCheckboxIsChecked:$result';
+  }
+
+  void queryCheckBoxIsChecked() async {
+    final result = await FlAliYunNumberAuth().queryCheckBoxIsChecked();
+    setResultText = 'queryCheckBoxIsChecked:$result';
+  }
+
+  void getCurrentCarrierName() async {
+    final result = await FlAliYunNumberAuth().getCurrentCarrierName();
+    setResultText = 'getCurrentCarrierName:$result';
+  }
+
+  void privacyAnimationStart() async {
+    final result = await FlAliYunNumberAuth().privacyAnimationStart();
+    setResultText = 'privacyAnimationStart:$result';
+  }
+
+  void checkBoxAnimationStart() async {
+    final result = await FlAliYunNumberAuth().checkBoxAnimationStart();
+    setResultText = 'checkBoxAnimationStart:$result';
+  }
+
+  void getVersion() async {
+    final result = await FlAliYunNumberAuth().getVersion();
+    setResultText = 'getVersion:$result';
   }
 
   set setResultText(String text) {
@@ -157,6 +191,12 @@ class ElevatedText extends StatelessWidget {
 
 extension ExtensionInt on int {
   // 将 int 转换为 px
-  int toPX(BuildContext context) =>
+  int toPx(BuildContext context) =>
       (this * MediaQuery.of(context).devicePixelRatio).toInt();
+}
+
+extension ExtensionDouble on double {
+  // 将 double 转换为 px
+  double toPx(BuildContext context) =>
+      this * MediaQuery.of(context).devicePixelRatio;
 }

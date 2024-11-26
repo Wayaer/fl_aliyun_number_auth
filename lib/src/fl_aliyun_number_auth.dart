@@ -17,150 +17,6 @@ class FlAliYunNumberAuth {
     _setMethodCallHandler();
   }
 
-  /// ios 端特有方法
-  FlAliYunNumberAuthForIOS get iosMethod => FlAliYunNumberAuthForIOS();
-
-  /// android 端特有方法
-  FlAliYunNumberAuthForAndroid get androidMethod =>
-      FlAliYunNumberAuthForAndroid();
-
-  /// 结果回调监听
-  AuthResultCallback? _authResultCallback;
-
-  /// 添加结果回调
-  addCallback(AuthResultCallback callback) {
-    _authResultCallback = callback;
-  }
-
-  /// 移除结果回调
-  removeCallback() {
-    _authResultCallback = null;
-  }
-
-  /// 初始化设置
-  Future<AuthResultModel?> setAuthInfo({
-    required AuthInfoForAndroid android,
-    required AuthInfoForIOS ios,
-  }) async {
-    if (!_supported) return null;
-    final result =
-        await _channel.invokeMethod<Map<dynamic, dynamic>>('setAuthSDKInfo', {
-      if (_isAndroid) ...android.toMap(),
-      if (_isIOS) ...ios.toMap(),
-    });
-    if (result == null) return null;
-    return AuthResultModel.fromMap(result);
-  }
-
-  /// 日志设置
-  Future<bool?> setLoggerInfo(LoggerModel logger) async {
-    if (!_supported) return null;
-    return await _channel.invokeMethod<bool>('setLoggerInfo', logger.toMap());
-  }
-
-  /// 一键登录获取Token
-  /// 获取登录Token 调起一键登录授权页面，在用户授权后获取一键登录的Token
-  /// timeout 接口超时时间 默认10s
-  /// [authResultCallback] 返回结果回调
-  Future<bool?> getLoginToken({
-    Duration timeout = const Duration(seconds: 10),
-
-    /// ios 模拟环境
-    bool isDebug = false,
-  }) async {
-    if (!_supported) return null;
-    return await _channel.invokeMethod<bool>('getLoginToken',
-        {'timeout': timeout.inMilliseconds, 'isDebug': isDebug});
-  }
-
-  /// 加速拉起授权页
-  /// [authResultCallback] 返回结果回调
-  Future<bool?> accelerateLoginPage(
-      {Duration timeout = const Duration(seconds: 10)}) async {
-    if (!_supported) return null;
-    return await _channel.invokeMethod<bool>(
-        'accelerateLoginPage', timeout.inMilliseconds);
-  }
-
-  /// SDK环境检查函数，检查终端是否支持号码认证，带返回code的
-  /// [authResultCallback] 返回结果回调
-  Future<bool?> checkEnvAvailable(AuthType type) async {
-    if (!_supported) return null;
-    return await _channel.invokeMethod<bool>(
-        'checkEnvAvailable', type.index + 1);
-  }
-
-  /// 注销登录页面
-  Future<bool?> quitLoginPage({
-    /// 仅支持ios
-    bool animated = true,
-  }) async {
-    if (!_supported) return null;
-    return await _channel
-        .invokeMethod<bool>('quitLoginPage', {'animated': animated});
-  }
-
-  /// 获取版本号
-  Future<String?> getVersion() async {
-    if (!_supported) return null;
-    return await _channel.invokeMethod<String>('getVersion');
-  }
-
-  /// 设置授权页协议框是否勾选
-  Future<bool?> setCheckboxIsChecked(bool isCheck) async {
-    if (!_supported) return null;
-    return await _channel.invokeMethod<bool>('setCheckboxIsChecked', isCheck);
-  }
-
-  /// 获取授权页协议勾选框选中状态
-  /// true 选中 false 未选中 null 未初始化
-  Future<bool?> queryCheckBoxIsChecked() async {
-    return await _channel.invokeMethod<bool>('queryCheckBoxIsChecked');
-  }
-
-  /// 结束授权页loading动画
-  Future<bool?> hideLoginLoading() async {
-    if (!_supported) return null;
-    return await _channel.invokeMethod<bool>('hideLoginLoading');
-  }
-
-  /// 获取上网卡运营商 CMCC(中国移动)、CUCC(中国联通)、CTCC(中国电信)
-  Future<String?> getCurrentCarrierName() async {
-    if (!_supported) return null;
-    return await _channel.invokeMethod<String>('getCurrentCarrierName');
-  }
-
-  /// 二次弹窗取消事件
-  Future<bool?> quitPrivacyAlert() async {
-    if (!_supported) return null;
-    return await _channel.invokeMethod<bool>('quitPrivacyAlert');
-  }
-
-  AuthUIModelForAndroid? _androidAuthUi;
-
-  AuthUIModelForAndroid? get androidAuthUi => _androidAuthUi;
-
-  AuthUIModelForIOS? _iosAuthUi;
-
-  AuthUIModelForIOS? get iosAuthUi => _iosAuthUi;
-
-  /// 设置授权页UI
-  Future<bool?> setAuthUI({
-    /// android 授权页配置
-    AuthUIModelForAndroid? android,
-
-    /// ios 授权页配置
-    AuthUIModelForIOS? ios,
-  }) async {
-    if (!_supported) return null;
-    _androidAuthUi = android;
-    _iosAuthUi = ios;
-    return await _channel.invokeMethod<bool>('setAuthUI', {
-      if (_isAndroid && android != null) ...android.toMap(),
-      if (_isIOS && ios != null) ...ios.toMap(),
-    });
-  }
-
   /// 设置监听器
   void _setMethodCallHandler() {
     _channel.setMethodCallHandler((MethodCall call) async {
@@ -195,16 +51,167 @@ class FlAliYunNumberAuth {
     });
   }
 
+  /// ios 端特有方法
+  FlAliYunNumberAuthForIOS get iosMethod => FlAliYunNumberAuthForIOS();
+
+  /// android 端特有方法
+  FlAliYunNumberAuthForAndroid get androidMethod =>
+      FlAliYunNumberAuthForAndroid();
+
+  /// 结果回调监听
+  AuthResultCallback? _authResultCallback;
+
+  /// 添加 Result 回调
+  ///
+  void addCallback(AuthResultCallback callback) {
+    _authResultCallback = callback;
+  }
+
+  /// 移除 Result 回调
+  void removeCallback() {
+    _authResultCallback = null;
+  }
+
+  /// 设置SDK密钥
+  Future<AuthResultModel?> setAuthInfo({
+    required AuthInfoForAndroid android,
+    required AuthInfoForIOS ios,
+  }) async {
+    if (!_supported) return null;
+    final result =
+        await _channel.invokeMethod<Map<dynamic, dynamic>>('setAuthSDKInfo', {
+      if (_isAndroid) ...android.toMap(),
+      if (_isIOS) ...ios.toMap(),
+    });
+    if (result == null) return null;
+    return AuthResultModel.fromMap(result);
+  }
+
+  /// android 授权页
+  AuthUIModelForAndroid? _androidAuthUi;
+
+  AuthUIModelForAndroid? get androidAuthUi => _androidAuthUi;
+
+  /// ios 授权页
+  AuthUIModelForIOS? _iosAuthUi;
+
+  AuthUIModelForIOS? get iosAuthUi => _iosAuthUi;
+
+  /// 设置授权页UI
+  Future<bool?> setAuthUI({
+    /// android 授权页配置
+    AuthUIModelForAndroid android = const AuthUIModelForAndroid(),
+
+    /// ios 授权页配置
+    AuthUIModelForIOS ios = const AuthUIModelForIOS(),
+  }) async {
+    if (!_supported) return null;
+    _androidAuthUi = android;
+    _iosAuthUi = ios;
+    return await _channel.invokeMethod<bool>('setAuthUI', {
+      if (_isAndroid) ...android.toMap(),
+      if (_isIOS) ...ios.toMap(),
+    });
+  }
+
+  /// 日志设置
+  Future<bool?> setLoggerInfo(LoggerModel logger) async {
+    if (!_supported) return null;
+    return await _channel.invokeMethod<bool>('setLoggerInfo', logger.toMap());
+  }
+
+  /// SDK环境检查函数，检查终端是否支持号码认证
+  /// [authResultCallback] 返回结果回调
+  /// [bool] return true:方法调用成功  false:方法调用失败或不支持
+  Future<bool?> checkEnvAvailable(AuthType type) async {
+    if (!_supported) return null;
+    return await _channel.invokeMethod<bool>(
+        'checkEnvAvailable', type.index + 1);
+  }
+
+  /// 一键登录预取号
+  /// [authResultCallback] 返回结果回调
+  /// [bool] return true:方法调用成功  false:方法调用失败或不支持
+  Future<bool?> accelerateLoginPage(
+      {Duration timeout = const Duration(seconds: 10)}) async {
+    if (!_supported) return null;
+    return await _channel.invokeMethod<bool>(
+        'accelerateLoginPage', timeout.inMilliseconds);
+  }
+
+  /// 一键登录获取Token
+  /// 获取登录Token 调起一键登录授权页面，在用户授权后获取一键登录的Token
+  /// timeout 接口超时时间 默认10s
+  /// [authResultCallback] 返回结果回调
+  /// [bool] return true:方法调用成功  false:方法调用失败或不支持
+  Future<bool?> getLoginToken({
+    Duration timeout = const Duration(seconds: 10),
+
+    /// ios 模拟环境
+    bool isDebug = false,
+  }) async {
+    if (!_supported) return null;
+    return await _channel.invokeMethod<bool>('getLoginToken',
+        {'timeout': timeout.inMilliseconds, 'isDebug': isDebug});
+  }
+
+  /// 注销登录页面
+  Future<bool?> quitLoginPage({
+    /// 仅支持ios
+    bool animated = true,
+  }) async {
+    if (!_supported) return null;
+    return await _channel
+        .invokeMethod<bool>('quitLoginPage', {'animated': animated});
+  }
+
+  /// 结束授权页loading动画
+  Future<bool?> hideLoginLoading() async {
+    if (!_supported) return null;
+    return await _channel.invokeMethod<bool>('hideLoginLoading');
+  }
+
+  /// 二次授权弹窗取消事件
+  Future<bool?> quitPrivacyAlert() async {
+    if (!_supported) return null;
+    return await _channel.invokeMethod<bool>('quitPrivacyAlert');
+  }
+
+  /// 设置授权页协议框是否勾选
+  Future<bool?> setCheckboxIsChecked(bool isCheck) async {
+    if (!_supported) return null;
+    return await _channel.invokeMethod<bool>('setCheckboxIsChecked', isCheck);
+  }
+
+  /// 获取授权页协议勾选框选中状态
+  /// true 选中 false 未选中 null 未初始化
+  Future<bool?> queryCheckBoxIsChecked() async {
+    if (!_supported) return null;
+    return await _channel.invokeMethod<bool>('queryCheckBoxIsChecked');
+  }
+
+  /// 获取上网卡运营商 CMCC(中国移动)、CUCC(中国联通)、CTCC(中国电信)
+  Future<String?> getCurrentCarrierName() async {
+    if (!_supported) return null;
+    return await _channel.invokeMethod<String>('getCurrentCarrierName');
+  }
+
   /// 授权页协议内容动画执行，注意：必须设置privacyAnimation属性，才会执行动画
   Future<bool?> privacyAnimationStart() async {
-    if (!_isIOS) return null;
+    if (!_supported) return null;
     return await _channel.invokeMethod<bool>('privacyAnimationStart');
   }
 
   /// 授权页checkbox动画执行，注意：必须设置checkboxAnimation属性，才会执行动画
   Future<bool?> checkBoxAnimationStart() async {
-    if (!_isIOS) return null;
+    if (!_supported) return null;
     return await _channel.invokeMethod<bool>('checkBoxAnimationStart');
+  }
+
+  /// 获取版本号
+  Future<String?> getVersion() async {
+    if (!_supported) return null;
+    return await _channel.invokeMethod<String>('getVersion');
   }
 }
 
