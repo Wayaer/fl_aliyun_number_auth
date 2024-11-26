@@ -86,6 +86,8 @@ public class FlAliYunNumberAuthPlugin: NSObject, FlutterPlugin {
             result(TXCommonUtils.isChinaTelecom())
         case "getNetworkType":
             result(TXCommonUtils.getNetworktype())
+        case "simSupportedIsOK":
+            result(TXCommonUtils.simSupportedIsOK())
         case "isWWANOpen":
             result(TXCommonUtils.isWWANOpen())
         case "reachableViaWWAN":

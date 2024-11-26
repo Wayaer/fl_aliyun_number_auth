@@ -259,6 +259,12 @@ class FlAliYunNumberAuthForIOS {
     return await _channel.invokeMethod<String>('getNetworkType');
   }
 
+  /// 判断当前设备是否有SIM卡
+  Future<bool?> simSupportedIsOK() async {
+    if (!_isIOS) return null;
+    return await _channel.invokeMethod<bool>('simSupportedIsOK');
+  }
+
   ///  判断wwan是否开着（通过p0网卡判断，无wifi或有wifi情况下都能检测到）
   Future<bool?> isWWANOpen() async {
     if (!_isIOS) return null;
