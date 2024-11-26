@@ -10,6 +10,7 @@ typedef AuthUIClickCallbackForAndroid = void Function(
 
 typedef LoggerHandlerForAndroid = void Function(String level, String msg);
 
+/// 所有单位均为 px , 请转为 px
 class AuthUIModelForAndroid {
   /// 配置授权页状态栏
   final StatusBarUIModelForAndroid? statusBarUi;
@@ -93,6 +94,7 @@ class AuthUIModelForAndroid {
   }
 }
 
+/// 所有单位均为 px , 请转为 px
 class AuthUIModelForIOS {
   /// 配置授权页状态栏
   final StatusBarUIModelForIOS? statusBarUi;

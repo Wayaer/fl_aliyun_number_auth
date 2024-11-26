@@ -33,6 +33,7 @@ void setAuthInfo() async {
 }
 
 /// 设置授权页UI
+/// 所有 UI 单位均为 px 参考 example 转换为 px
 void setAuthUI() async {
   final result = await FlAliYunNumberAuth()
       .setAuthUI(android: buildAndroidUi(context), ios: buildIOSUi(context));

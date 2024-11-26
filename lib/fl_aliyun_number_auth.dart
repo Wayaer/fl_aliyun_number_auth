@@ -11,6 +11,6 @@ export 'src/model/status_bar_model.dart';
 export 'src/model/ios_ui_model.dart';
 export 'src/const/enum.dart';
 export 'src/model/auth_model.dart';
-export 'src/model/auth_info.dart';
+export 'src/auth_info.dart';
 export 'src/fl_aliyun_number_auth.dart';
 export 'src/const/code.dart';
