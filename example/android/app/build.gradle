@@ -24,22 +24,15 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
-    signingConfigs {
-        release {
-            storeFile file('aisaihu.jks')
-            storePassword 'aisaihu123'
-            keyAlias 'aisaihu'
-            keyPassword 'aisaihu123'
-        }
-    }
+
     buildTypes {
         release {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'consumer-rules.pro'
-            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
         }
         debug {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'consumer-rules.pro'
-            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
         }
     }
 }
