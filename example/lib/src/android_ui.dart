@@ -3,19 +3,21 @@ import 'package:example/src/const.dart';
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 import 'package:flutter/material.dart';
 
-AuthUIModelForAndroid buildAndroidUi(BuildContext context) {
+AuthUIModelForAndroid buildAndroidDialogUi(BuildContext context) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
   final width = mediaQuery.size.width.toInt();
   final height = mediaQuery.size.height.toInt();
   final top = mediaQuery.viewPadding.top.toInt();
+  final bottom = mediaQuery.viewPadding.bottom.toInt();
   final logBtnHeight = 44;
 
   final primaryColor = Theme.of(context).primaryColor;
   final bodyColor = Theme.of(context).textTheme.bodyMedium?.color;
   return AuthUIModelForAndroid(
       statusBarUi: StatusBarUIModelForAndroid(
-        statusBarColor: Colors.transparent,
+        // statusBarColor: Colors.transparent,
         webViewStatusBarColor: Colors.transparent,
+        lightColor: true,
       ),
       navUi: NavUIModelForAndroid(
         navColor: Colors.transparent,
@@ -104,7 +106,7 @@ AuthUIModelForAndroid buildAndroidUi(BuildContext context) {
         dialogAlpha: 0.6,
         pageBackgroundPath: AS.appBg,
         dialogOffsetX: 15.toPx(context),
-        dialogOffsetY: (height - 400 - top - 15).toPx(context),
+        dialogOffsetY: (height - 400 - top - 15 - bottom).toPx(context),
         tapAuthPageMaskClosePage: false,
       ),
       privacyAlertUi: PrivacyAlertUIModelForAndroid(

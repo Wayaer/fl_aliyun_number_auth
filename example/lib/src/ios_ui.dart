@@ -3,7 +3,7 @@ import 'package:example/src/const.dart';
 import 'package:fl_aliyun_number_auth/fl_aliyun_number_auth.dart';
 import 'package:flutter/material.dart';
 
-AuthUIModelForIOS buildIOSUi(BuildContext context) {
+AuthUIModelForIOS buildIOSDialogUi(BuildContext context) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
   final width = mediaQuery.size.width.toInt();
   final height = mediaQuery.size.height.toInt();
@@ -47,7 +47,7 @@ AuthUIModelForIOS buildIOSUi(BuildContext context) {
           logoIsHidden: false,
           logoFrameBlock: ViewFrameBlockForIOS(
             // size: Size(50.0.toPx(context), 50.0.toPx(context)),
-            offset: Offset(0, -30.0.toPx(context)),
+            offset: Offset(0, -50.0.toPx(context)),
           )),
       sloganUi: SloganUIModelForIOS(
           sloganText: NSAttributedString(text: '欢迎登录', color: bodyColor),
@@ -122,8 +122,8 @@ AuthUIModelForIOS buildIOSUi(BuildContext context) {
         ),
         alertCornerRadiusArray: [
           4.toPx(context),
-          4.toPx(context),
-          4.toPx(context),
+          0.toPx(context),
+          0.toPx(context),
           4.toPx(context),
         ],
       ),

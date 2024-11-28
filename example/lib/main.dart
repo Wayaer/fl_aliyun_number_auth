@@ -100,8 +100,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void setAuthUI() async {
-    final result = await FlAliYunNumberAuth()
-        .setAuthUI(android: buildAndroidUi(context), ios: buildIOSUi(context));
+    final result = await FlAliYunNumberAuth().setAuthUI(
+        android: buildAndroidDialogUi(context), ios: buildIOSDialogUi(context));
     setResultText = 'setAuthUI:$result';
   }
 

@@ -16,10 +16,13 @@
 
 ```xml
 <!--如果有配置其他 networkSecurityConfig 请添加行替换  或者复制 number_auth_network_security_config 中的添加至自己的 xml-->
-<application
-        android:networkSecurityConfig="@xml/number_auth_network_security_config"
-        android:requestLegacyExternalStorage="true"
-        tools:replace="android:networkSecurityConfig">
+<application android:networkSecurityConfig="@xml/number_auth_network_security_config"
+    android:requestLegacyExternalStorage="true" tools:replace="android:networkSecurityConfig">
+
+    <!--如果使用弹窗模式 需要添加一下内容-->
+    <activity android:name="com.mobile.auth.gatewayauth.LoginAuthActivity"
+        android:theme="@style/NumberAuthDialogTheme" tools:replace="android:theme" />
+
 </application>
 ```
 

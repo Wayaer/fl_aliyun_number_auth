@@ -11,7 +11,6 @@
 
     <!--目前中国移动提供的个别接口为HTTP请求，对于全局禁用HTTP的项目，需要设置HTTP白名单。以下为运营商HTTP接口域名：onekey.cmpassport.com，enrichgw.10010.com-->
     <application
-
         android:usesCleartextTraffic="true"
         tools:targetApi="n">
         <!--重点关注！！！！！！！-->
@@ -25,7 +24,7 @@
             android:exported="false"
             android:launchMode="singleTop"
             android:screenOrientation="behind"
-            android:theme="@style/TransparentTheme" />
+            android:theme="@style/NumberAuthPageTheme" />
         <!--  //仅在弹窗模式下配置，全屏模式无需配置-->
         <!--  //如使用自定义协议页跳转协议(即setProtocolAction)则不需注册该界面-->
         <activity
@@ -34,7 +33,7 @@
             android:exported="false"
             android:launchMode="singleTop"
             android:screenOrientation="behind"
-            android:theme="@style/TransparentTheme" />
+            android:theme="@style/NumberAuthPageTheme" />
         <!-- /如果需要使用二次弹窗功能则添加该注册-->
         <activity
             android:name="com.mobile.auth.gatewayauth.PrivacyDialogActivity"
@@ -42,6 +41,6 @@
             android:exported="false"
             android:launchMode="singleTop"
             android:screenOrientation="behind"
-            android:theme="@style/TransparentTheme" />
+            android:theme="@style/NumberAuthDialogTheme" />
     </application>
 </manifest>
