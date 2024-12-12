@@ -48,8 +48,8 @@ class NSAttributedString {
 
   Map<String, dynamic> toMap() => {
         'text': text,
-        'color': color?.toHex(),
-        'backgroundColor': backgroundColor?.toHex(),
+        'color': color?.toMap(),
+        'backgroundColor': backgroundColor?.toMap(),
         'wordSpacing': wordSpacing,
         'font': font?.toMap(),
       };
@@ -91,7 +91,7 @@ class UILabel extends UIView {
   Map<String, dynamic> toMap() => {
         ...super.toMap(),
         'text': text,
-        'color': color?.toHex(),
+        'color': color?.toMap(),
         'font': font?.toMap(),
       };
 }

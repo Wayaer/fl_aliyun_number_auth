@@ -19,6 +19,7 @@ class FlAliYunNumberAuth {
 
   /// 设置监听器
   void _setMethodCallHandler() {
+    if (!_supported) return;
     _channel.setMethodCallHandler((MethodCall call) async {
       switch (call.method) {
         case 'onAuthResult':

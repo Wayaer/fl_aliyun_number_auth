@@ -39,7 +39,7 @@ class SwitchUIModelForAndroid {
   Map<String, dynamic> toMap() => {
         'switchAccHidden': switchAccHidden,
         'switchAccText': switchAccText,
-        'switchAccTextColor': switchAccTextColor?.toHex(),
+        'switchAccTextColor': switchAccTextColor?.toMap(),
         'switchAccTextSize': switchAccTextSize,
         'switchOffsetY': switchOffsetY,
         'switchOffsetYB': switchOffsetYB,

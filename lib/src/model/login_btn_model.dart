@@ -63,7 +63,7 @@ class LoginBtnUIModelForAndroid {
 
   Map<String, dynamic> toMap() => {
         'logBtnText': logBtnText,
-        'logBtnTextColor': logBtnTextColor?.toHex(),
+        'logBtnTextColor': logBtnTextColor?.toMap(),
         'logBtnTextSize': logBtnTextSize,
         'logBtnWidth': logBtnWidth,
         'logBtnHeight': logBtnHeight,

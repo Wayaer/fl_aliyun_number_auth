@@ -42,7 +42,7 @@ class NumberUIModelForAndroid {
   });
 
   Map<String, dynamic> toMap() => {
-        'numberColor': numberColor?.toHex(),
+        'numberColor': numberColor?.toMap(),
         'numberTextSize': numberTextSize,
         'numFieldOffsetY': numFieldOffsetY,
         'numFieldOffsetYB': numFieldOffsetYB,
@@ -71,7 +71,7 @@ class NumberUIModelForIOS {
   });
 
   Map<String, dynamic> toMap() => {
-        'numberColor': numberColor?.toHex(),
+        'numberColor': numberColor?.toMap(),
         'numberFont': numberFont?.toMap(),
         'numberFrameBlock': numberFrameBlock?.toMap(),
       };

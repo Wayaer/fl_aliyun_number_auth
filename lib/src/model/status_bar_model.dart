@@ -32,11 +32,11 @@ class StatusBarUIModelForAndroid {
   });
 
   Map<String, dynamic> toMap() => {
-        'statusBarColor': statusBarColor?.toHex(),
+        'statusBarColor': statusBarColor?.toMap(),
         'lightColor': lightColor,
         'statusBarHidden': statusBarHidden,
         'statusBarUIFlag': statusBarUIFlag?.index,
-        'webViewStatusBarColor': webViewStatusBarColor?.toHex(),
+        'webViewStatusBarColor': webViewStatusBarColor?.toMap(),
       };
 }
 

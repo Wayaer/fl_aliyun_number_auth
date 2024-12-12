@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
           height: 120,
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.5),
+              color: Colors.grey.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(8)),
           child: Text(resultText, textAlign: TextAlign.center)),
       SizedBox(height: 10),

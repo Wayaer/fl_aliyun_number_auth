@@ -14,10 +14,11 @@ extension ExtensionOffset on Offset {
 }
 
 extension ExtensionColor on Color {
-  String toHex() {
-    // 获取颜色的 ARGB 分量，转换为十六进制并填充到 8 位
-    String hexColor = value.toRadixString(16).padLeft(8, '0');
-    // 直接返回 #AARRGGBB 格式
-    return '#${hexColor.toUpperCase()}';
-  }
+  Map<String, dynamic> toMap() => {
+        'a': a,
+        'r': r,
+        'g': g,
+        'b': b,
+        'colorSpace': [0, 2, 7][colorSpace.index],
+      };
 }

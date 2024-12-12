@@ -34,7 +34,7 @@ class SloganUIModelForAndroid {
 
   Map<String, dynamic> toMap() => {
         'sloganText': sloganText,
-        'sloganTextColor': sloganTextColor?.toHex(),
+        'sloganTextColor': sloganTextColor?.toMap(),
         'sloganTextSize': sloganTextSize,
         'sloganOffsetY': sloganOffsetY,
         'sloganOffsetYB': sloganOffsetYB,

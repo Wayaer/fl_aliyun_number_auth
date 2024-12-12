@@ -90,9 +90,9 @@ class NavUIModelForAndroid {
   });
 
   Map<String, dynamic> toMap() => {
-        'navColor': navColor?.toHex(),
+        'navColor': navColor?.toMap(),
         'navText': navText,
-        'navTextColor': navTextColor?.toHex(),
+        'navTextColor': navTextColor?.toMap(),
         'navTextSize': navTextSize,
         'navTypeface': navTypeface?.index,
         'navReturnImgPath': navReturnImgPath,
@@ -101,14 +101,14 @@ class NavUIModelForAndroid {
         'navReturnImgScaleType': navReturnImgScaleType?.index,
         'navReturnHidden': navReturnHidden,
         'navHidden': navHidden,
-        'webNavColor': webNavColor?.toHex(),
-        'webNavTextColor': webNavTextColor?.toHex(),
+        'webNavColor': webNavColor?.toMap(),
+        'webNavTextColor': webNavTextColor?.toMap(),
         'webNavTextSize': webNavTextSize,
         'webNavReturnImgPath': webNavReturnImgPath,
         'webHiddeProgress': webHiddeProgress,
         'webSupportedJavascript': webSupportedJavascript,
-        'webViewStatusBarColor': webViewStatusBarColor?.toHex(),
-        'bottomNavColor': bottomNavColor?.toHex(),
+        'webViewStatusBarColor': webViewStatusBarColor?.toMap(),
+        'bottomNavColor': bottomNavColor?.toMap(),
       };
 }
 
@@ -172,7 +172,7 @@ class NavUIModelForIOS {
 
   Map<String, dynamic> toMap() => {
         'navIsHidden': navIsHidden,
-        'navColor': navColor?.toHex(),
+        'navColor': navColor?.toMap(),
         'navTitle': navTitle?.toMap(),
         'navBackImage': navBackImage,
         'hideNavBackItem': hideNavBackItem,
@@ -180,9 +180,9 @@ class NavUIModelForIOS {
         'navBackButtonFrameBlock': navBackButtonFrameBlock?.toMap(),
         'navTitleFrameBlock': navTitleFrameBlock?.toMap(),
         'navMoreViewFrameBlock': navMoreViewFrameBlock?.toMap(),
-        'privacyNavColor': privacyNavColor?.toHex(),
+        'privacyNavColor': privacyNavColor?.toMap(),
         'privacyNavTitleFont': privacyNavTitleFont?.toMap(),
-        'privacyNavTitleColor': privacyNavTitleColor?.toHex(),
+        'privacyNavTitleColor': privacyNavTitleColor?.toMap(),
         'privacyNavBackImage': privacyNavBackImage,
       };
 }

@@ -14,17 +14,14 @@ class AuthListener(private val channel: MethodChannel) : TokenResultListener, Pr
     private val gson = Gson()
 
     override fun onTokenSuccess(str: String?) {
-        println("onTokenSuccess: $str")
         onAuthResult(toMap(str))
     }
 
     override fun onTokenFailed(s: String?, s1: String?) {
-        println("onTokenFailed=2: $s =$s1")
         onAuthResult(toMap(s) + mapOf("isFailed" to true, "msg" to s1))
     }
 
     override fun onTokenFailed(str: String?) {
-        println("onTokenFailed=1: $str")
         onAuthResult(toMap(str) + mapOf("isFailed" to true))
     }
 
