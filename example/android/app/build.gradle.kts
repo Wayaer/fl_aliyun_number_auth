@@ -1,7 +1,7 @@
 plugins {
-    id "com.android.application"
-    id "kotlin-android"
-    id "dev.flutter.flutter-gradle-plugin"
+    id("com.android.application")
+    id("kotlin-android")
+    id("dev.flutter.flutter-gradle-plugin")
 }
 
 android {
@@ -14,7 +14,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_21
+        jvmTarget = JavaVersion.VERSION_21.toString()
     }
 
     defaultConfig {
@@ -26,13 +26,13 @@ android {
     }
 
     buildTypes {
-        release {
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'consumer-rules.pro'
-//            signingConfig signingConfigs.release
+        getByName("debug") {
+//            signingConfig = signingConfigs.getByName("release")
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "consumer-rules.pro")
         }
-        debug {
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'consumer-rules.pro'
-//            signingConfig signingConfigs.release
+        getByName("release") {
+//            signingConfig = signingConfigs.getByName("release")
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "consumer-rules.pro")
         }
     }
 }

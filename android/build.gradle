@@ -33,8 +33,12 @@ android {
     compileSdk = 34
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     sourceSets {
@@ -46,13 +50,13 @@ android {
         consumerProguardFiles 'consumer-rules.pro'
         multiDexEnabled true
     }
-}
-dependencies {
-    implementation "androidx.appcompat:appcompat:1.7.0"
-    implementation 'com.google.code.gson:gson:2.11.0'
-    // 阿里云sdk
-    api(name: 'auth_number_product-2.14.3-log-online-standard-cuum-release', ext: 'aar')
-    implementation(name: 'main-2.2.3-release', ext: 'aar')
-    implementation(name: 'logger-2.2.2-release', ext: 'aar')
-}
 
+    dependencies {
+        implementation "androidx.appcompat:appcompat:1.7.0"
+        implementation 'com.google.code.gson:gson:2.11.0'
+        // 阿里云sdk
+        api(name: 'auth_number_product-2.14.3-log-online-standard-cuum-release', ext: 'aar')
+        implementation(name: 'main-2.2.3-release', ext: 'aar')
+        implementation(name: 'logger-2.2.2-release', ext: 'aar')
+    }
+}

@@ -393,7 +393,7 @@ class FlAliYunNumberAuthPlugin : FlutterPlugin, ActivityAware, MethodChannel.Met
                 authUIConfigBuilder.setLogBtnMarginLeftAndRight(it.toDp())
             }
             (loginBtnUi["logBtnBackgroundPath"] as String?)?.let {
-                authUIConfigBuilder.setLogBtnBackgroundPath(it)
+                authUIConfigBuilder.setLogBtnBackgroundPath(it.toImagePath())
             }
             (loginBtnUi["logBtnOffsetY"] as Int?)?.let { authUIConfigBuilder.setLogBtnOffsetY(it.toDp()) }
             (loginBtnUi["logBtnOffsetYB"] as Int?)?.let {
