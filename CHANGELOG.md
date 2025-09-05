@@ -1,3 +1,9 @@
+## 0.2.0
+
+* 更新sdk android 2.14.12
+* 更新sdk ios 2.14.9
+* 新增ios xcframework 支持
+
 ## 0.1.1
 
 * 修复Android `logBtnBackgroundPath` 无效
