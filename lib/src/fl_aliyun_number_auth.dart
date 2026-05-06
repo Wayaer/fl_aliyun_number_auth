@@ -9,9 +9,11 @@ const MethodChannel _channel = MethodChannel('fl_aliyun_number_auth');
 typedef AuthResultCallback = void Function(AuthResultModel? result);
 
 class FlAliYunNumberAuth {
-  factory FlAliYunNumberAuth() => _singleton ??= FlAliYunNumberAuth._();
+  factory FlAliYunNumberAuth() => _instance;
 
-  static FlAliYunNumberAuth? _singleton;
+  static final FlAliYunNumberAuth _instance = FlAliYunNumberAuth._();
+
+  static FlAliYunNumberAuth get instance => _instance;
 
   FlAliYunNumberAuth._() {
     _setMethodCallHandler();
@@ -25,8 +27,7 @@ class FlAliYunNumberAuth {
         case 'onAuthResult':
           AuthResultModel? model;
           try {
-            model = AuthResultModel.fromMap(
-                call.arguments as Map<dynamic, dynamic>);
+            model = AuthResultModel.fromMap(call.arguments as Map<dynamic, dynamic>);
           } catch (e) {
             debugPrint("AuthResultCallback : $e");
           }
@@ -36,16 +37,13 @@ class FlAliYunNumberAuth {
           _iosAuthUi?.onViewFrameBlock(call.arguments as Map<dynamic, dynamic>);
           break;
         case 'onActivityResult':
-          _androidAuthUi?.onActivityResultHandler(
-              call.arguments as Map<dynamic, dynamic>);
+          _androidAuthUi?.onActivityResultHandler(call.arguments as Map<dynamic, dynamic>);
           break;
         case 'onAuthUIClick':
-          _androidAuthUi
-              ?.onAuthUIClickHandler(call.arguments as Map<dynamic, dynamic>);
+          _androidAuthUi?.onAuthUIClickHandler(call.arguments as Map<dynamic, dynamic>);
           break;
         case 'onLoggerHandler':
-          _androidAuthUi
-              ?.onLoggerHandler(call.arguments as Map<dynamic, dynamic>);
+          _androidAuthUi?.onLoggerHandler(call.arguments as Map<dynamic, dynamic>);
           break;
         default:
       }
@@ -56,8 +54,7 @@ class FlAliYunNumberAuth {
   FlAliYunNumberAuthForIOS get iosMethod => FlAliYunNumberAuthForIOS();
 
   /// android 端特有方法
-  FlAliYunNumberAuthForAndroid get androidMethod =>
-      FlAliYunNumberAuthForAndroid();
+  FlAliYunNumberAuthForAndroid get androidMethod => FlAliYunNumberAuthForAndroid();
 
   /// 结果回调监听
   AuthResultCallback? _authResultCallback;
@@ -79,8 +76,7 @@ class FlAliYunNumberAuth {
     required AuthInfoForIOS ios,
   }) async {
     if (!_supported) return null;
-    final result =
-        await _channel.invokeMethod<Map<dynamic, dynamic>>('setAuthSDKInfo', {
+    final result = await _channel.invokeMethod<Map<dynamic, dynamic>>('setAuthSDKInfo', {
       if (_isAndroid) ...android.toMap(),
       if (_isIOS) ...ios.toMap(),
     });
@@ -126,18 +122,15 @@ class FlAliYunNumberAuth {
   /// [bool] return true:方法调用成功  false:方法调用失败或不支持
   Future<bool?> checkEnvAvailable(AuthType type) async {
     if (!_supported) return null;
-    return await _channel.invokeMethod<bool>(
-        'checkEnvAvailable', type.index + 1);
+    return await _channel.invokeMethod<bool>('checkEnvAvailable', type.index + 1);
   }
 
   /// 一键登录预取号
   /// [authResultCallback] 返回结果回调
   /// [bool] return true:方法调用成功  false:方法调用失败或不支持
-  Future<bool?> accelerateLoginPage(
-      {Duration timeout = const Duration(seconds: 10)}) async {
+  Future<bool?> accelerateLoginPage({Duration timeout = const Duration(seconds: 10)}) async {
     if (!_supported) return null;
-    return await _channel.invokeMethod<bool>(
-        'accelerateLoginPage', timeout.inMilliseconds);
+    return await _channel.invokeMethod<bool>('accelerateLoginPage', timeout.inMilliseconds);
   }
 
   /// 一键登录获取Token
@@ -152,8 +145,7 @@ class FlAliYunNumberAuth {
     bool isDebug = false,
   }) async {
     if (!_supported) return null;
-    return await _channel.invokeMethod<bool>('getLoginToken',
-        {'timeout': timeout.inMilliseconds, 'isDebug': isDebug});
+    return await _channel.invokeMethod<bool>('getLoginToken', {'timeout': timeout.inMilliseconds, 'isDebug': isDebug});
   }
 
   /// 注销登录页面
@@ -162,8 +154,7 @@ class FlAliYunNumberAuth {
     bool animated = true,
   }) async {
     if (!_supported) return null;
-    return await _channel
-        .invokeMethod<bool>('quitLoginPage', {'animated': animated});
+    return await _channel.invokeMethod<bool>('quitLoginPage', {'animated': animated});
   }
 
   /// 结束授权页loading动画
@@ -223,12 +214,13 @@ bool _isAndroid = defaultTargetPlatform == TargetPlatform.android;
 bool _isIOS = defaultTargetPlatform == TargetPlatform.iOS;
 
 class FlAliYunNumberAuthForIOS {
-  factory FlAliYunNumberAuthForIOS() =>
-      _singleton ??= FlAliYunNumberAuthForIOS._();
+  factory FlAliYunNumberAuthForIOS() => _instance;
 
   FlAliYunNumberAuthForIOS._();
 
-  static FlAliYunNumberAuthForIOS? _singleton;
+  static final FlAliYunNumberAuthForIOS _instance = FlAliYunNumberAuthForIOS._();
+
+  static FlAliYunNumberAuthForIOS get instance => _instance;
 
   /// 判断当前设备蜂窝数据网络是否开启，即3G/4G
   Future<String?> checkDeviceCellularDataEnable() async {
@@ -281,8 +273,7 @@ class FlAliYunNumberAuthForIOS {
   ///  获取设备当前网络私网IP地址
   Future<String?> getMobilePrivateIPAddress(bool preferIPv4) async {
     if (!_isIOS) return null;
-    return await _channel.invokeMethod<String>(
-        'getMobilePrivateIPAddress', preferIPv4);
+    return await _channel.invokeMethod<String>('getMobilePrivateIPAddress', preferIPv4);
   }
 
   /// 获取当前设备的唯一标识ID
@@ -293,30 +284,27 @@ class FlAliYunNumberAuthForIOS {
 }
 
 class FlAliYunNumberAuthForAndroid {
-  factory FlAliYunNumberAuthForAndroid() =>
-      _singleton ??= FlAliYunNumberAuthForAndroid._();
+  factory FlAliYunNumberAuthForAndroid() => _instance;
 
   FlAliYunNumberAuthForAndroid._();
 
-  static FlAliYunNumberAuthForAndroid? _singleton;
+  static final FlAliYunNumberAuthForAndroid _instance = FlAliYunNumberAuthForAndroid._();
+
+  static FlAliYunNumberAuthForAndroid get instance => _instance;
 
   /// 加速拉起 Verify
   /// [authResultCallback] 返回结果回调
-  Future<bool?> accelerateVerify(
-      {Duration timeout = const Duration(seconds: 10)}) async {
+  Future<bool?> accelerateVerify({Duration timeout = const Duration(seconds: 10)}) async {
     if (!_supported) return null;
-    return await _channel.invokeMethod<bool>(
-        'accelerateVerify', timeout.inMilliseconds);
+    return await _channel.invokeMethod<bool>('accelerateVerify', timeout.inMilliseconds);
   }
 
   /// getVerifyToken
   /// timeout 接口超时时间 默认10s
   /// [authResultCallback] 返回结果回调
-  Future<bool?> getVerifyToken(
-      {Duration timeout = const Duration(seconds: 10)}) async {
+  Future<bool?> getVerifyToken({Duration timeout = const Duration(seconds: 10)}) async {
     if (!_supported) return null;
-    return await _channel.invokeMethod<bool>(
-        'getVerifyToken', timeout.inMilliseconds);
+    return await _channel.invokeMethod<bool>('getVerifyToken', timeout.inMilliseconds);
   }
 
   /// 授权页隐藏导航栏
@@ -328,8 +316,7 @@ class FlAliYunNumberAuthForAndroid {
   /// 授权页是否跟随系统深色模式
   Future<bool?> setAuthPageUseDayLight(bool authPageUseDayLight) async {
     if (!_isAndroid) return null;
-    return await _channel.invokeMethod<bool>(
-        'setAuthPageUseDayLight', authPageUseDayLight);
+    return await _channel.invokeMethod<bool>('setAuthPageUseDayLight', authPageUseDayLight);
   }
 
   /// 授权页物理返回键禁用
@@ -341,8 +328,7 @@ class FlAliYunNumberAuthForAndroid {
   /// 横屏水滴屏全屏适配
   Future<bool?> keepAuthPageLandscapeFullScreen(bool fullScreen) async {
     if (!_isAndroid) return null;
-    return await _channel.invokeMethod<bool>(
-        'keepAuthPageLandscapeFullScreen', fullScreen);
+    return await _channel.invokeMethod<bool>('keepAuthPageLandscapeFullScreen', fullScreen);
   }
 
   /// 删除预取号码信息
@@ -368,8 +354,7 @@ class FlAliYunNumberAuthForAndroid {
   /// 授权页是否扩大协议按钮选择范围至我已阅读并同意
   Future<bool?> expandAuthPageCheckedScope(Duration expand) async {
     if (!_isAndroid) return null;
-    return await _channel.invokeMethod<bool>(
-        'expandAuthPageCheckedScope', expand);
+    return await _channel.invokeMethod<bool>('expandAuthPageCheckedScope', expand);
   }
 
   /// addAuthRegisterViewConfig
@@ -413,15 +398,13 @@ class FlAliYunNumberAuthForAndroid {
   /// 二次弹窗动态添加控件
   Future<bool?> addPrivacyAuthRegisterViewConfig() async {
     if (!_isAndroid) return null;
-    return await _channel
-        .invokeMethod<bool>('addPrivacyAuthRegisterViewConfig');
+    return await _channel.invokeMethod<bool>('addPrivacyAuthRegisterViewConfig');
   }
 
   /// 移除所有动态添加的控件
   /// 在调用addPrivacyAuthRegistViewConfig之前调用removePrivacyAuthRegisterViewConfig先移除所有动态添加的控件。
   Future<bool?> removePrivacyAuthRegisterViewConfig() async {
     if (!_isAndroid) return null;
-    return await _channel
-        .invokeMethod<bool>('removePrivacyAuthRegisterViewConfig');
+    return await _channel.invokeMethod<bool>('removePrivacyAuthRegisterViewConfig');
   }
 }
